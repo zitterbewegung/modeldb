@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="ModelDB: a system for managing machine learning models : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>ModelDB: a system for managing machine learning models</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mitdbg/modeldb">View on GitHub</a>
+
+          <h1 id="project_title">ModelDB: a system for managing machine learning models</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mitdbg/modeldb/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mitdbg/modeldb/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="modeldb-a-system-to-manage-ml-models" class="anchor" href="#modeldb-a-system-to-manage-ml-models" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB: A system to manage ML models.</h1>
+
+<p>ModelDB is an end-to-end system to manage machine learning models.</p>
+
+<h2>
+<a id="project-overview" class="anchor" href="#project-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Overview</h2>
+
+<p>ModelDB is made up of three main parts: the ModelDB server, the ModelDB clients, and the ModelDB frontend. </p>
+
+<h3>
+<a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB server</h3>
+
+<p>The <a href="server">ModelDB server</a> stores all the data for ModelDB and exposes a thrift API for storing as well as querying data.</p>
+
+<h3>
+<a id="modeldb-client" class="anchor" href="#modeldb-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB client</h3>
+
+<p>ModelDB clients are native libraries in various languages that can be used to log data to ModelDB. We currently provide clients for <a href="client/scala/libs/spark.ml">spark.ml</a> and <a href="client/python">scikit-learn</a>.</p>
+
+<p>Sample machine learning workflows using these client libraries are available <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/sample">here</a>, <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/evaluation">here</a>, and <a href="client/python/samples">here</a>.</p>
+
+<h3>
+<a id="modeldb-frontend" class="anchor" href="#modeldb-frontend" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB Frontend</h3>
+
+<p>Once machine learning workflows and models have been logged to ModelDB, they can be explored via the web-based ModelDB <a href="frontend">frontend</a>.</p>
+
+<h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup</h2>
+
+<p>To setup ModelDB, follow these steps:</p>
+
+<ol>
+<li>ModelDB has various dependencies. See <a href="docs/RequiredSoftware.md">Required Software</a>. Install the relevant ones.</li>
+<li>Configure and start the <a href="server">server</a>.</li>
+<li>Build modeldb clients as described in for <a href="client/scala/libs/spark.ml">spark.ml</a> and <a href="client/python">scikit-learn</a>.</li>
+<li>Update your ML code to use the client libraries to log workflows and models to ModelDB, as in <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/sample">here</a>, <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/evaluation">here</a>, and <a href="client/python/samples">here</a>.</li>
+<li>Run your ML code normally.</li>
+<li>Start the ModelDB <a href="frontend">frontend</a> and explore models in ModelDB.</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">ModelDB: a system for managing machine learning models maintained by <a href="https://github.com/mitdbg">mitdbg</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

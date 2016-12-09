@@ -25,6 +25,9 @@
 <!--               <a class="zip_download_link" href="https://github.com/mitdbg/modeldb/zipball/master">Download this project as a .zip file</a> -->
 <!--               <a class="tar_download_link" href="https://github.com/mitdbg/modeldb/tarball/master">Download this project as a tar.gz file</a> -->
 <!--             </section> -->
+        <div id="mdb_logo">
+
+        <div>
         </header>
     </div>
 
@@ -34,39 +37,96 @@
 
 <h2>
 <a id="project-overview" class="anchor" href="#project-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Overview</h2>
-<p>ModelDB is an end-to-end system to manage machine learning models.</p>
-<p>ModelDB is made up of three main parts: the ModelDB server, the ModelDB clients, and the ModelDB frontend. </p>
+<p>ModelDB is an end-to-end system to manage machine learning models. 
+You can log models, metadata and metrics to ModelDB using our Thrift API or native
+libraries for spark.ml and scikit-learn.
+The location for model storage is configurable (e.g. HDFS, local file system) while
+metadata is stored in a database for easy querying.
+Data in ModelDB can be queried via the ModelDB frontend or via the Thrift API.
+</p>
 
 <h3>
-<a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB server</h3>
-
-<p>The <a href="server">ModelDB server</a> stores all the data for ModelDB and exposes a thrift API for storing as well as querying data.</p>
-
-<h3>
-<a id="modeldb-client" class="anchor" href="#modeldb-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB client</h3>
-
-<p>ModelDB clients are native libraries in various languages that can be used to log data to ModelDB. We currently provide clients for <a href="client/scala/libs/spark.ml">spark.ml</a> and <a href="client/python">scikit-learn</a>.</p>
-
-<p>Sample machine learning workflows using these client libraries are available <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/sample">here</a>, <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/evaluation">here</a>, and <a href="client/python/samples">here</a>.</p>
+<a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What can you do with ModelDB?</h3>
+<ul>
+<li>Build a central repository for models</li>
+<li>Make all your models reproducible</li>
+<li>Manage model versions</li>
+<li>Compare models across any number of runs</li>
+<li>Share models, workflows and metrics within and outside your team</li>
+</ul>
 
 <h3>
-<a id="modeldb-frontend" class="anchor" href="#modeldb-frontend" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ModelDB Frontend</h3>
+<a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How do I use ModelDB?</h3>
 
-<p>Once machine learning workflows and models have been logged to ModelDB, they can be explored via the web-based ModelDB <a href="frontend">frontend</a>.</p>
+Start with logging models, metadata and metrics to ModelDB. With minimal changes
+to your code, you can benefit from ModelDB logging.
+
+<h4><a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Log using APIs</h4>
+
+<p> We provide two types of APIs to log information to ModelDB. The light API
+allows users to log arbitrary (but coarse-grained) information to ModelDB. 
+For example, this API, shown below, can be used to log models, datasets, metrics etc. </p>
+<blockquote>
+  <pre>
+    <code>
+        mdb.sync_datasets(datasets)
+        mdb.sync_model(model, hyperparameter_dictionary)
+        mdb.sync_metrics(model, metric_dictionary)
+    </code>
+  </pre>
+</blockquote>
+
+<p>If you are using spark.ml or scikit-learn, we provide native clients that can
+collect much more fine-grained information including what operations were used
+in generating a model. To use these APIs, you replace the relevant functions in
+your code with the corresponding *_sync functions.</p>
+
+<blockquote>
+  <pre>
+    <code>
+        log_reg.fit_sync(X, y)
+        one_hot_encoder.transform_sync(X)
+        log_reg.predict_sync(X)
+    </code>
+  </pre>
+</blockquote>
+
+<h4><a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Explore via web frontend</h4>
+The ModelDB frontend organizes models by projects and experiments. A user can
+easily view and search through models (Fig. 1. a), compare models using any associated
+metadata (Fig. 1. b), and view pipelines that created a model (Fig. 1. c).
+
+<figure>
+<img src="images/frontend.png" width="600px"/>
+<figcaption><center>Fig. 1. ModelDB frontend</center></figcaption>
+</figure>
+
+<h2><a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Status</h2>
+We are currently testing ModelDB with a small number of companies and research 
+groups. The system will be made open source in early 2017. In the meantime, we 
+are happy to provide early access on a case-by-case basis. Please reach out to 
+mvartak_at_csail.mit.edu.
+
 
 <h2>
-<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup</h2>
+<a id="modeldb-server" class="anchor" href="#modeldb-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h2>
 
-<p>To setup ModelDB, follow these steps:</p>
+<p>ModelDB has been developed at the MIT Database Group. The team consists of:</p>
+<ul>
+<li><a href="http://people.csail.mit.edu/mvartak/">Manasi Vartak</a>, PhD Candidate, MIT</li>
+<li>Harihar Subramanyam, MEng, MIT</li>
+<li>Wei-En Lee, MEng, MIT</li>
+<li>Srinidhi Viswanathan, MEng, MIT</li>
+<li><a href="http://db.csail.mit.edu/madden/">Samuel Madden</a>, Professor, MIT</li>
+<li><a href="https://cs.stanford.edu/~matei/">Matei Zaharia</a>, Assistant Professor, Stanford University</li>
+</ul>
 
-<ol>
-<li>ModelDB has various dependencies. See <a href="docs/RequiredSoftware.md">Required Software</a>. Install the relevant ones.</li>
-<li>Configure and start the <a href="server">server</a>.</li>
-<li>Build modeldb clients as described in for <a href="client/scala/libs/spark.ml">spark.ml</a> and <a href="client/python">scikit-learn</a>.</li>
-<li>Update your ML code to use the client libraries to log workflows and models to ModelDB, as in <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/sample">here</a>, <a href="client/scala/libs/spark.ml/src/main/scala-2.11/edu/mit/csail/db/ml/modeldb/evaluation">here</a>, and <a href="client/python/samples">here</a>.</li>
-<li>Run your ML code normally.</li>
-<li>Start the ModelDB <a href="frontend">frontend</a> and explore models in ModelDB.</li>
-</ol>
+<p>Papers:</p>
+<ul>
+<li><a href="papers/hilda_modeldb.pdf">Short paper</a> presented at HILDA workshop, SIGMOD 2016</li>
+</ul>
+
+
       </section>
     </div>
 

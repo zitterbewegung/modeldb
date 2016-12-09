@@ -368,6 +368,18 @@ Full-Width Styles
   background: #212121;
 }
 
+#mdb_logo {
+  display: block;
+  position: absolute;
+  top: 60px;
+  right: -160px;
+  z-index: 10;
+/*  padding: 10px 50px 10px 10px;*/
+  width: 195px;
+  height: 180px;
+  background: url(../images/mdb_logo.png) no-repeat;
+}
+
 
 
 /*******************************************************************************

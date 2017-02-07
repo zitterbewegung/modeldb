@@ -15,19 +15,14 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - Collaboration
 
 ## How it works
-1. Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB.
+Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB. Using ModelDB requires minimal changes to a modeling workflow.
 
-  Using ModelDB requires minimal changes to a modeling workflow. For example, in ```spark.ml```, it requires the following changes:
+For example, in ```spark.ml```, it requires the following changes:
 
-  {% highlight ruby %}
-def show
-  @widget = Widget(params[:id])
-  respond_to do |format|
-    format.html # show.html.erb
-    format.json { render json: @widget }
-  end
-end
-{% endhighlight %}
+  {% highlight scala %}
+  estimator.fit(data) --> estimator.fitSync(data)
+  
+  {% endhighlight %}
 
 
   ```

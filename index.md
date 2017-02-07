@@ -14,10 +14,32 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - Visual exploration of models and results
 - Collaboration
 
+## How it works
+Use a set of native APIs (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB.
+
+ModelDB APIs require minimal changes to a modeling workflow. For example, in ```spark.ml```, it requires the following changes
+
+```
+
+```
+Similarly, the ```scikit-learn``` ModelDB API looks like this.
+
+```
+
+```
+
+Data logged through the ModelDB APIs gets stored in the ModelDB server. It can be queried via the ModelDB web frontend.
+
+![alt text](images/frontend.png "ModelDB frontend")
+
+### Architecture
+ModelDB adopts a modular client-server architecture (below). Native clients for different languages (and ML packages) log data to the ModelDB server. All communication takes place through the ModelDB Thrift API. As a result, adding a native client for another language is straightforward.
+The web frontend surfaces data in the backend for query, visualization and updates.
+
+<img src="images/arch.png" width="60%">
+
 ## How to use?
-
-
-ModelDB clients are currently available for spark.ml and scikit-learn. See the getting started guides to use ModelDB.
+Checkout the ModelDB Getting Started Guides for [spark.ml]() and [scikit-learn]() to start using ModelDB. Please use the ModelDB mailing list or Google Group for quesions.
 
 ## Papers
 - [Short paper](papers/hilda_modeldb.pdf) at HILDA workshop, SIGMOD 2016

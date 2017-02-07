@@ -1,6 +1,10 @@
 # ModelDB: A system to manage machine learning models
 
-## What is ModelDB?
+Companies often build hundreds of models a day (e.g., churn, recommendation, credit default); however, there is no practical way to manage all the models that are built over time.
+This leads to insights being lost, resources wasted on reproducing old results, and difficulty collaborating.
+ModelDB is an end-to-end system that tracks models as they are built, extracts and stores relevant metadata (e.g., hyperparameters, data sources) for models, and makes this data available in a format that is easy to query.
+
+## Why ModelDB?
 
 
 ## Use Cases
@@ -18,9 +22,9 @@
 - Full paper (coming soon)
 
 ## Contributors
-- [Manasi Vartak](http://people.csail.mit.edu/mvartak/), PhD Student, MIT CSAIL (_lead_)
+- [Manasi Vartak](http://people.csail.mit.edu/mvartak/), PhD Student, MIT CSAIL
 - [Harihar Subramanyam](https://www.linkedin.com/in/harihar-subramanyam-0862b353/), MEng, MIT
 - [Wei-En Lee](https://www.linkedin.com/in/weienlee/), MEng Student MIT
 - [Srinidhi Viswanathan](https://www.linkedin.com/in/srinidhi-viswanathan-16b50b7b/), MEng, MIT
-- [Samuel Madden](http://db.csail.mit.edu/madden/), Faculty, MIT
+- [Samuel Madden](http://db.csail.mit.edu/madden/), Faculty, MIT CSAIL
 - [Matei Zaharia](https://cs.stanford.edu/~matei), Faculty, Stanford University

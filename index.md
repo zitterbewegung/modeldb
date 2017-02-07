@@ -19,11 +19,22 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 
   Using ModelDB requires minimal changes to a modeling workflow. For example, in ```spark.ml```, it requires the following changes:
 
-  ```code
+  {% highlight ruby %}
+def show
+  @widget = Widget(params[:id])
+  respond_to do |format|
+    format.html # show.html.erb
+    format.json { render json: @widget }
+  end
+end
+{% endhighlight %}
+
+
+  ```
   estimator.fit(data) --> estimator.fitSync(data)
 
   transformer.transform(data) --> transformer.transformSync(data)
-  
+
   model.predict(data) --> model.predictSync(data)
   ```
   And similarly in ```scikit-learn```:

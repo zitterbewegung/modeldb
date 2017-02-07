@@ -1,1 +1,8 @@
 _site/*
+frontend/
+server/
+client/
+data/
+README.md
+.DS_Store
+.idea/

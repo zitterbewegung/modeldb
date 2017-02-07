@@ -4,8 +4,8 @@ Companies often build hundreds of models a day (e.g., churn, recommendation, cre
 This lack of tooling leads to insights being lost, resources wasted on re-generating old results, and difficulty collaborating.
 ModelDB is an end-to-end system that tracks models as they are built, extracts and stores relevant metadata (e.g., hyperparameters, data sources) for models, and makes this data available for easy querying and visualization.
 
-## Why ModelDB?
-
+<!-- ## Why ModelDB?
+ -->
 
 ## Use Cases
 - Tracking Modeling Experiments
@@ -15,22 +15,28 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - Collaboration
 
 ## How it works
-Use a set of native APIs (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB.
+1. Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB.
 
-ModelDB APIs require minimal changes to a modeling workflow. For example, in ```spark.ml```, it requires the following changes
+  Using ModelDB requires minimal changes to a modeling workflow. For example, in ```spark.ml```, it requires the following changes:
 
-```
+  ```
+  estimator.fit(data) --> estimator.fitSync(data)
+  transformer.transform(data) --> transformer.transformSync(data)
+  model.predict(data) --> model.predictSync(data)
+  ```
+  And similarly in ```scikit-learn```:
 
-```
-Similarly, the ```scikit-learn``` ModelDB API looks like this.
+  ```
+  model.fit(data) --> model.fit_sync(data)
+  preprocessor.transform(data) --> preprocessor.transform_sync(data)
+  model.predict(data) --> model.predict_sync(data)
+  ```
 
-```
+2. Explore models and related data through the frontend.
 
-```
+  Data logged through the ModelDB APIs gets stored in the ModelDB server. It can be queried via the ModelDB web frontend.
 
-Data logged through the ModelDB APIs gets stored in the ModelDB server. It can be queried via the ModelDB web frontend.
-
-![alt text](images/frontend.png "ModelDB frontend")
+  ![alt text](images/frontend.png "ModelDB frontend")
 
 ### Architecture
 ModelDB adopts a modular client-server architecture (below). Native clients for different languages (and ML packages) log data to the ModelDB server. All communication takes place through the ModelDB Thrift API. As a result, adding a native client for another language is straightforward.

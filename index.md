@@ -1,8 +1,8 @@
 # ModelDB: A system to manage machine learning models
 
-Companies often build hundreds of models a day (e.g., churn, recommendation, credit default); however, there is no practical way to manage all the models that are built over time.
-This leads to insights being lost, resources wasted on reproducing old results, and difficulty collaborating.
-ModelDB is an end-to-end system that tracks models as they are built, extracts and stores relevant metadata (e.g., hyperparameters, data sources) for models, and makes this data available in a format that is easy to query.
+Companies often build hundreds of models a day (e.g., churn, recommendation, credit default). However, there is no practical way to manage all the models that are built over time.
+This lack of tooling leads to insights being lost, resources wasted on re-generating old results, and difficulty collaborating.
+ModelDB is an end-to-end system that tracks models as they are built, extracts and stores relevant metadata (e.g., hyperparameters, data sources) for models, and makes this data available for easy querying and visualization.
 
 ## Why ModelDB?
 

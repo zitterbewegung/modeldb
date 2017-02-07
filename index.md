@@ -16,6 +16,9 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 
 ## How to use?
 
+
+ModelDB clients are currently available for spark.ml and scikit-learn. See the getting started guides to use ModelDB.
+
 ## Papers
 - [Short paper](papers/hilda_modeldb.pdf) at HILDA workshop, SIGMOD 2016
 <!-- - [Harihar's Masters thesis]() on software design aspects of ModelDB -->
@@ -28,3 +31,6 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - [Srinidhi Viswanathan](https://www.linkedin.com/in/srinidhi-viswanathan-16b50b7b/), MEng, MIT
 - [Samuel Madden](http://db.csail.mit.edu/madden/), Faculty, MIT CSAIL
 - [Matei Zaharia](https://cs.stanford.edu/~matei), Faculty, Stanford University
+
+## Contact us
+Send questions to modeldb \_at\_ csail.mit.edu

@@ -15,7 +15,7 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - Collaboration
 
 ## How it works
-Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB. Using ModelDB requires minimal changes to a modeling workflow.
+Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB. Using the ModelDB client API requires minimal changes to a modeling workflow.
 
 For example, in ```spark.ml```, it requires the following changes:
 
@@ -23,31 +23,29 @@ For example, in ```spark.ml```, it requires the following changes:
   estimator.fit(data) --> estimator.fitSync(data)
   transformer.transform(data) --> transformer.transformSync(data)
   model.predict(data) --> model.predictSync(data)
-
   {% endhighlight %}
 
   And similarly in ```scikit-learn```:
 
-  {% highlight python %}
+  {% highlight ruby %}
   model.fit(data) --> model.fit_sync(data)
   preprocessor.transform(data) --> preprocessor.transform_sync(data)
   model.predict(data) --> model.predict_sync(data)
   {% endhighlight %}
 
+  Once you run a workflow that has been instrumented with ModelDB, all the relevant modeling data is logged to the server.
+  Now you can use the frontend to query and visualize this data.
 
-  Once you run the workflow instrumented with ModelDB, all the modeling data is logged to the server.
-  Now use the frontend to query and visualize this data.
+  <img src="images/frontend.png" width="70%">
 
-  ![alt text](images/frontend.png "ModelDB frontend")
-
-### Architecture
+#### Architecture
 ModelDB adopts a modular client-server architecture (below). Native clients for different languages (and ML packages) log data to the ModelDB server. All communication takes place through the ModelDB Thrift API. As a result, adding a native client for another language is straightforward.
 The web frontend surfaces data in the backend for query, visualization and updates.
 
 <img src="images/arch.png" width="60%">
 
-## How to use?
-Checkout the ModelDB Getting Started Guides for [spark.ml]() and [scikit-learn]() to start using ModelDB. Please use the ModelDB mailing list or Google Group for quesions.
+## Getting Started
+The ModelDB Getting Started Guides for [spark.ml]() and [scikit-learn]() are a good place to start. Please use the ModelDB mailing list or Google Group for quesions.
 
 ## Papers
 - [Short paper](papers/hilda_modeldb.pdf) at HILDA workshop, SIGMOD 2016

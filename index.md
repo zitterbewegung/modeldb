@@ -36,7 +36,7 @@ For example, in ```spark.ml```, it requires the following changes:
   Once you run a workflow that has been instrumented with ModelDB, all the relevant modeling data is logged to the server.
   Now you can use the frontend to query and visualize this data.
 
-  ![alt text](images/frontend.png "ModelDB frontend")
+  <img src="images/frontend.png" width="70%">
 
 #### Architecture
 ModelDB adopts a modular client-server architecture (below). Native clients for different languages (and ML packages) log data to the ModelDB server. All communication takes place through the ModelDB Thrift API. As a result, adding a native client for another language is straightforward.

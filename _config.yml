@@ -1,5 +1,5 @@
-title: "ModelDB: a system for managing machine learning models"
-description: 
+title: "ModelDB"
+description: A system to manage ML models
 google_analytics: 
 show_downloads: true
 theme: jekyll-theme-dinky

@@ -19,19 +19,19 @@ Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-lear
 
 For example, in ```spark.ml```, it requires the following changes:
 
-  ```java
+ {% highlight java %}
   estimator.fit(data) --> estimator.fitSync(data)
   transformer.transform(data) --> transformer.transformSync(data)
   model.predict(data) --> model.predictSync(data)
-  ```
+ {% endhighlight %}
 
   And similarly in ```scikit-learn```:
 
-  ```java
+ {% highlight ruby %}
   model.fit(data) --> model.fit_sync(data)
   preprocessor.transform(data) --> preprocessor.transform_sync(data)
   model.predict(data) --> model.predict_sync(data)
-  ```
+ {% endhighlight %}
 
   Once you run a workflow that has been instrumented with ModelDB, all the relevant modeling data is logged to the server.
   Now you can use the frontend to query and visualize this data.

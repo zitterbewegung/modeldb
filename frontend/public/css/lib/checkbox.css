@@ -1,0 +1,145 @@
+/* taken from https://codepen.io/rkchauhan/pen/ONJEYL */
+
+.columns-container {
+  white-space: normal;
+  padding: 20px;
+  display: none;
+}
+
+.column-checkbox {
+  margin: 5px;
+  min-width: 100px;
+  background-color: #D9E0E8;
+  padding: 0 5px 5px 0;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.rkmd-checkbox {
+  color: black;
+  font-size: 15px;
+  letter-spacing: .5px;
+}
+.rkmd-checkbox .input-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  vertical-align: -9px;
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"] {
+  visibility: hidden;
+  position: absolute;
+  left: 7px;
+  bottom: 7px;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  opacity: 0;
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"] + .checkbox:before {
+  position: absolute;
+  left: 4px;
+  bottom: 8px;
+  width: 18px;
+  height: 18px;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  vertical-align: -6px;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  -webkit-font-feature-settings: 'liga';
+          font-feature-settings: 'liga';
+  -webkit-transition: all .2s ease;
+  transition: all .2s ease;
+  z-index: 1;
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"] + .checkbox:before {
+  content: "\e835";
+  color: #717171;
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"]:checked + .checkbox:before {
+  content: "\e834";
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"]:active:not(:disabled) + .checkbox:before {
+  -webkit-transform: scale3d(0.88, 0.88, 1);
+          transform: scale3d(0.88, 0.88, 1);
+}
+.rkmd-checkbox .input-checkbox input[type="checkbox"]:disabled + .checkbox:before {
+  color: rgba(0, 0, 0, 0.157) !important;
+}
+.rkmd-checkbox.checkbox-light label, .rkmd-checkbox.checkbox-light .label {
+  color: #FFF;
+}
+.rkmd-checkbox.checkbox-light input[type="checkbox"] + .checkbox:before {
+  color: #FFF;
+}
+.rkmd-checkbox.checkbox-light input[type="checkbox"]:disabled + .checkbox:before {
+  color: #5d5d5d !important;
+}
+.rkmd-checkbox.checkbox-light.checkbox-rotate input[type="checkbox"] + .checkbox:before {
+  border-color: #FFF;
+}
+.rkmd-checkbox.checkbox-light.checkbox-rotate input[type="checkbox"]:disabled + .checkbox:before {
+  border-color: #5d5d5d !important;
+}
+.rkmd-checkbox label, .rkmd-checkbox .label {
+  cursor: pointer;
+}
+
+.rkmd-checkbox .checkbox-lightBlue .ripple {
+  background-color: #2c3e50 !important;
+}
+
+.rkmd-checkbox:not(.checkbox-rotate) .checkbox-lightBlue input[type="checkbox"]:checked + .checkbox:before {
+  color: #2c3e50;
+}
+
+.rkmd-checkbox.checkbox-ripple .ripple {
+  position: absolute;
+  top: 2px;
+  left: 0px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+}
+.rkmd-checkbox.checkbox-ripple .ripple.animated {
+  display: block;
+  -webkit-animation-name: checkbox-ripple;
+          animation-name: checkbox-ripple;
+  -webkit-animation-duration: 400ms;
+          animation-duration: 400ms;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+}
+@-webkit-keyframes checkbox-ripple {
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(1.6);
+            transform: scale(1.6);
+  }
+}
+@keyframes checkbox-ripple {
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(1.6);
+            transform: scale(1.6);
+  }
+}

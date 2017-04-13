@@ -1,0 +1,49 @@
+.table-container {
+  margin: 20px;
+}
+
+.table-container select {
+  width: 60px;
+  padding-left: 10px;
+  margin: 0 5px;
+}
+
+.table-container input[type=search] {
+  padding: 5px;
+}
+
+.table-container table {
+  margin-bottom: 5px;
+}
+
+#table_filter {
+  float: left;
+}
+
+#table_length {
+  float: right;
+}
+
+.table-container .table-scroll-wrapper {
+  overflow: scroll;
+  width: 100%;
+}
+
+.table-sliders-icon {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 2px;
+  left: 190px;
+  opacity: 0.4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.table-sliders-icon:hover {
+  opacity: 0.7;
+}
+
+.table-container .columns-container {
+  clear: both;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/lib/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/lib/checkbox.css">
+    <link rel='stylesheet' href='/css/style.css' />
+    <link rel='stylesheet' href='/css/models.css' />
+    <link rel='stylesheet' href='/css/heatmap.css' />
+    <link rel='stylesheet' href='/css/table.css' />
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <!-- D3.js-->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <!-- lib js files -->
+    <script src="/js/lib/ejs_production.js"></script>
+    <script src="/js/lib/jquery.dataTables.min.js"></script>
+
+    <!-- script files -->
+    <script src='/js/tooltip.js'></script>
+    <script src='/js/heatmap.js'></script>
+    <script src='/js/table.js'></script>
+    <script src='/js/predictions.js'></script>
+
+  </head>
+  <body>
+    <%- include partials/nav.ejs %>
+    <div class="container">
+      <div class="menu">
+      </div>
+      <div class="tab" data-id="0">
+        <div id="chart" class="heatmap"></div>
+        <div id="heatmap-tooltip" class="hidden"><div id="value"></div></div>
+        <div class="table-container">
+          <table class="cell-border hover stripe" id="table"></table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

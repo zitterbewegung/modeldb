@@ -47,3 +47,15 @@
 .table-container .columns-container {
   clear: both;
 }
+
+.table-placeholder {
+  clear: both;
+  height: 367px;
+  text-align: center;
+  line-height: 367px;
+  font-size: 20px;
+  font-weight: 300;
+  color: #999;
+  text-transform: uppercase;
+  display: none;
+}

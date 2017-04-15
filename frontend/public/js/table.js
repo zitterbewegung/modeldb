@@ -1,5 +1,6 @@
 var table = function(colSrc, dataSrc, selector) {
   $.get(colSrc, function(response) {
+    // populate datatable using ajax
     var dt = $(selector).DataTable({
       "autoWidth": false,
       "ajax": {
@@ -9,11 +10,22 @@ var table = function(colSrc, dataSrc, selector) {
       "columns": response
     });
 
+    // set column count
+    $(selector).data('numColumns', response.length);
+
     // wrap table for overflow scroll
     $(selector).wrap($('<div class="table-scroll-wrapper"></div>'));
 
     // add icon to show column toggles
     $('#table_filter').append($('<img class="table-sliders-icon" src="/images/sliders.png">'));
+    var toggle = $('<div class="table-toggle"></div>');
+    toggle.append($('<span>Show all columns:</span>'));
+    toggle.append($('<div class="toggle-btn active">' +
+      '<input type="checkbox"  checked class="cb-value" />' +
+      '<span class="round-btn"></span>' +
+      '</div>'));
+
+    $('#table_filter').append(toggle);
 
     // add column toggles
     var columnsContainer = $('<div class="columns-container"></div>');
@@ -30,7 +42,10 @@ var table = function(colSrc, dataSrc, selector) {
       columnsContainer.append(col);
     }
     columnsContainer.insertBefore('.table-scroll-wrapper');
-    $('.checkbox-ripple').rkmd_checkboxRipple();
+
+    // add placeholder for when all columns unselected
+    var placeholder = $('<div class="table-placeholder">Select a column to display</div>');
+    placeholder.insertBefore('.table-scroll-wrapper');
 
     // figure out column widths
     var maxWidth = 0;
@@ -44,13 +59,45 @@ var table = function(colSrc, dataSrc, selector) {
     // handlers
     $(document).on('click', '.table-sliders-icon', function() {
       $('.columns-container').slideToggle();
+      $('.table-toggle').fadeToggle();
     });
 
     $(document).on('change', '.column-checkbox input', function(event) {
       var checked = event.target.checked;
       var column = dt.column($(event.target).data('id'));
       column.visible(checked);
+      var count = $(selector).data('numColumns');
+      console.log(count);
+      count = checked ? count + 1 : count - 1;
+      $(selector).data('numColumns', count);
+      if (count == 0) {
+        $('.table-placeholder').fadeIn(200);
+      } else {
+        $('.table-placeholder').hide();
+      }
     });
+
+    $('.checkbox-ripple').rkmd_checkboxRipple();
+    $('.cb-value').click(function() {
+      var mainParent = $(this).parent('.toggle-btn');
+      var cols = $('.column-checkbox input');
+      if($(mainParent).find('input.cb-value').is(':checked')) {
+        $(mainParent).addClass('active');
+        for (var i=0; i<cols.length; i++) {
+          if (!$(cols[i]).prop('checked')) {
+            cols[i].click();
+          }
+        }
+      } else {
+        $(mainParent).removeClass('active');
+        for (var i=0; i<cols.length; i++) {
+          if ($(cols[i]).prop('checked')) {
+            cols[i].click();
+          }
+        }
+      }
+    });
+
   });
 
 };

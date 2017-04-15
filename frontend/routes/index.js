@@ -18,7 +18,7 @@ router.get('/predictions', function(req, res, next) {
   });
 });
 
-router.get('/p1', function(req, res, next) {
+router.get('/heatmap', function(req, res, next) {
   var response = {};
   response.data = [];
   response.rows = {};
@@ -28,15 +28,15 @@ router.get('/p1', function(req, res, next) {
   c2 = 0;
 
   for (var i=0; i<50; i++) {
-    response.rows[i] = c1++;
-    response.cols[i] = c2++;
+    response.rows['ex ' + i] = c1++;
+    response.cols['m ' + i] = c2++;
   }
 
   for (var i=0; i<50; i++) {
     for (var j=0; j<50; j++) {
       response.data.push({
-        'x': i,
-        'y': j,
+        'x': 'm ' + i,
+        'y': 'ex ' + j,
         'value': Math.random()
       });
     }

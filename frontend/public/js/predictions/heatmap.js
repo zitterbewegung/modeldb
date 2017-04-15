@@ -1,5 +1,8 @@
 var heatmap = function(src, selector, cellSize) {
 
+  var tooltip = $('<div id="heatmap-tooltip" class="hidden"><div id="value"></div></div>');
+  $('body').append(tooltip);
+
   var margin = { top: 70, right: 70, bottom: 70, left: 70 },
     cellSize=12;
 
@@ -77,12 +80,12 @@ var heatmap = function(src, selector, cellSize) {
 
     var heatMap = svg.append("g").attr("class","g3")
       .selectAll(".cellg")
-      .data(data,function(d){return d.y+":"+d.x;})
+      .data(data,function(d){return rows[d.y]+":"+cols[d.x];})
       .enter()
       .append("rect")
       .attr("x", function(d) { return (cols[d.x]) * cellSize; })
       .attr("y", function(d) { return (rows[d.y]) * cellSize; })
-      .attr("class", function(d){return "cell cell-border cr"+(d.y-1)+" cc"+(d.x-1);})
+      .attr("class", function(d){return "cell cell-border cr"+(rows[d.y]-1)+" cc"+(cols[d.x]-1);})
       .attr("width", cellSize)
       .attr("height", cellSize)
       .style("fill", function(d) { return colorScale(d.value); })
@@ -135,7 +138,7 @@ var heatmap = function(src, selector, cellSize) {
       if(rORc=="r"){
        sorted=d3.range(col_number).sort(function(a,b){ if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
        t.selectAll(".cell")
-         .attr("x", function(d) { return sorted.indexOf(d.x) * cellSize; })
+         .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * cellSize; })
          ;
        t.selectAll(".colLabel")
         .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
@@ -143,7 +146,7 @@ var heatmap = function(src, selector, cellSize) {
       }else{
        sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
        t.selectAll(".cell")
-         .attr("y", function(d) { return sorted.indexOf(d.y) * cellSize; })
+         .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * cellSize; })
          ;
        t.selectAll(".rowLabel")
         .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })

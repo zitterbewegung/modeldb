@@ -2,7 +2,8 @@ $(function() {
 
   console.log('test');
 
-  heatmap('/p1', '#chart');
+  heatmap('/heatmap', '#chart');
+  pipeline('', '#pipeline');
   table('/table-columns', '/table-data', '#table');
 
 });

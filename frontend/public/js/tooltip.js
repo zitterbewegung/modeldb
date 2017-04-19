@@ -5,7 +5,7 @@ $(function() {
   });
 
   $(document).on('mouseenter', '.tooltip-trigger', function(event) {
-    var elt = $(event.target);
+    var elt = $(event.currentTarget);
 
     if (elt.hasClass('nkv') || elt.hasClass('show-on-overflow')) {
       if (event.target.scrollWidth <= elt.innerWidth()) {

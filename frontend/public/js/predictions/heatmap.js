@@ -3,7 +3,7 @@ var heatmap = function(src, selector, cellSize) {
   var tooltip = $('<div id="heatmap-tooltip" class="hidden"><div id="value"></div></div>');
   $('body').append(tooltip);
 
-  var margin = { top: 70, right: 70, bottom: 70, left: 70 },
+  var margin = { top: 70, right:0, bottom:0, left: 70 },
     cellSize=12;
 
     //gridSize = Math.floor(width / 24),

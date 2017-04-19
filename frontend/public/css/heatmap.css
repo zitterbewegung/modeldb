@@ -89,7 +89,7 @@ text.text-hover {
 }
 
 .heatmap {
-  margin-right: 20px;
+  margin: 20px;
   overflow: scroll;
   text-align: center;
 }

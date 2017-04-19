@@ -44,6 +44,28 @@ router.get('/heatmap', function(req, res, next) {
   res.json(response);
 });
 
+router.get('/pipeline', function(req, res, next) {
+  var response = {};
+  response.model = Math.round(Math.random() * 1000);
+  response.stages = [];
+  response.transitions = [];
+  // stages
+  for (var i=0; i<10; i++) {
+    response.stages.push({
+      'id': i,
+      'title': Math.random().toString(36).substr(2, 5)
+    });
+  }
+
+  for (var i=0; i<response.stages.length - 1; i++) {
+    response.transitions.push({
+      'id': i,
+      'title': Math.random().toString(36).substr(2,5)
+    });
+  }
+  res.json(response);
+});
+
 router.get('/table-columns', function(req, res, next) {
   var response = [];
 

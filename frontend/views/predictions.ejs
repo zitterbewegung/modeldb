@@ -10,6 +10,8 @@
     <link rel='stylesheet' href='/css/models.css' />
     <link rel='stylesheet' href='/css/heatmap.css' />
     <link rel='stylesheet' href='/css/table.css' />
+    <link rel='stylesheet' href='/css/pipeline.css' />
+
 
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -22,6 +24,7 @@
     <script src="/js/lib/jquery.dataTables.min.js"></script>
 
     <!-- script files -->
+    <script src='/js/tooltip.js'></script>
     <script src='/js/predictions/heatmap.js'></script>
     <script src='/js/predictions/pipeline.js'></script>
     <script src='/js/predictions/table.js'></script>
@@ -35,8 +38,7 @@
       </div>
       <div class="tab" data-id="0">
         <div id="chart" class="heatmap"></div>
-
-        <div id=""
+        <div id="pipeline"></div>
         <div class="table-container">
           <table class="cell-border hover stripe" id="table"></table>
         </div>

@@ -49,6 +49,7 @@ $(function() {
       url: '/models/ancestry/' + modelId,
       type: "GET",
       success: function(response) {
+        console.log(response.transformEvents);
         if (response.transformEvents.length === 0) {
           $('#network').hide();
           return;

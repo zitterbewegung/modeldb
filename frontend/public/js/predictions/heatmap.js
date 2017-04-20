@@ -30,8 +30,6 @@ var heatmap = function(src, selector, cellSize) {
     width = cellSize*col_number + GT_OFFSET; // - margin.left - margin.right,
     height = cellSize*row_number; // - margin.top - margin.bottom,
 
-    console.log(cols);
-
     var blueScale = d3.scale.linear()
       .domain([0, 1])
       .interpolate(d3.interpolateHcl)

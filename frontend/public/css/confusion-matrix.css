@@ -14,7 +14,7 @@
 }
 
 .cfm-predicted-label {
-  font-weight: bold;
+  font-weight: 300;
   font-size: 14px;
   position: absolute;
   top: 10px;
@@ -23,13 +23,21 @@
 
 .cfm-actual-label {
   top: 120px;
-  left: 0px;
+  left: 5px;
   position: absolute;
-  font-weight: bold;
+  font-weight: 300;
   font-size: 14px;
   -ms-transform: rotate(-90deg); /* IE 9 */
   -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
   transform: rotate(-90deg);
+}
+
+.cfm-model-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 14px;
+  top: 200px;
+  left: 50%;
 }
 
 .cfm-p1 {

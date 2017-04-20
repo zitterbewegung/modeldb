@@ -15,6 +15,7 @@ var addConfusionMatrix = function(model, selector, col) {
 
   var predictedLabel = $('<div class="cfm-predicted-label">Predicted</div>');
   var actualLabel = $('<div class="cfm-actual-label">Actual</div>');
+  var modelLabel = $('<div class="cfm-model-label">Model ' + model + '</div>');
 
   var p0 = $('<div class="cfm-p0">0</div>');
   var p1 = $('<div class="cfm-p1">1</div>');
@@ -23,6 +24,7 @@ var addConfusionMatrix = function(model, selector, col) {
 
   matrix.append(predictedLabel);
   matrix.append(actualLabel);
+  matrix.append(modelLabel);
   matrix.append(p0);
   matrix.append(p1);
   matrix.append(a0);

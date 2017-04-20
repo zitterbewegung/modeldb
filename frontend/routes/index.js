@@ -30,15 +30,15 @@ router.get('/heatmap', function(req, res, next) {
   response.cols['GT'] = 0;
 
   for (var i=0; i<50; i++) {
-    response.rows['ex ' + i] = c1++;
-    response.cols['m ' + i] = c2++;
+    response.rows[i] = c1++;
+    response.cols[i] = c2++;
   }
 
   for (var i=0; i<50; i++) {
     for (var j=0; j<50; j++) {
       response.data.push({
-        'x': 'm ' + i,
-        'y': 'ex ' + j,
+        'x': i,
+        'y': j,
         'value': Math.random()
       });
     }
@@ -47,7 +47,7 @@ router.get('/heatmap', function(req, res, next) {
   for (var i=0; i<50; i++) {
     response.data.push({
       'x': 'GT',
-      'y': 'ex ' + i,
+      'y': i,
       'value': (Math.round(Math.random()))
     })
   }

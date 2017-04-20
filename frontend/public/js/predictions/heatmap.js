@@ -30,6 +30,8 @@ var heatmap = function(src, selector, cellSize) {
     width = cellSize*col_number + GT_OFFSET; // - margin.left - margin.right,
     height = cellSize*row_number; // - margin.top - margin.bottom,
 
+    console.log(cols);
+
     var blueScale = d3.scale.linear()
       .domain([0, 1])
       .interpolate(d3.interpolateHcl)
@@ -64,7 +66,7 @@ var heatmap = function(src, selector, cellSize) {
       .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",i,rowSortOrder);})
+      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",rows[d],rowSortOrder);})
       ;
 
     var colLabels = svg.append("g")
@@ -79,10 +81,10 @@ var heatmap = function(src, selector, cellSize) {
       })
       .style("text-anchor", "left")
       .attr("transform", "translate("+cellSize/1.2 + ",-6) rotate (-90)")
-      .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
+      .attr("class",  function (d,i) { return "colLabel mono c"+cols[d];} )
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",i,colSortOrder);})
+      .on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
       ;
 
     var heatMap = svg.append("g").attr("class","g3")
@@ -92,7 +94,7 @@ var heatmap = function(src, selector, cellSize) {
       .append("rect")
       .attr("x", function(d) { return (cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
       .attr("y", function(d) { return (rows[d.y]) * cellSize; })
-      .attr("class", function(d){return "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);})
+      .attr("class", function(d){ return "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);})
       .attr("width", cellSize)
       .attr("height", cellSize)
       .style("fill", function(d) { return colorScale(d.value); })
@@ -107,8 +109,8 @@ var heatmap = function(src, selector, cellSize) {
       .on("mouseover", function(d){
         //highlight text
         d3.select(this).classed("cell-hover",true);
-        d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return ri==(rows[d.y]);});
-        d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return ci==(cols[d.x]);});
+        d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r==d.y;});
+        d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c==d.x;});
 
         //Update the tooltip position and value
         d3.select("#heatmap-tooltip")

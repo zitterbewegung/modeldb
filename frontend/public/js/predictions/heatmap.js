@@ -140,7 +140,7 @@ var heatmap = function(src, selector, cellSize) {
           removeModel(d.x);
         } else {
           selectedModels[d.x] = true;
-          addModel(d.x);
+          addModel(d.x, cols[d.x]);
         }
         d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
       })
@@ -190,7 +190,7 @@ var heatmap = function(src, selector, cellSize) {
   });
 
 
-  function addModel(model) {
+  function addModel(model, col) {
     if ($('.predictions-selected-models div').length == 0) {
       $('.predictions-selected-models').html('');
     }
@@ -200,6 +200,7 @@ var heatmap = function(src, selector, cellSize) {
     $('.predictions-selected-models').append(div);
 
     addPipeline('/pipeline/' + model, '#pipelines');
+    addConfusionMatrix(model, '#confusion-matrices', col);
   }
 
   function removeModel(model) {
@@ -209,6 +210,7 @@ var heatmap = function(src, selector, cellSize) {
     }
 
     removePipeline(model);
+    removeConfusionMatrix(model);
   }
 
 };

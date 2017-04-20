@@ -1,0 +1,98 @@
+#confusion-matrices {
+  overflow: auto;
+}
+
+.confusion-matrix-container {
+  display: inline-block;
+  margin: 20px;
+}
+
+.confusion-matrix {
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.cfm-predicted-label {
+  font-weight: bold;
+  font-size: 14px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+}
+
+.cfm-actual-label {
+  top: 120px;
+  left: 0px;
+  position: absolute;
+  font-weight: bold;
+  font-size: 14px;
+  -ms-transform: rotate(-90deg); /* IE 9 */
+  -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
+  transform: rotate(-90deg);
+}
+
+.cfm-p1 {
+  position: absolute;
+  top: 35px;
+  left: 90px;
+}
+
+.cfm-p0 {
+  position: absolute;
+  top: 35px;
+  left: 155px;
+}
+
+.cfm-a1 {
+  position: absolute;
+  left: 40px;
+  top: 85px;
+  -ms-transform: rotate(-90deg); /* IE 9 */
+  -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
+  transform: rotate(-90deg);
+}
+
+.cfm-a0 {
+  position: absolute;
+  top: 150px;
+  left: 40px;
+  -ms-transform: rotate(-90deg); /* IE 9 */
+  -webkit-transform: rotate(-90deg); /* Chrome, Safari, Opera */
+  transform: rotate(-90deg);
+}
+
+.cfm-tp {
+  top: 60px;
+  left: 60px;
+}
+
+.cfm-fn {
+  top: 60px;
+  left: 125px;
+}
+
+.cfm-fp {
+  top: 125px;
+  left: 60px;
+}
+
+.cfm-tn {
+  top: 125px;
+  left: 125px;
+}
+.cfm-cell {
+  line-height: 65px;
+  height: 65px;
+  width: 65px;
+  text-align: center;
+  background-color: white;
+  position: absolute;
+  opacity:0.7;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cfm-cell:hover {
+  opacity: 0.9;
+}

@@ -28,11 +28,15 @@ var addPipeline = function(src, selector) {
       container.append(transition);
     }
 
-    container.data('id', model);
+    container.addClass('' + model);
     $(selector).append(container);
   });
 
 };
+
+var removePipeline = function(model) {
+  $('.pipeline-container.' + model).remove();
+}
 
 $(document).on('click', '.pipeline-stage', function(event) {
   var elt = $(event.target);

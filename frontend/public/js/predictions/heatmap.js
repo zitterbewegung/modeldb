@@ -137,12 +137,12 @@ var heatmap = function(src, selector, cellSize) {
 
         if (selectedModels[d.x]) {
           delete selectedModels[d.x];
+          removeModel(d.x);
         } else {
           selectedModels[d.x] = true;
+          addModel(d.x);
         }
         d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
-
-        updateModels(selectedModels);
       })
       ;
 
@@ -190,33 +190,25 @@ var heatmap = function(src, selector, cellSize) {
   });
 
 
-  function updateModels(models) {
-    if (Object.keys(models).length == 0) {
-      $('.predictions-selected-models').html("Select models from the prediction matrix");
-      $('#pipelines').html('');
-    } else {
+  function addModel(model) {
+    if ($('.predictions-selected-models div').length == 0) {
       $('.predictions-selected-models').html('');
-
-      // show pipelines
-      var exists = {};
-      var pipelines = $('.pipeline-container');
-      for (var i=0; i<pipelines.length; i++) {
-        if (models[$(pipelines[i]).data('id')]) {
-          exists[$(pipelines[i]).data('id')] = true;
-        } else {
-          $(pipelines[i]).remove();
-        }
-      }
-      for (var model in models) {
-          if (models.hasOwnProperty(model)) {
-              $('.predictions-selected-models').append($('<div>' + model + '</div>'));
-              if (!exists[model]) {
-                addPipeline('/pipeline/' + model, '#pipelines');
-              }
-          }
-      }
     }
+
+    var div = $('<div>' + model + '</div>');
+    div.addClass(model + '');
+    $('.predictions-selected-models').append(div);
+
+    addPipeline('/pipeline/' + model, '#pipelines');
   }
 
+  function removeModel(model) {
+    $('.predictions-selected-models div.' + model).remove();
+    if ($('.predictions-selected-models div').length == 0) {
+      $('.predictions-selected-models').html("Select models from the prediction matrix");
+    }
+
+    removePipeline(model);
+  }
 
 };

@@ -25,7 +25,9 @@ router.get('/heatmap', function(req, res, next) {
   response.cols = {};
 
   c1 = 0;
-  c2 = 0;
+  c2 = 1;
+
+  response.cols['GT'] = 0;
 
   for (var i=0; i<50; i++) {
     response.rows['ex ' + i] = c1++;
@@ -41,12 +43,22 @@ router.get('/heatmap', function(req, res, next) {
       });
     }
   }
+
+  for (var i=0; i<50; i++) {
+    response.data.push({
+      'x': 'GT',
+      'y': 'ex ' + i,
+      'value': (Math.round(Math.random()))
+    })
+  }
+
   res.json(response);
 });
 
-router.get('/pipeline', function(req, res, next) {
+router.get('/pipeline/:id', function(req, res, next) {
+  var modelId = req.params.id;
   var response = {};
-  response.model = Math.round(Math.random() * 1000);
+  response.model = modelId;
   response.stages = [];
   response.transitions = [];
   // stages

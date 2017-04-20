@@ -1,8 +1,11 @@
 var heatmap = function(src, selector, cellSize) {
 
+  var selectedModels = {};
+
   var tooltip = $('<div id="heatmap-tooltip" class="hidden"><div id="value"></div></div>');
   $('body').append(tooltip);
 
+  var GT_OFFSET = 8;
   var margin = { top: 70, right:0, bottom:0, left: 70 },
     cellSize=12;
 
@@ -24,16 +27,18 @@ var heatmap = function(src, selector, cellSize) {
 
     row_number = rowLabel.length;
     col_number = colLabel.length;
-    width = cellSize*col_number; // - margin.left - margin.right,
+    width = cellSize*col_number + GT_OFFSET; // - margin.left - margin.right,
     height = cellSize*row_number; // - margin.top - margin.bottom,
 
-    var colorScale = d3.scale.quantile()
-      .domain([0, 0.5, 1])
-      .range(colors);
-
-    var colorScale = d3.scale.linear().domain([0, 1])
+    var blueScale = d3.scale.linear()
+      .domain([0, 1])
       .interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#ecf0f1"), d3.rgb('#2c3e50')]);
+      .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
+
+    var colorScale = d3.scale.linear().domain([0, 0.5, 1])
+      //.range(["red", "white", "green"]);
+      //.interpolate(d3.interpolateHcl)
+      .range([d3.rgb("#e74c3c"), "white", d3.rgb('#2ecc71')]);
 
 
     var svg = d3.select(selector).append("svg")
@@ -53,7 +58,7 @@ var heatmap = function(src, selector, cellSize) {
       .append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return i * cellSize; })
+      .attr("y", function (d, i) { return rows[d] * cellSize; })
       .style("text-anchor", "end")
       .attr("transform", "translate(-4," + cellSize / 1.1 + ")")
       .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
@@ -69,13 +74,15 @@ var heatmap = function(src, selector, cellSize) {
       .append("text")
       .text(function (d) { return d; })
       .attr("x", 0)
-      .attr("y", function (d, i) { return i * cellSize; })
+      .attr("y", function (d, i) {
+        return cols[d] * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET);
+      })
       .style("text-anchor", "left")
       .attr("transform", "translate("+cellSize/1.2 + ",-6) rotate (-90)")
       .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
       .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
       .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {colSortOrder=!colSortOrder;  sortbylabel("c",i,colSortOrder);})
+      .on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",i,colSortOrder);})
       ;
 
     var heatMap = svg.append("g").attr("class","g3")
@@ -83,9 +90,9 @@ var heatmap = function(src, selector, cellSize) {
       .data(data,function(d){return rows[d.y]+":"+cols[d.x];})
       .enter()
       .append("rect")
-      .attr("x", function(d) { return (cols[d.x]) * cellSize; })
+      .attr("x", function(d) { return (cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
       .attr("y", function(d) { return (rows[d.y]) * cellSize; })
-      .attr("class", function(d){return "cell cell-border cr"+(rows[d.y]-1)+" cc"+(cols[d.x]-1);})
+      .attr("class", function(d){return "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);})
       .attr("width", cellSize)
       .attr("height", cellSize)
       .style("fill", function(d) { return colorScale(d.value); })
@@ -123,6 +130,27 @@ var heatmap = function(src, selector, cellSize) {
              d3.selectAll(".colLabel").classed("text-highlight",false);
              d3.select("#heatmap-tooltip").classed("hidden", true);
       })
+      .on('click', function(d) {
+        if (d.x == 'GT') {
+          return;
+        }
+
+        if (selectedModels[d.x]) {
+          delete selectedModels[d.x];
+        } else {
+          selectedModels[d.x] = true;
+        }
+        d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
+
+        updateModels(selectedModels);
+      })
+      ;
+
+    var border = svg.append("rect").attr("class","gt-border")
+      .attr("x", cellSize + 1)
+      .attr("y", 0)
+      .attr("height", height)
+      .attr("width", 1)
       ;
 
     // sort
@@ -130,32 +158,65 @@ var heatmap = function(src, selector, cellSize) {
       var t = svg.transition().duration(1000 - 5*(row_number + col_number));
       var vals=[];
       var sorted; // sorted is zero-based index
-      d3.selectAll(".c"+rORc+(i-1))
+      a = d3.selectAll(".c"+rORc+(i))
        .filter(function(ce){
           vals.push(ce.value);
         })
       ;
       if(rORc=="r"){
-       sorted=d3.range(col_number).sort(function(a,b){ if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
-       t.selectAll(".cell")
-         .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * cellSize; })
-         ;
-       t.selectAll(".colLabel")
-        .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
-       ;
-      }else{
-       sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
-       t.selectAll(".cell")
-         .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * cellSize; })
-         ;
-       t.selectAll(".rowLabel")
-        .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
-       ;
+        vals.pop();
+        sorted=d3.range(1, col_number).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
+        sorted.unshift(cols['GT']);
+        t.selectAll(".cell:not(.cc0)")
+          .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+          ;
+        t.selectAll(".colLabel:not(.c0)")
+          .attr("y", function (d, i) { return sorted.indexOf(cols[d]) * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET); })
+          ;
+      } else {
+        sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
+        t.selectAll(".cell")
+          .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * cellSize; })
+          ;
+        t.selectAll(".rowLabel")
+          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
+          ;
       }
     }
 
+    $('.heatmap').scrollTop(45);
+    $('.heatmap').scrollLeft(45);
+
   });
 
+
+  function updateModels(models) {
+    if (Object.keys(models).length == 0) {
+      $('.predictions-selected-models').html("Select models from the prediction matrix");
+      $('#pipelines').html('');
+    } else {
+      $('.predictions-selected-models').html('');
+
+      // show pipelines
+      var exists = {};
+      var pipelines = $('.pipeline-container');
+      for (var i=0; i<pipelines.length; i++) {
+        if (models[$(pipelines[i]).data('id')]) {
+          exists[$(pipelines[i]).data('id')] = true;
+        } else {
+          $(pipelines[i]).remove();
+        }
+      }
+      for (var model in models) {
+          if (models.hasOwnProperty(model)) {
+              $('.predictions-selected-models').append($('<div>' + model + '</div>'));
+              if (!exists[model]) {
+                addPipeline('/pipeline/' + model, '#pipelines');
+              }
+          }
+      }
+    }
+  }
 
 
 };

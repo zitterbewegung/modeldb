@@ -35,10 +35,16 @@
     <%- include partials/nav.ejs %>
     <div class="container">
       <div class="menu">
+        <div class="menu-section-container">
+          <h2>Models:</h2>
+          <div class="predictions-selected-models">
+            Select models from the prediction matrix
+          </div>
+        </div>
       </div>
       <div class="tab" data-id="0">
         <div id="chart" class="heatmap"></div>
-        <div id="pipeline"></div>
+        <div id="pipelines"></div>
         <div class="table-container">
           <table class="cell-border hover stripe" id="table"></table>
         </div>

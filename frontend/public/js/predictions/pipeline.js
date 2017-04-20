@@ -1,7 +1,6 @@
-var pipeline = function(src, selector) {
+var addPipeline = function(src, selector) {
 
   $.get(src, function(response) {
-    console.log(response);
     var container = $('<div class="pipeline-container"></div>')
     var model = response.model;
 
@@ -13,7 +12,7 @@ var pipeline = function(src, selector) {
     // stages and transitions
     for (var i=0; i<response.stages.length; i++) {
       var stage = $('<div class="pipeline-stage"></div>');
-      stage.addClass('tooltip-trigger');
+      stage.html(response.stages[i].title);
       stage.data('val', response.stages[i].title);
 
       var transition = null;
@@ -29,32 +28,23 @@ var pipeline = function(src, selector) {
       container.append(transition);
     }
 
+    container.data('id', model);
     $(selector).append(container);
   });
 
-
-  $(document).on('click', '.pipeline-stage', function(event) {
-    var elt = $(event.target);
-    var selected = elt.hasClass('selected');
-
-    // close all other stages and restore tooltip trigger
-    $('.pipeline-stage').html('');
-    $('.pipeline-stage').removeClass('selected');
-    $('.pipeline-stage').addClass('tooltip-trigger');
-
-    if (!selected) { // selecting new stage
-      elt.addClass('selected');
-      elt.html(elt.data('val'));
-
-      // remove tooltip
-      $('.tooltip').remove();
-      elt.removeClass('tooltip-trigger');
-
-      // TODO: make this load appropriate table
-    } else { // unselecting stage
-      // TODO: make this hide the table
-    }
-
-  });
-
 };
+
+$(document).on('click', '.pipeline-stage', function(event) {
+  var elt = $(event.target);
+  console.log(elt);
+  var selected = elt.hasClass('selected');
+
+  $('.pipeline-stage').removeClass('selected');
+  if (!selected) { // selecting new stage
+    elt.addClass('selected');
+    // TODO: make this load appropriate table
+  } else { // unselecting stage
+
+    // TODO: make this hide the table
+  }
+});

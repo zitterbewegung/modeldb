@@ -67,7 +67,6 @@ var table = function(colSrc, dataSrc, selector) {
       var column = dt.column($(event.target).data('id'));
       column.visible(checked);
       var count = $(selector).data('numColumns');
-      console.log(count);
       count = checked ? count + 1 : count - 1;
       $(selector).data('numColumns', count);
       if (count == 0) {
@@ -105,7 +104,6 @@ var table = function(colSrc, dataSrc, selector) {
 (function($) {
 
   $.fn.rkmd_checkboxRipple = function() {
-    console.log('test');
     var self, checkbox, ripple, size, rippleX, rippleY, eWidth, eHeight;
     self = this;
     checkbox = self.find('.input-checkbox');

@@ -17,6 +17,7 @@ var heatmap = function(src, selector, cellSize) {
     cols = {};
     rowLabel = [];
     colLabel = [];
+    selectedModel = null;
 
   d3.json(src,function(error, response) {
     data = response.data;
@@ -80,9 +81,9 @@ var heatmap = function(src, selector, cellSize) {
       .style("text-anchor", "left")
       .attr("transform", "translate("+cellSize/1.2 + ",-6) rotate (-90)")
       .attr("class",  function (d,i) { return "colLabel mono c"+cols[d];} )
-      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
+      .on("mouseover", function(d) {selectedModel = d; d3.select(this).classed("text-hover",true);})
+      .on("mouseout" , function(d) {selectedModel = null; d3.select(this).classed("text-hover",false);})
+      //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
       ;
 
     var heatMap = svg.append("g").attr("class","g3")
@@ -130,20 +131,6 @@ var heatmap = function(src, selector, cellSize) {
              d3.selectAll(".colLabel").classed("text-highlight",false);
              d3.select("#heatmap-tooltip").classed("hidden", true);
       })
-      .on('click', function(d) {
-        if (d.x == 'GT') {
-          return;
-        }
-
-        if (selectedModels[d.x]) {
-          delete selectedModels[d.x];
-          removeModel(d.x);
-        } else {
-          selectedModels[d.x] = true;
-          addModel(d.x, cols[d.x]);
-        }
-        d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
-      })
       ;
 
     var border = svg.append("rect").attr("class","gt-border")
@@ -187,8 +174,30 @@ var heatmap = function(src, selector, cellSize) {
     $('.heatmap').scrollTop(45);
     $('.heatmap').scrollLeft(45);
 
+    var cc = clickcancel();
+    colLabels.call(cc);
+    cc.on('click', function(d, i) {
+      colSortOrder=!colSortOrder;
+      sortbylabel("c", cols[selectedModel] ,colSortOrder);
+    });
+    cc.on('dblclick', function(d) {
+      toggleModel(selectedModel);
+    });
   });
 
+  function toggleModel(model) {
+    if (model == 'GT') {
+      return;
+    }
+    if (selectedModels[model]) {
+      delete selectedModels[model];
+      removeModel(model);
+    } else {
+      selectedModels[model] = true;
+      addModel(model, cols[model]);
+    }
+    d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
+  }
 
   function addModel(model, col) {
     if ($('.predictions-selected-models div').length == 0) {
@@ -206,11 +215,48 @@ var heatmap = function(src, selector, cellSize) {
   function removeModel(model) {
     $('.predictions-selected-models div.' + model).remove();
     if ($('.predictions-selected-models div').length == 0) {
-      $('.predictions-selected-models').html("Select models from the prediction matrix");
+      $('.predictions-selected-models').html("Double click on a column label in the prediction matrix to select a model");
     }
 
     removePipeline(model);
     removeConfusionMatrix(model);
+  }
+
+  function clickcancel() {
+      var event = d3.dispatch('click', 'dblclick');
+      function cc(selection) {
+          var down,
+              tolerance = 5,
+              last,
+              wait = null;
+          // euclidean distance
+          function dist(a, b) {
+              return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
+          }
+          selection.on('mousedown', function() {
+              down = d3.mouse(document.body);
+              last = +new Date();
+          });
+          selection.on('mouseup', function() {
+              if (dist(down, d3.mouse(document.body)) > tolerance) {
+                  return;
+              } else {
+                  if (wait) {
+                      window.clearTimeout(wait);
+                      wait = null;
+                      event.dblclick(d3.event);
+                  } else {
+                      wait = window.setTimeout((function(e) {
+                          return function() {
+                              event.click(e);
+                              wait = null;
+                          };
+                      })(d3.event), 300);
+                  }
+              }
+          });
+      };
+      return d3.rebind(cc, event, 'on');
   }
 
 };

@@ -25,6 +25,8 @@ $(function() {
     if (scheme == "BINARY_SCALE") {
       updateColorScale(scheme);
     }
+
+    updateConfusionMatrices();
   });
 
 });

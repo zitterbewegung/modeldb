@@ -203,11 +203,6 @@ var heatmap = function(src, selector, cellSize) {
   }
 
   function addModel(model, col) {
-    // remove filler text if first model to be selected
-    if ($('.predictions-selected-models div').length == 0) {
-      $('.predictions-selected-models').html('');
-    }
-
     // update list of models in menu
     var div = $('<div>' + model + '</div>');
     div.addClass(model + '');
@@ -238,9 +233,6 @@ var heatmap = function(src, selector, cellSize) {
   function removeModel(model, col) {
     // update list of models in menu
     $('.predictions-selected-models div.' + model).remove();
-    if ($('.predictions-selected-models div').length == 0) {
-      $('.predictions-selected-models').html("Double click on a column label in the prediction matrix to select a model");
-    }
 
     // unhighlight column in prediction matrix
     d3.select(".hl-col-" + col).remove();

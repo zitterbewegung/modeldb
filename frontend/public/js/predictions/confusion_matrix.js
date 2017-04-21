@@ -1,14 +1,5 @@
 var addConfusionMatrix = function(model, selector, col) {
-  var THRESHOLD = 0.5;
-
   var count = 0;
-  var vals = {
-    'TP': 0,
-    'TN': 0,
-    'FP': 0,
-    'FN': 0
-  };
-
 
   var container = $('<div class="confusion-matrix-container"></div>');
   var matrix = $('<div class="confusion-matrix"></div>');
@@ -30,6 +21,86 @@ var addConfusionMatrix = function(model, selector, col) {
   matrix.append(a0);
   matrix.append(a1);
 
+  var vals = countExamples(col);
+
+  var TP = $('<div class="cfm-cell cfm-tp"></div>');
+  var FN = $('<div class="cfm-cell cfm-fn"></div>');
+  var FP = $('<div class="cfm-cell cfm-fp"></div>');
+  var TN = $('<div class="cfm-cell cfm-tn"></div>');
+
+  TP.html(vals['TP']);
+  FN.html(vals['FN']);
+  FP.html(vals['FP']);
+  TN.html(vals['TN']);
+
+  var blueScale = d3.scale.linear()
+  .domain([0, vals['count']])
+  .interpolate(d3.interpolateHcl)
+  .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
+
+  TP.css('background-color', blueScale(vals['TP']));
+  FN.css('background-color', blueScale(vals['FN']));
+  FP.css('background-color', blueScale(vals['FP']));
+  TN.css('background-color', blueScale(vals['TN']));
+
+  matrix.append(TP);
+  matrix.append(FN);
+  matrix.append(FP);
+  matrix.append(TN);
+
+  container.append(matrix);
+  container.addClass('' + model);
+  container.data('model', col);
+  $(selector).append(container);
+
+}
+
+var removeConfusionMatrix = function(model) {
+  $('.confusion-matrix-container.' + model).remove();
+}
+
+var updateConfusionMatrices = function() {
+  var matrices = $('.confusion-matrix-container');
+
+  for (var i=0; i<matrices.length; i++) {
+    var matrix = $(matrices[i]);
+    var model = matrix.data('model');
+    console.log(model);
+
+    vals = countExamples(model);
+
+    var blueScale = d3.scale.linear()
+      .domain([0, vals['count']])
+      .interpolate(d3.interpolateHcl)
+      .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
+
+    TP = matrix.find('.cfm-tp');
+    FN = matrix.find('.cfm-tn');
+    FP = matrix.find('.cfm-fp');
+    TN = matrix.find('.cfm-fn');
+
+    TP.html(vals['TP']);
+    TN.html(vals['TN']);
+    FP.html(vals['FP']);
+    TN.html(vals['FN']);
+
+    TP.css('background-color', blueScale(vals['TP']));
+    FN.css('background-color', blueScale(vals['FN']));
+    FP.css('background-color', blueScale(vals['FP']));
+    TN.css('background-color', blueScale(vals['TN']));
+
+  }
+}
+
+var countExamples = function(col) {
+  var vals = {
+    'TP': 0,
+    'TN': 0,
+    'FP': 0,
+    'FN': 0,
+    'count': 0,
+  };
+
   // go through examples for selected model
   d3.selectAll('.cc' + col)
     .filter(function(d){
@@ -49,42 +120,9 @@ var addConfusionMatrix = function(model, selector, col) {
             vals['FP'] += 1;
           }
 
-          count += 1;
+          vals['count'] += 1;
         });
     });
 
-  var TP = $('<div class="cfm-cell cfm-tp"></div>');
-  var FN = $('<div class="cfm-cell cfm-fn"></div>');
-  var FP = $('<div class="cfm-cell cfm-fp"></div>');
-  var TN = $('<div class="cfm-cell cfm-tn"></div>');
-
-  TP.html(vals['TP']);
-  FN.html(vals['FN']);
-  FP.html(vals['FP']);
-  TN.html(vals['TN']);
-
-  var blueScale = d3.scale.linear()
-  .domain([0, count])
-  .interpolate(d3.interpolateHcl)
-  .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
-
-  TP.css('background-color', blueScale(vals['TP']));
-  FN.css('background-color', blueScale(vals['FN']));
-  FP.css('background-color', blueScale(vals['FP']));
-  TN.css('background-color', blueScale(vals['TN']));
-
-  matrix.append(TP);
-  matrix.append(FN);
-  matrix.append(FP);
-  matrix.append(TN);
-
-  container.append(matrix);
-  container.addClass('' + model);
-  $(selector).append(container);
-
-
-}
-
-var removeConfusionMatrix = function(model) {
-  $('.confusion-matrix-container.' + model).remove();
+  return vals;
 }

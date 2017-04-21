@@ -6,6 +6,10 @@ select.color-scheme {
   margin-bottom: 20px;
 }
 
+.predictions-selected-models > div:first-child {
+  margin-top: 10px;
+}
+
 .predictions-threshold-container {
   position: relative;
 }

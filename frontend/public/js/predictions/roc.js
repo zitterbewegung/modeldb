@@ -13,7 +13,7 @@ var removeROC = function(model, selector) {
 var addROCPoints = function(model, col) {
   var points = []
 
-  for (var t=0; t<=1; t+= 0.01) {
+  for (var t=0; t<=1; t+= STEP_SIZE) {
     var vals = countExamplesForThreshold(col, t);
     var TPR = vals['TP'] / (vals['TP'] + vals['FN']);
     var FPR = vals['FP'] / (vals['FP'] + vals['TN']);

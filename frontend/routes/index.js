@@ -24,18 +24,24 @@ router.get('/heatmap', function(req, res, next) {
   response.rows = {};
   response.cols = {};
 
+  var numRows = 50;
+  var numCols = 50;
+
   c1 = 0;
   c2 = 1;
 
   response.cols['GT'] = 0;
 
-  for (var i=0; i<50; i++) {
+  for (var i=0; i<numRows; i++) {
     response.rows[i] = c1++;
+  }
+
+  for (var i=0; i<numCols; i++) {
     response.cols[i] = c2++;
   }
 
-  for (var i=0; i<50; i++) {
-    for (var j=0; j<50; j++) {
+  for (var i=0; i<numCols; i++) {
+    for (var j=0; j<numRows; j++) {
       response.data.push({
         'x': i,
         'y': j,
@@ -44,7 +50,7 @@ router.get('/heatmap', function(req, res, next) {
     }
   }
 
-  for (var i=0; i<50; i++) {
+  for (var i=0; i<numRows; i++) {
     response.data.push({
       'x': 'GT',
       'y': i,

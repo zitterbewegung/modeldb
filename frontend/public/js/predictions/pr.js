@@ -13,7 +13,7 @@ var removePR = function(model, selector) {
 var addPRPoints = function(model, col) {
   var points = []
 
-  for (var t=0; t<=1; t+= 0.01) {
+  for (var t=0; t<=1; t+= STEP_SIZE) {
     var vals = countExamplesForThreshold(col, t);
     var P = vals['TP'] / (vals['TP'] + vals['FP']);
     var R = vals['TP'] / (vals['TP'] + vals['FN']);
@@ -104,8 +104,6 @@ var updatePRVega = function(selector) {
   }
 
   vg.embed(selector, specs, function(error, result) {
-    console.log(error);
-    console.log(result);
     $(selector).append($('<div class="pr-title">PR</div>'));
     if (Object.keys(PR_POINTS).length == 0) {
       $(selector).append($('<div class="pr-placeholder">SELECT A MODEL</div>'));

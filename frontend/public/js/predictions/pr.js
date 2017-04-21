@@ -1,45 +1,45 @@
-var ROC_POINTS = {};
+var PR_POINTS = {};
 
-var addROC = function(model, selector, col) {
-  addROCPoints(model, col);
-  updateROCVega(selector);
+var addPR = function(model, selector, col) {
+  addPRPoints(model, col);
+  updatePRVega(selector);
 };
 
-var removeROC = function(model, selector) {
-  removeROCPoints(model);
-  updateROCVega(selector);
+var removePR = function(model, selector) {
+  removePRPoints(model);
+  updatePRVega(selector);
 };
 
-var addROCPoints = function(model, col) {
+var addPRPoints = function(model, col) {
   var points = []
 
   for (var t=0; t<=1; t+= 0.01) {
     var vals = countExamplesForThreshold(col, t);
-    var TPR = vals['TP'] / (vals['TP'] + vals['FN']);
-    var FPR = vals['FP'] / (vals['FP'] + vals['TN']);
+    var P = vals['TP'] / (vals['TP'] + vals['FP']);
+    var R = vals['TP'] / (vals['TP'] + vals['FN']);
 
     points.push({
-      'x': FPR,
-      'y': TPR,
+      'x': R,
+      'y': P,
       'model': model
     });
   }
 
-  ROC_POINTS[model] = points;
+  PR_POINTS[model] = points;
 };
 
-var removeROCPoints = function(model) {
-  delete ROC_POINTS[model];
+var removePRPoints = function(model) {
+  delete PR_POINTS[model];
 };
 
-var updateROCVega = function(selector) {
+var updatePRVega = function(selector) {
   var specs = {
     "width": 400,
     "height": 200,
     "data": [
       {
-        "name": "roc",
-        "values": [].concat.apply([], Object.values(ROC_POINTS))
+        "name": "PR",
+        "values": [].concat.apply([], Object.values(PR_POINTS))
       }
     ],
     "scales": [
@@ -57,13 +57,13 @@ var updateROCVega = function(selector) {
       {
         "name": "color",
         "type": "ordinal",
-        "domain": {"data": "roc", "field": "model"},
+        "domain": {"data": "PR", "field": "model"},
         "range": "category10"
       }
     ],
     "axes": [
-      {"type": "x", "scale": "x", "tickSizeEnd": 0, "title": "False Positive"},
-      {"type": "y", "scale": "y", "title": "True Positive"}
+      {"type": "x", "scale": "x", "tickSizeEnd": 0, "title": "Recall"},
+      {"type": "y", "scale": "y", "title": "Precision"}
     ],
 
     "legends": [
@@ -83,7 +83,7 @@ var updateROCVega = function(selector) {
       {
         "type": "group",
         "from": {
-          "data": "roc",
+          "data": "PR",
           "transform": [{"type": "facet", "groupby": ["model"]}]
         },
         "marks": [
@@ -104,9 +104,11 @@ var updateROCVega = function(selector) {
   }
 
   vg.embed(selector, specs, function(error, result) {
-    $(selector).append($('<div class="roc-title">ROC</div>'));
-    if (Object.keys(ROC_POINTS).length == 0) {
-      $(selector).append($('<div class="roc-placeholder">SELECT A MODEL</div>'));
+    console.log(error);
+    console.log(result);
+    $(selector).append($('<div class="pr-title">PR</div>'));
+    if (Object.keys(PR_POINTS).length == 0) {
+      $(selector).append($('<div class="pr-placeholder">SELECT A MODEL</div>'));
     }
   });
 }

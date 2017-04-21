@@ -3,6 +3,7 @@ $(function() {
   heatmap('/heatmap', '#heatmap');
   table('/table-columns', '/table-data', '#table');
   updateROCVega('.roc-container');
+  updatePRVega('.pr-container');
 
   $(document).on('change', 'select.color-scheme', function(event){
     var scale = event.target.value;

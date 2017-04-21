@@ -12,7 +12,7 @@
     <link rel='stylesheet' href='/css/table.css' />
     <link rel='stylesheet' href='/css/pipeline.css' />
     <link rel='stylesheet' href='/css/confusion-matrix.css' />
-
+    <link rel='stylesheet' href='/css/predictions.css' />
 
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -26,6 +26,7 @@
 
     <!-- script files -->
     <script src='/js/tooltip.js'></script>
+    <script src='/js/predictions/config.js'></script>
     <script src='/js/predictions/heatmap.js'></script>
     <script src='/js/predictions/pipeline.js'></script>
     <script src='/js/predictions/table.js'></script>
@@ -37,12 +38,27 @@
     <%- include partials/nav.ejs %>
     <div class="container">
       <div class="menu">
+
         <div class="menu-section-container">
           <h2>Models:</h2>
           <div class="predictions-selected-models">
             Double click on a column label in the prediction matrix to select a model
           </div>
         </div>
+
+        <div class="menu-section-container">
+          <h2>Color scheme</h2>
+          Select color scheme for visualizing predictions in the matrix
+          <div class="select-container">
+            <select class="color-scheme">
+              <option selected value="RG_SCALE">Prediction values (red/green)</option>
+              <option value="OB_SCALE">Prediction values (orange/blue)</option>
+              <option value="BINARY_SCALE">Binary classification</option>
+              <option value="MONO_SCALE">Distance from ground truth</option>
+            </select>
+          </div>
+        </div>
+
       </div>
       <div class="tab" data-id="0">
         <div id="chart" class="heatmap"></div>

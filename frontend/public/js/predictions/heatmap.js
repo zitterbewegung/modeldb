@@ -1,3 +1,6 @@
+var cols;
+var rows;
+
 var heatmap = function(src, selector, cellSize) {
 
   var selectedModels = {};
@@ -30,17 +33,6 @@ var heatmap = function(src, selector, cellSize) {
     col_number = colLabel.length;
     width = cellSize*col_number + GT_OFFSET; // - margin.left - margin.right,
     height = cellSize*row_number; // - margin.top - margin.bottom,
-
-    var blueScale = d3.scale.linear()
-      .domain([0, 1])
-      .interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
-
-    var colorScale = d3.scale.linear().domain([0, 0.5, 1])
-      //.range(["red", "white", "green"]);
-      //.interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#e74c3c"), "white", d3.rgb('#2ecc71')]);
-
 
     var svg = d3.select(selector).append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -93,10 +85,16 @@ var heatmap = function(src, selector, cellSize) {
       .append("rect")
       .attr("x", function(d) { return (cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
       .attr("y", function(d) { return (rows[d.y]) * cellSize; })
-      .attr("class", function(d){ return "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);})
+      .attr("class", function(d){
+        var result = "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);
+        if (d.x == "GT") {
+          result += " gt" + rows[d.y]
+        }
+        return result;
+      })
       .attr("width", cellSize)
       .attr("height", cellSize)
-      .style("fill", function(d) { return colorScale(d.value); })
+      .style("fill", function(d) { return COLOR_SCALE(d.value); })
       /* .on("click", function(d) {
              var rowtext=d3.select(".r"+(d.row-1));
              if(rowtext.classed("text-selected")==false){
@@ -178,6 +176,7 @@ var heatmap = function(src, selector, cellSize) {
 
     $('.heatmap').scrollTop(45);
     $('.heatmap').scrollLeft(45);
+    sortbylabel("c",0,true);
 
     var cc = clickcancel();
     colLabels.call(cc);
@@ -289,3 +288,29 @@ var heatmap = function(src, selector, cellSize) {
   }
 
 };
+
+var updateColorScale = function(scale) {
+  COLOR_SCALE = SCALES[scale];
+  if (scale == "MONO_SCALE") {
+    d3.selectAll(".cell.cc0")
+      .style("fill", function(d) {
+        return COLOR_SCALE(d.value);
+      });
+    d3.selectAll(".cell:not(.cc0)")
+      .style("fill", function(d) {
+        // use distance from ground truth
+        var val;
+        d3.select('.gt' + rows[d.y]).filter(function(e) {
+          val = COLOR_SCALE(Math.abs(d.value - e.value));
+        });
+
+        return val;
+      });
+  } else {
+    d3.selectAll(".cell")
+      .style("fill", function(d) {
+        return COLOR_SCALE(d.value);
+      });
+  }
+
+}

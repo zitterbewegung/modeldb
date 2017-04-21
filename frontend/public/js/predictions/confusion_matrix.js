@@ -78,8 +78,6 @@ var addConfusionMatrix = function(model, selector, col) {
   matrix.append(FP);
   matrix.append(TN);
 
-  console.log(vals);
-
   container.append(matrix);
   container.addClass('' + model);
   $(selector).append(container);

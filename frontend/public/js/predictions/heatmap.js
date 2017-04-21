@@ -140,12 +140,14 @@ var heatmap = function(src, selector, cellSize) {
       .attr("width", 1)
       ;
 
+    var hlCols = svg.append("g").attr("class","hl-cols")
+
     // sort
     function sortbylabel(rORc,i,sortOrder){
       var t = svg.transition().duration(1000 - 5*(row_number + col_number));
       var vals=[];
       var sorted; // sorted is zero-based index
-      a = d3.selectAll(".c"+rORc+(i))
+      d3.selectAll(".c"+rORc+(i))
        .filter(function(ce){
           vals.push(ce.value);
         })
@@ -159,6 +161,9 @@ var heatmap = function(src, selector, cellSize) {
           ;
         t.selectAll(".colLabel:not(.c0)")
           .attr("y", function (d, i) { return sorted.indexOf(cols[d]) * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET); })
+          ;
+        t.selectAll(".hl-col")
+          .attr("x", function(d) { return sorted.indexOf(cols[d]) * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET);})
           ;
       } else {
         sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
@@ -191,33 +196,57 @@ var heatmap = function(src, selector, cellSize) {
     }
     if (selectedModels[model]) {
       delete selectedModels[model];
-      removeModel(model);
+      removeModel(model, cols[model]);
     } else {
       selectedModels[model] = true;
       addModel(model, cols[model]);
     }
-    d3.selectAll(".cell").classed("col-selected",function(c,ci){ return selectedModels[c.x];});
   }
 
   function addModel(model, col) {
+    // remove filler text if first model to be selected
     if ($('.predictions-selected-models div').length == 0) {
       $('.predictions-selected-models').html('');
     }
 
+    // update list of models in menu
     var div = $('<div>' + model + '</div>');
     div.addClass(model + '');
     $('.predictions-selected-models').append(div);
 
+    // highlight column in prediction matrix
+    var x = d3.select('.c'+col).attr('y');
+    d3.select('.hl-cols')
+      .selectAll('.hl-colg')
+      .data([model])
+      .enter()
+      .append("rect")
+      .attr("height", height)
+      .attr("width", cellSize)
+      .attr("x", x)
+      .attr("y", 0)
+      .attr("class", "hl-col hl-col-" + col)
+      .style("opacity", "0.7")
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("stroke-width", "1.5")
+    ;
+    // add relevant visualizations
     addPipeline('/pipeline/' + model, '#pipelines');
     addConfusionMatrix(model, '#confusion-matrices', col);
   }
 
-  function removeModel(model) {
+  function removeModel(model, col) {
+    // update list of models in menu
     $('.predictions-selected-models div.' + model).remove();
     if ($('.predictions-selected-models div').length == 0) {
       $('.predictions-selected-models').html("Double click on a column label in the prediction matrix to select a model");
     }
 
+    // unhighlight column in prediction matrix
+    d3.select(".hl-col-" + col).remove();
+
+    // remove relevant visualizations
     removePipeline(model);
     removeConfusionMatrix(model);
   }

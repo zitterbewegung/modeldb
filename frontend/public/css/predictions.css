@@ -59,3 +59,12 @@ input.threshold::-webkit-slider-thumb:after {
  top: 5px;
  background: #2c3e50;
 }
+
+#heatmap, #charts {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#charts {
+  width: 450px;
+}

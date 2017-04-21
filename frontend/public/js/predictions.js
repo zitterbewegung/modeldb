@@ -1,8 +1,8 @@
 $(function() {
 
-  heatmap('/heatmap', '#chart');
+  heatmap('/heatmap', '#heatmap');
   table('/table-columns', '/table-data', '#table');
-
+  updateROCVega('.roc-container');
 
   $(document).on('change', 'select.color-scheme', function(event){
     var scale = event.target.value;

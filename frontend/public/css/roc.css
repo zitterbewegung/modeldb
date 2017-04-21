@@ -1,0 +1,23 @@
+.roc-container {
+  padding-top: 40px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.roc-title {
+  position: absolute;
+  top: 10px;
+  left: 150px;
+  font-size: 16px;
+}
+
+.roc-placeholder {
+  height: 305px;
+  width: 395px;
+  position: absolute;
+  top: 0;
+  line-height: 280px;
+  font-size: 14px;
+  text-align: center;
+  background-color: rgba(220,220,220,0.8)
+}

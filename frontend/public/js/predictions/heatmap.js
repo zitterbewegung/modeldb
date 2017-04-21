@@ -228,6 +228,7 @@ var heatmap = function(src, selector, cellSize) {
     // add relevant visualizations
     addPipeline('/pipeline/' + model, '#pipelines');
     addConfusionMatrix(model, '#confusion-matrices', col);
+    addROC(model, '.roc-container', col);
   }
 
   function removeModel(model, col) {
@@ -240,6 +241,7 @@ var heatmap = function(src, selector, cellSize) {
     // remove relevant visualizations
     removePipeline(model);
     removeConfusionMatrix(model);
+    removeROC(model, '.roc-container');
   }
 
   function clickcancel() {

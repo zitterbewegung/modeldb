@@ -12,6 +12,7 @@
     <link rel='stylesheet' href='/css/table.css' />
     <link rel='stylesheet' href='/css/pipeline.css' />
     <link rel='stylesheet' href='/css/confusion-matrix.css' />
+    <link rel='stylesheet' href='/css/roc.css' />
     <link rel='stylesheet' href='/css/predictions.css' />
 
     <!-- JQuery -->
@@ -19,6 +20,8 @@
 
     <!-- D3.js-->
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="//vega.github.io/vega-editor/vendor/vega.js" charset="utf-8"></script>
+    <script src="//vega.github.io/vega-editor/vendor/vega-embed.js" charset="utf-8"></script>
 
     <!-- lib js files -->
     <script src="/js/lib/ejs_production.js"></script>
@@ -31,6 +34,7 @@
     <script src='/js/predictions/pipeline.js'></script>
     <script src='/js/predictions/table.js'></script>
     <script src='/js/predictions/confusion_matrix.js'></script>
+    <script src='/js/predictions/roc.js'></script>
     <script src='/js/predictions.js'></script>
 
   </head>
@@ -67,7 +71,11 @@
 
       </div>
       <div class="tab" data-id="0">
-        <div id="chart" class="heatmap"></div>
+        <div id="heatmap" class="heatmap"></div>
+        <div id="charts">
+          <div class="roc-container">
+          </div>
+        </div>
         <div id="pipelines"></div>
         <div id="confusion-matrices"></div>
         <div class="table-container">

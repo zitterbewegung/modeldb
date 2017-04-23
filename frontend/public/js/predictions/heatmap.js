@@ -11,9 +11,8 @@ var heatmap = function(src, selector, cellSize) {
   var GT_OFFSET = 8;
   var margin = { top: 70, right:0, bottom:0, left: 70 },
     cellSize=12;
-
     //gridSize = Math.floor(width / 24),
-    legendElementWidth = cellSize*2.5,
+    legendCellSize = cellSize*2.5,
     colorBuckets = 21,
     colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
     rows = {};
@@ -177,6 +176,7 @@ var heatmap = function(src, selector, cellSize) {
     $('.heatmap').scrollTop(45);
     $('.heatmap').scrollLeft(45);
     sortbylabel("c",0,true);
+    updateLegend();
 
     var cc = clickcancel();
     colLabels.call(cc);
@@ -285,6 +285,98 @@ var heatmap = function(src, selector, cellSize) {
 
 };
 
+var updateLegend = function() {
+  d3.select('.heatmap-legend svg').remove();
+  var cellSize = 12;
+  var legendCellSize = 23;
+  var width = 480;
+  var height = 50;
+  var left = "";
+  var right = "";
+
+  var scale = $('.color-scheme').val();
+  if (scale == "RG_SCALE" || scale == "OB_SCALE") {
+    left = "Prediction value";
+  } else if (scale == "BINARY_SCALE") {
+    left = "Binary classification";
+  } else if (scale == "MONO_SCALE" ) {
+    left = "Closer";
+    right = "Farther";
+  }
+
+  var svg = d3.select('.heatmap-legend')
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    ;
+
+  var linspace = [];
+  for (var i=0; i<=1.01; i+= 0.05) {
+    linspace.push(i);
+  }
+
+  var legend = svg.selectAll(".legend")
+    .data(linspace)
+    .enter()
+    .append('g')
+    .attr("class", "legend");
+
+  var legendTitle = svg.append('g')
+    .attr("class", 'legend-title');
+
+  legendTitle.append("text")
+    .attr("class", "mono")
+    .text(left)
+    .attr("x", 0)
+    .attr("y", 12)
+    ;
+
+  legendTitle.append("text")
+    .attr("class", "mono")
+    .text(right)
+    .attr("x", width - right.length * 7)
+    .attr("y", 12)
+    ;
+
+  legend.append("rect")
+    .attr("x", function(d, i) { return legendCellSize * i; })
+    .attr("y", 18)
+    .attr("width", legendCellSize)
+    .attr("height", cellSize)
+    .style("fill", function(d, i) {
+      if (scale == "BINARY_SCALE") {
+        return (d < 0.5) ? "#D9E0E8" : "#2c3e50";
+      } else {
+        return COLOR_SCALE(d);
+      }
+    });
+
+  // adjust halfway point for binary scale
+  if (scale == "BINARY_SCALE") {
+    legend.append("rect")
+      .attr("x", legendCellSize * 10.5)
+      .attr("y", 18)
+      .attr("width", legendCellSize)
+      .attr("height", cellSize)
+      .style("fill", "#2c3e50");
+  }
+
+  legend.append("text")
+    .attr("class", "mono")
+    .text(function(d, i) {
+      if (i==0 || i==20) {
+          return d.toFixed(1);
+      }
+      if (scale != "BINARY_SCALE" && i == 10) {
+        return d.toFixed(1);
+      }
+    })
+    .attr("x", function(d, i) { return legendCellSize * i; })
+    .attr("y", 42);
+
+
+}
+
 var updateColorScale = function(scale) {
   COLOR_SCALE = SCALES[scale];
   if (scale == "MONO_SCALE") {
@@ -309,4 +401,14 @@ var updateColorScale = function(scale) {
       });
   }
 
+  // make correction to GT when
+  // binary scale threshold = 0
+  if (scale == "BINARY_SCALE") {
+    d3.selectAll(".cell.cc0")
+      .style("fill", function(d) {
+        return (d.value < 0.5) ? "#D9E0E8" : "#2c3e50";
+      });
+  }
+
+  updateLegend();
 }

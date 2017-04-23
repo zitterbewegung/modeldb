@@ -60,6 +60,20 @@ input.threshold::-webkit-slider-thumb:after {
  background: #2c3e50;
 }
 
+.heatmap-legend {
+  width: 100%;
+  height: 60px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+.heatmap-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 540px;
+}
+
 #heatmap, #charts {
   display: inline-block;
   vertical-align: top;

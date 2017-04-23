@@ -302,6 +302,9 @@ var updateLegend = function() {
   } else if (scale == "MONO_SCALE" ) {
     left = "Closer";
     right = "Farther";
+  } else if (scale == "CORRECTNESS_SCALE") {
+    left = "Incorrect";
+    right = "Correct";
   }
 
   var svg = d3.select('.heatmap-legend')
@@ -364,8 +367,9 @@ var updateLegend = function() {
   legend.append("text")
     .attr("class", "mono")
     .text(function(d, i) {
+      if (scale == "CORRECTNESS_SCALE") { return; }
       if (i==0 || i==20) {
-          return d.toFixed(1);
+        return d.toFixed(1);
       }
       if (scale != "BINARY_SCALE" && i == 10) {
         return d.toFixed(1);
@@ -390,6 +394,24 @@ var updateColorScale = function(scale) {
         var val;
         d3.select('.gt' + rows[d.y]).filter(function(e) {
           val = COLOR_SCALE(Math.abs(d.value - e.value));
+        });
+
+        return val;
+      });
+  } else if (scale == "CORRECTNESS_SCALE") {
+    d3.selectAll(".cell.cc0")
+      .style("fill", function(d) {
+        return MONO_SCALE(d.value);
+      });
+    d3.selectAll(".cell:not(.cc0)")
+      .style("fill", function(d) {
+        var val;
+        d3.select('.gt' + rows[d.y]).filter(function(e) {
+          if (e.value < 0.5) {
+            val = CORRECTNESS_SCALE_GT0(d.value);
+          } else {
+            val = CORRECTNESS_SCALE_GT1(d.value);
+          }
         });
 
         return val;

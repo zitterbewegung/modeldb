@@ -82,3 +82,7 @@ input.threshold::-webkit-slider-thumb:after {
 #charts {
   width: 450px;
 }
+
+#pipelines {
+  display: none;
+}

@@ -19,11 +19,22 @@ $(function() {
     BINARY_SCALE = d3.scale.threshold()
       .domain([THRESHOLD])
       .range(["#D9E0E8", "#2c3e50"]);
+
+    CORRECTNESS_SCALE_GT1 = d3.scale.linear()
+      .domain([0, Math.min(Math.max(THRESHOLD, 0.001), 0.999), 1])
+      .range([d3.rgb("#e74c3c"), "white", d3.rgb('#2ecc71')]);
+
+    CORRECTNESS_SCALE_GT0 = d3.scale.linear()
+      .domain([0, Math.min(Math.max(THRESHOLD, 0.001), 0.999), 1])
+      .range([d3.rgb("#2ecc71"), "white", d3.rgb('#e74c3c')]);
+
     SCALES["BINARY_SCALE"] = BINARY_SCALE;
+    SCALES["CORRECTNESS_SCALE_GT0"] = CORRECTNESS_SCALE_GT0;
+    SCALES["CORRECTNESS_SCALE_GT1"] = CORRECTNESS_SCALE_GT1;
 
     // update matrix if necessary
     var scheme = $('select.color-scheme').val();
-    if (scheme == "BINARY_SCALE") {
+    if (scheme == "BINARY_SCALE" || scheme == "CORRECTNESS_SCALE") {
       updateColorScale(scheme);
     }
 

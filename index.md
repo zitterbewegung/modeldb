@@ -14,6 +14,9 @@ ModelDB is an end-to-end system that tracks models as they are built, extracts a
 - Visual exploration of models and results
 - Collaboration
 
+## Demo
+Visit the [ModelDB client demo](http://modeldb.csail.mit.edu:3000) to try ModelDB's scikit-learn integration in Jupyter Notebook. See your results and those of others at the [ModelDB server demo](http://modeldb.csail.mit.edu:8000).
+
 ## How it works
 Use a set of ModelDB native clients (currently ```spark.ml``` and ```scikit-learn```) to log modeling data to ModelDB. Using the ModelDB client API requires minimal changes to a modeling workflow.
 
@@ -56,7 +59,7 @@ The web frontend surfaces data in the backend for query, visualization and updat
 <img src="images/arch.png" width="60%">
 
 ## Getting Started
-The ModelDB Getting Started Guides for [spark.ml]() and [scikit-learn]() are a good place to start. Please use the ModelDB mailing list or Google Group for quesions.
+The ModelDB Getting Started Guides for [spark.ml]() and [scikit-learn]() are a good place to start. Please use the ModelDB mailing list or [Google Group](https://groups.google.com/forum/#!forum/modeldb) for quesions.
 
 ## Papers
 - [Short paper](papers/hilda_modeldb.pdf) at HILDA workshop, SIGMOD 2016

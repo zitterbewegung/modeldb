@@ -2,288 +2,245 @@ var cols;
 var rows;
 
 var heatmap = function(src, selector, cellSize) {
+  rows = {};
+  cols = {};
 
-  var selectedModels = {};
-
-  var tooltip = $('<div id="heatmap-tooltip" class="hidden"><div id="value"></div></div>');
-  $('body').append(tooltip);
-
-  var GT_OFFSET = 8;
-  var margin = { top: 70, right:0, bottom:0, left: 70 },
-    cellSize=12;
-    //gridSize = Math.floor(width / 24),
-    legendCellSize = cellSize*2.5,
-    colorBuckets = 21,
-    colors = ['#005824','#1A693B','#347B53','#4F8D6B','#699F83','#83B09B','#9EC2B3','#B8D4CB','#D2E6E3','#EDF8FB','#FFFFFF','#F1EEF6','#E6D3E1','#DBB9CD','#D19EB9','#C684A4','#BB6990','#B14F7C','#A63467','#9B1A53','#91003F'];
-    rows = {};
-    cols = {};
-    rowLabel = [];
-    colLabel = [];
-    selectedModel = null;
-
-  d3.json(src,function(error, response) {
-    data = response.data;
+  $.get(src, function(response) {
+    MATRIX_DATA = response.data;
     rows = response.rows;
     cols = response.cols;
-    rowLabel = Object.keys(rows);
-    colLabel = Object.keys(cols);
 
-    row_number = rowLabel.length;
-    col_number = colLabel.length;
-    width = cellSize*col_number + GT_OFFSET; // - margin.left - margin.right,
-    height = cellSize*row_number; // - margin.top - margin.bottom,
-
-    var svg = d3.select(selector).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      ;
-
-    var rowSortOrder=false;
-    var colSortOrder=false;
-
-    var rowLabels = svg.append("g")
-      .selectAll(".rowLabelg")
-      .data(rowLabel)
-      .enter()
-      .append("text")
-      .text(function (d) { return d; })
-      .attr("x", 0)
-      .attr("y", function (d, i) { return rows[d] * cellSize; })
-      .style("text-anchor", "end")
-      .attr("transform", "translate(-4," + cellSize / 1.1 + ")")
-      .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
-      .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-      .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-      .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",rows[d],rowSortOrder);})
-      ;
-
-    var colLabels = svg.append("g")
-      .selectAll(".colLabelg")
-      .data(colLabel)
-      .enter()
-      .append("text")
-      .text(function (d) { return d; })
-      .attr("x", 0)
-      .attr("y", function (d, i) {
-        return cols[d] * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET);
-      })
-      .style("text-anchor", "left")
-      .attr("transform", "translate("+cellSize/1.2 + ",-6) rotate (-90)")
-      .attr("class",  function (d,i) { return "colLabel mono c"+cols[d];} )
-      .on("mouseover", function(d) {selectedModel = d; d3.select(this).classed("text-hover",true);})
-      .on("mouseout" , function(d) {selectedModel = null; d3.select(this).classed("text-hover",false);})
-      //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
-      ;
-
-    var heatMap = svg.append("g").attr("class","g3")
-      .selectAll(".cellg")
-      .data(data,function(d){return rows[d.y]+":"+cols[d.x];})
-      .enter()
-      .append("rect")
-      .attr("x", function(d) { return (cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
-      .attr("y", function(d) { return (rows[d.y]) * cellSize; })
-      .attr("class", function(d){
-        var result = "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);
-        if (d.x == "GT") {
-          result += " gt" + rows[d.y]
-        }
-        return result;
-      })
-      .attr("width", cellSize)
-      .attr("height", cellSize)
-      .style("fill", function(d) { return COLOR_SCALE(d.value); })
-      /* .on("click", function(d) {
-             var rowtext=d3.select(".r"+(d.row-1));
-             if(rowtext.classed("text-selected")==false){
-                 rowtext.classed("text-selected",true);
-             }else{
-                 rowtext.classed("text-selected",false);
-             }
-      })*/
-      .on("mouseover", function(d){
-        //highlight text
-        d3.select(this).classed("cell-hover",true);
-        d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r==d.y;});
-        d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c==d.x;});
-
-        //Update the tooltip position and value
-        d3.select("#heatmap-tooltip")
-          .style("left", (d3.event.pageX+10) + "px")
-          .style("top", (d3.event.pageY-10) + "px")
-          .select("#value")
-          .html('<div><div class="heatmap-tooltip-key">example id:</div>' +
-            '<div class="heatmap-tooltip-value">' + d.y + '</div></div>'+
-            '<div><div class="heatmap-tooltip-key">model id:</div>' +
-            '<div class="heatmap-tooltip-value">' + d.x + '</div></div>'+
-            '<div><div class="heatmap-tooltip-key">prediction:</div>' +
-            '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>');
-        //Show the tooltip
-        d3.select("#heatmap-tooltip").classed("hidden", false);
-      })
-      .on("mouseout", function(){
-             d3.select(this).classed("cell-hover",false);
-             d3.selectAll(".rowLabel").classed("text-highlight",false);
-             d3.selectAll(".colLabel").classed("text-highlight",false);
-             d3.select("#heatmap-tooltip").classed("hidden", true);
-      })
-      ;
-
-    var border = svg.append("rect").attr("class","gt-border")
-      .attr("x", cellSize + 1)
-      .attr("y", 0)
-      .attr("height", height)
-      .attr("width", 1)
-      ;
-
-    var hlCols = svg.append("g").attr("class","hl-cols")
-
-    // sort
-    function sortbylabel(rORc,i,sortOrder){
-      var t = svg.transition().duration(1000 - 5*(row_number + col_number));
-      var vals=[];
-      var sorted; // sorted is zero-based index
-      d3.selectAll(".c"+rORc+(i))
-       .filter(function(ce){
-          vals.push(ce.value);
-        })
-      ;
-      if(rORc=="r"){
-        vals.pop();
-        sorted=d3.range(1, col_number).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
-        sorted.unshift(cols['GT']);
-        t.selectAll(".cell:not(.cc0)")
-          .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * cellSize + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
-          ;
-        t.selectAll(".colLabel:not(.c0)")
-          .attr("y", function (d, i) { return sorted.indexOf(cols[d]) * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET); })
-          ;
-        t.selectAll(".hl-col")
-          .attr("x", function(d) { return sorted.indexOf(cols[d]) * cellSize + (cols[d] == 0 ? 0 : GT_OFFSET);})
-          ;
-      } else {
-        sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
-        t.selectAll(".cell")
-          .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * cellSize; })
-          ;
-        t.selectAll(".rowLabel")
-          .attr("y", function (d, i) { return sorted.indexOf(i) * cellSize; })
-          ;
-      }
-    }
-
-    $('.heatmap').scrollTop(45);
-    $('.heatmap').scrollLeft(45);
-    sortbylabel("c",0,true);
-    updateLegend();
-
-    var cc = clickcancel();
-    colLabels.call(cc);
-    cc.on('click', function(d, i) {
-      colSortOrder=!colSortOrder;
-      sortbylabel("c", cols[selectedModel] ,colSortOrder);
-    });
-    cc.on('dblclick', function(d) {
-      toggleModel(selectedModel);
-    });
+    drawHeatmap(selector, cols, rows);
   });
 
-  function toggleModel(model) {
-    if (model == 'GT') {
-      return;
-    }
-    if (selectedModels[model]) {
-      delete selectedModels[model];
-      removeModel(model, cols[model]);
-    } else {
-      selectedModels[model] = true;
-      addModel(model, cols[model]);
-    }
-  }
-
-  function addModel(model, col) {
-    // update list of models in menu
-    var div = $('<div>' + model + '</div>');
-    div.addClass(model + '');
-    $('.predictions-selected-models').append(div);
-
-    // highlight column in prediction matrix
-    var x = d3.select('.c'+col).attr('y');
-    d3.select('.hl-cols')
-      .selectAll('.hl-colg')
-      .data([model])
-      .enter()
-      .append("rect")
-      .attr("height", height)
-      .attr("width", cellSize)
-      .attr("x", x)
-      .attr("y", 0)
-      .attr("class", "hl-col hl-col-" + col)
-      .style("opacity", "0.7")
-      .style("fill", "none")
-      .style("stroke", "#000")
-      .style("stroke-width", "1.5")
-    ;
-    // add relevant visualizations
-    addPipeline('/pipeline/' + model, '#pipelines');
-    addConfusionMatrix(model, '#confusion-matrices', col);
-    addROC(model, '.roc-container', col);
-    addPR(model, '.pr-container', col);
-  }
-
-  function removeModel(model, col) {
-    // update list of models in menu
-    $('.predictions-selected-models div.' + model).remove();
-
-    // unhighlight column in prediction matrix
-    d3.select(".hl-col-" + col).remove();
-
-    // remove relevant visualizations
-    removePipeline(model);
-    removeConfusionMatrix(model);
-    removeROC(model, '.roc-container');
-    removePR(model, '.pr-container');
-  }
-
-  function clickcancel() {
-      var event = d3.dispatch('click', 'dblclick');
-      function cc(selection) {
-          var down,
-              tolerance = 5,
-              last,
-              wait = null;
-          // euclidean distance
-          function dist(a, b) {
-              return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
-          }
-          selection.on('mousedown', function() {
-              down = d3.mouse(document.body);
-              last = +new Date();
-          });
-          selection.on('mouseup', function() {
-              if (dist(down, d3.mouse(document.body)) > tolerance) {
-                  return;
-              } else {
-                  if (wait) {
-                      window.clearTimeout(wait);
-                      wait = null;
-                      event.dblclick(d3.event);
-                  } else {
-                      wait = window.setTimeout((function(e) {
-                          return function() {
-                              event.click(e);
-                              wait = null;
-                          };
-                      })(d3.event), 300);
-                  }
-              }
-          });
-      };
-      return d3.rebind(cc, event, 'on');
-  }
-
 };
+
+function drawHeatmap(selector, cols, rows) {
+  var margin = { top: 70, right:0, bottom:0, left: 70 };
+  var rowLabel = Object.keys(rows);
+  var colLabel = Object.keys(cols);
+  MATRIX_NUMROWS = rowLabel.length;
+  MATRIX_NUMCOLS = colLabel.length;
+  var width = CELL_SIZE * MATRIX_NUMCOLS + GT_OFFSET; // - margin.left - margin.right,
+  var height = CELL_SIZE * MATRIX_NUMROWS; // - margin.top - margin.bottom,
+  MATRIX_HEIGHT = height;
+  MATRIX_WIDTH = width;
+
+  var svg = d3.select(selector).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("class", "heatmap-svg")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    ;
+
+  var rowSortOrder=false;
+  var colSortOrder=false;
+
+  var rowLabels = svg.append("g")
+    .selectAll(".rowLabelg")
+    .data(rowLabel)
+    .enter()
+    .append("text")
+    .text(function (d) { return d; })
+    .attr("x", 0)
+    .attr("y", function (d, i) { return rows[d] * CELL_SIZE; })
+    .style("text-anchor", "end")
+    .attr("transform", "translate(-4," + CELL_SIZE / 1.1 + ")")
+    .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
+    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
+    .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",rows[d],rowSortOrder);})
+    ;
+
+  var colLabels = svg.append("g")
+    .selectAll(".colLabelg")
+    .data(colLabel)
+    .enter()
+    .append("text")
+    .text(function (d) { return d; })
+    .attr("x", 0)
+    .attr("y", function (d, i) {
+      return cols[d] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);
+    })
+    .style("text-anchor", "left")
+    .attr("transform", "translate("+CELL_SIZE/1.2 + ",-6) rotate (-90)")
+    .attr("class",  function (d,i) { return "colLabel mono c"+cols[d];} )
+    .on("mouseover", function(d) {selectedModel = d; d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {selectedModel = null; d3.select(this).classed("text-hover",false);})
+    //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
+    ;
+
+  var heatMap = svg.append("g").attr("class","g3")
+    .selectAll(".cellg")
+    .data(MATRIX_DATA,function(d){return rows[d.y]+":"+cols[d.x];})
+    .enter()
+    .append("rect")
+    .attr("x", function(d) { return (cols[d.x]) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+    .attr("y", function(d) { return (rows[d.y]) * CELL_SIZE; })
+    .attr("class", function(d){
+      var result = "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);
+      if (d.x == "GT") {
+        result += " gt" + rows[d.y]
+      }
+      return result;
+    })
+    .attr("width", CELL_SIZE)
+    .attr("height", CELL_SIZE)
+    .style("fill", function(d) { return COLOR_SCALE(d.value); })
+    /* .on("click", function(d) {
+           var rowtext=d3.select(".r"+(d.row-1));
+           if(rowtext.classed("text-selected")==false){
+               rowtext.classed("text-selected",true);
+           }else{
+               rowtext.classed("text-selected",false);
+           }
+    })*/
+    .on("mouseover", function(d){
+      //highlight text
+      d3.select(this).classed("cell-hover",true);
+      d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r==d.y;});
+      d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c==d.x;});
+
+      //Update the tooltip position and value
+      d3.select("#heatmap-tooltip")
+        .style("left", (d3.event.pageX+10) + "px")
+        .style("top", (d3.event.pageY-10) + "px")
+        .select("#value")
+        .html('<div><div class="heatmap-tooltip-key">example id:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.y + '</div></div>'+
+          '<div><div class="heatmap-tooltip-key">model id:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.x + '</div></div>'+
+          '<div><div class="heatmap-tooltip-key">prediction:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>');
+      //Show the tooltip
+      d3.select("#heatmap-tooltip").classed("hidden", false);
+    })
+    .on("mouseout", function(){
+           d3.select(this).classed("cell-hover",false);
+           d3.selectAll(".rowLabel").classed("text-highlight",false);
+           d3.selectAll(".colLabel").classed("text-highlight",false);
+           d3.select("#heatmap-tooltip").classed("hidden", true);
+    })
+    ;
+
+  var border = svg.append("rect").attr("class","gt-border")
+    .attr("x", CELL_SIZE + 1)
+    .attr("y", 0)
+    .attr("height", height)
+    .attr("width", 1)
+    ;
+
+  var hlCols = svg.append("g").attr("class","hl-cols")
+
+
+
+  $('.heatmap').scrollTop(45);
+  $('.heatmap').scrollLeft(45);
+  sortbylabel("c",0,true);
+  updateLegend();
+
+  var cc = clickcancel();
+  colLabels.call(cc);
+  cc.on('click', function(d, i) {
+    colSortOrder=!colSortOrder;
+    sortbylabel("c", cols[selectedModel] ,colSortOrder);
+  });
+  cc.on('dblclick', function(d) {
+    toggleModel(selectedModel);
+  });
+}
+
+function sortbylabel(rORc,i,sortOrder){
+  var svg = d3.select('.heatmap-svg');
+  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
+  var vals=[];
+  var sorted; // sorted is zero-based index
+  d3.selectAll(".c"+rORc+(i))
+   .filter(function(ce){
+      vals.push(ce.value);
+    })
+  ;
+  if(rORc=="r"){
+    vals.pop();
+    sorted=d3.range(1, MATRIX_NUMCOLS).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
+    sorted.unshift(cols['GT']);
+    t.selectAll(".cell:not(.cc0)")
+      .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+      ;
+    t.selectAll(".colLabel:not(.c0)")
+      .attr("y", function (d, i) { return sorted.indexOf(cols[d]) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      ;
+    t.selectAll(".hl-col")
+      .attr("x", function(d) { return sorted.indexOf(cols[d]) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+      ;
+  } else {
+    sorted=d3.range(MATRIX_NUMROWS).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
+    t.selectAll(".cell")
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * CELL_SIZE; })
+      ;
+    t.selectAll(".rowLabel")
+      .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
+      ;
+  }
+}
+
+function toggleModel(model) {
+  if (model == 'GT') {
+    return;
+  }
+  if (SELECTED_MODELS[model]) {
+    delete SELECTED_MODELS[model];
+    removeModel(model, cols[model]);
+  } else {
+    SELECTED_MODELS[model] = true;
+    addModel(model, cols[model]);
+  }
+}
+
+function addModel(model, col) {
+  // update list of models in menu
+  var div = $('<div>' + model + '</div>');
+  div.addClass(model + '');
+  $('.predictions-selected-models').append(div);
+
+  // highlight column in prediction matrix
+  var x = d3.select('.c'+col).attr('y');
+  d3.select('.hl-cols')
+    .selectAll('.hl-colg')
+    .data([model])
+    .enter()
+    .append("rect")
+    .attr("height", MATRIX_HEIGHT)
+    .attr("width", CELL_SIZE)
+    .attr("x", x)
+    .attr("y", 0)
+    .attr("class", "hl-col hl-col-" + col)
+    .style("opacity", "0.7")
+    .style("fill", "none")
+    .style("stroke", "#000")
+    .style("stroke-width", "1.5")
+  ;
+  // add relevant visualizations
+  addPipeline('/pipeline/' + model, '#pipelines');
+  addConfusionMatrix(model, '#confusion-matrices', col);
+  addROC(model, '.roc-container', col);
+  addPR(model, '.pr-container', col);
+}
+
+function removeModel(model, col) {
+  // update list of models in menu
+  $('.predictions-selected-models div.' + model).remove();
+
+  // unhighlight column in prediction matrix
+  d3.select(".hl-col-" + col).remove();
+
+  // remove relevant visualizations
+  removePipeline(model);
+  removeConfusionMatrix(model);
+  removeROC(model, '.roc-container');
+  removePR(model, '.pr-container');
+}
 
 var updateLegend = function() {
   d3.select('.heatmap-legend svg').remove();
@@ -377,8 +334,6 @@ var updateLegend = function() {
     })
     .attr("x", function(d, i) { return legendCellSize * i; })
     .attr("y", 42);
-
-
 }
 
 var updateColorScale = function(scale) {
@@ -433,4 +388,41 @@ var updateColorScale = function(scale) {
   }
 
   updateLegend();
+}
+
+function clickcancel() {
+    var event = d3.dispatch('click', 'dblclick');
+    function cc(selection) {
+        var down,
+            tolerance = 5,
+            last,
+            wait = null;
+        // euclidean distance
+        function dist(a, b) {
+            return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
+        }
+        selection.on('mousedown', function() {
+            down = d3.mouse(document.body);
+            last = +new Date();
+        });
+        selection.on('mouseup', function() {
+            if (dist(down, d3.mouse(document.body)) > tolerance) {
+                return;
+            } else {
+                if (wait) {
+                    window.clearTimeout(wait);
+                    wait = null;
+                    event.dblclick(d3.event);
+                } else {
+                    wait = window.setTimeout((function(e) {
+                        return function() {
+                            event.click(e);
+                            wait = null;
+                        };
+                    })(d3.event), 300);
+                }
+            }
+        });
+    };
+    return d3.rebind(cc, event, 'on');
 }

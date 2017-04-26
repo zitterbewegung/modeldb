@@ -1,4 +1,9 @@
+/* binary classification threshold */
 THRESHOLD = 0.5;
+STEP_SIZE = 0.01; // for calculating ROC and PR
+
+
+/* scales */
 COLOR_SCALE = null;
 
 RG_SCALE = d3.scale.linear().domain([0, 0.5, 1])
@@ -34,4 +39,17 @@ SCALES = {
 };
 
 COLOR_SCALE = RG_SCALE;
-STEP_SIZE = 0.01;
+
+
+/* matrix constants  */
+CELL_SIZE = 12;
+MATRIX_HEIGHT = 0;
+MATRIX_WIDTH = 0;
+GT_OFFSET = 8;
+
+
+/* matrix data */
+SELECTED_MODELS = {};
+MATRIX_DATA = [];
+MATRIX_NUMROWS = 0;
+MATRIX_NUMCOLS = 0;

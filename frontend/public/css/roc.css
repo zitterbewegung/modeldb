@@ -4,6 +4,10 @@
   position: relative;
 }
 
+.pr-container {
+  margin-top: 30px;
+}
+
 .roc-title, .pr-title {
   position: absolute;
   top: 10px;

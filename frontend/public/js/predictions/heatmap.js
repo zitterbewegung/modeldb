@@ -39,49 +39,49 @@ function drawHeatmap(selector, cols, rows) {
 
   var rowLabels = svg.append("g")
     .selectAll(".rowLabelg")
-    .data(rowLabel)
+    .data(Object.values(rows))
     .enter()
     .append("text")
-    .text(function (d) { return d; })
+    .text(function (d) { return d.id; })
     .attr("x", 0)
-    .attr("y", function (d, i) { return rows[d] * CELL_SIZE; })
+    .attr("y", function (d, i) { return d.index * CELL_SIZE; })
     .style("text-anchor", "end")
     .attr("transform", "translate(-4," + CELL_SIZE / 1.1 + ")")
-    .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
+    .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
     .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-    .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r",rows[d],rowSortOrder);})
+    .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r", d.index, rowSortOrder);})
     ;
 
   var colLabels = svg.append("g")
     .selectAll(".colLabelg")
-    .data(colLabel)
+    .data(Object.values(cols))
     .enter()
     .append("text")
-    .text(function (d) { return d; })
+    .text(function (d) { return d.id; })
     .attr("x", 0)
     .attr("y", function (d, i) {
-      return cols[d] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);
+      return d.index * CELL_SIZE + (d.index == 0 ? 0 : GT_OFFSET);
     })
     .style("text-anchor", "left")
     .attr("transform", "translate("+CELL_SIZE/1.2 + ",-6) rotate (-90)")
-    .attr("class",  function (d,i) { return "colLabel mono c"+cols[d];} )
-    .on("mouseover", function(d) {selectedModel = d; d3.select(this).classed("text-hover",true);})
+    .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
+    .on("mouseover", function(d) {selectedModel = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {selectedModel = null; d3.select(this).classed("text-hover",false);})
     //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
     ;
 
   var heatMap = svg.append("g").attr("class","g3")
     .selectAll(".cellg")
-    .data(MATRIX_DATA,function(d){return rows[d.y]+":"+cols[d.x];})
+    .data(MATRIX_DATA,function(d){return rows[d.y].index+":"+cols[d.x].index;})
     .enter()
     .append("rect")
-    .attr("x", function(d) { return (cols[d.x]) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
-    .attr("y", function(d) { return (rows[d.y]) * CELL_SIZE; })
+    .attr("x", function(d) { return (cols[d.x].index * CELL_SIZE) + (cols[d.x].index == 0 ? 0 : GT_OFFSET); })
+    .attr("y", function(d) { return rows[d.y].index * CELL_SIZE; })
     .attr("class", function(d){
-      var result = "cell cell-border cr"+(rows[d.y])+" cc"+(cols[d.x]);
+      var result = "cell cell-border cr"+(rows[d.y].index)+" cc"+(cols[d.x].index);
       if (d.x == "GT") {
-        result += " gt" + rows[d.y]
+        result += " gt" + rows[d.y].index
       }
       return result;
     })
@@ -144,7 +144,7 @@ function drawHeatmap(selector, cols, rows) {
   colLabels.call(cc);
   cc.on('click', function(d, i) {
     colSortOrder=!colSortOrder;
-    sortbylabel("c", cols[selectedModel] ,colSortOrder);
+    sortbylabel("c", cols[selectedModel].index ,colSortOrder);
   });
   cc.on('dblclick', function(d) {
     toggleModel(selectedModel);
@@ -164,20 +164,20 @@ function sortbylabel(rORc,i,sortOrder){
   if(rORc=="r"){
     vals.pop();
     sorted=d3.range(1, MATRIX_NUMCOLS).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
-    sorted.unshift(cols['GT']);
+    sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
-      .attr("x", function(d) { return sorted.indexOf(cols[d.x]) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+      .attr("x", function(d) { return sorted.indexOf(cols[d.x].index) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".colLabel:not(.c0)")
-      .attr("y", function (d, i) { return sorted.indexOf(cols[d]) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".hl-col")
-      .attr("x", function(d) { return sorted.indexOf(cols[d]) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+      .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
       ;
   } else {
     sorted=d3.range(MATRIX_NUMROWS).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
-      .attr("y", function(d) { return sorted.indexOf(rows[d.y]) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
       ;
     t.selectAll(".rowLabel")
       .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
@@ -191,10 +191,10 @@ function toggleModel(model) {
   }
   if (SELECTED_MODELS[model]) {
     delete SELECTED_MODELS[model];
-    removeModel(model, cols[model]);
+    removeModel(model, cols[model].index);
   } else {
     SELECTED_MODELS[model] = true;
-    addModel(model, cols[model]);
+    addModel(model, cols[model].index);
   }
 }
 
@@ -208,7 +208,7 @@ function addModel(model, col) {
   var x = d3.select('.c'+col).attr('y');
   d3.select('.hl-cols')
     .selectAll('.hl-colg')
-    .data([model])
+    .data([cols[model]])
     .enter()
     .append("rect")
     .attr("height", MATRIX_HEIGHT)

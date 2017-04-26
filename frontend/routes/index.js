@@ -30,14 +30,26 @@ router.get('/heatmap', function(req, res, next) {
   c1 = 0;
   c2 = 1;
 
-  response.cols['GT'] = 0;
+  response.cols['GT'] = {
+    'id': 'GT',
+    'index': 0,
+    'show': true
+  };
 
   for (var i=0; i<numRows; i++) {
-    response.rows[i] = c1++;
+    response.rows[i] = {
+      'id': i,
+      'index': c1++,
+      'show': true
+    };
   }
 
   for (var i=0; i<numCols; i++) {
-    response.cols[i] = c2++;
+    response.cols[i] = {
+      'id': i,
+      'index': c2++,
+      'show': true
+    };
   }
 
   for (var i=0; i<numCols; i++) {

@@ -18,6 +18,16 @@ router.get('/predictions', function(req, res, next) {
   });
 });
 
+router.get('/examples/:id', function(req, res, next) {
+  var exampleId = req.params.id;
+  var response = {};
+  response['id'] = exampleId;
+  for (var i=0; i<5; i++) {
+    response[Math.random().toString(36).substr(2, 5)] = Math.random().toString(36).substr(2, 5);
+  }
+  res.json(response);
+});
+
 router.get('/heatmap', function(req, res, next) {
   var response = {};
   response.data = [];

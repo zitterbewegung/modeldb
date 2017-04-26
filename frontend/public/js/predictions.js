@@ -41,4 +41,8 @@ $(function() {
     updateConfusionMatrices();
   });
 
+  $(document).on('click', '.example-container-close', function() {
+    removeExample($($(this).parent()).data('id'));
+  });
+
 });

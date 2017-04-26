@@ -38,7 +38,6 @@ function drawHeatmap(selector, cols, rows) {
   var rowSortOrder=false;
   var colSortOrder=false;
 
-  console.log(rows);
   var rowLabels = svg.append("g")
     .selectAll(".rowLabelg")
     .data(Object.values(rows)
@@ -50,13 +49,13 @@ function drawHeatmap(selector, cols, rows) {
     .append("text")
     .text(function (d) { return d.id; })
     .attr("x", 0)
-    .attr("y", function (d, i) { console.log(d); return d.index * CELL_SIZE; })
+    .attr("y", function (d, i) { return d.index * CELL_SIZE; })
     .style("text-anchor", "end")
     .attr("transform", "translate(-4," + CELL_SIZE / 1.1 + ")")
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
-    .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
-    .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
-    .on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r", d.index, rowSortOrder);})
+    .on("mouseover", function(d) {SELECTED_EXAMPLE = d.id; d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {SELECTED_EXAMPLE = null; d3.select(this).classed("text-hover",false);})
+    //.on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r", d.index, rowSortOrder);})
     ;
 
   var colLabels = svg.append("g")
@@ -76,8 +75,8 @@ function drawHeatmap(selector, cols, rows) {
     .style("text-anchor", "left")
     .attr("transform", "translate("+CELL_SIZE/1.2 + ",-6) rotate (-90)")
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
-    .on("mouseover", function(d) {selectedModel = d.id; d3.select(this).classed("text-hover",true);})
-    .on("mouseout" , function(d) {selectedModel = null; d3.select(this).classed("text-hover",false);})
+    .on("mouseover", function(d) {SELECTED_MODEL = d.id; d3.select(this).classed("text-hover",true);})
+    .on("mouseout" , function(d) {SELECTED_MODEL = null; d3.select(this).classed("text-hover",false);})
     //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
     ;
 
@@ -143,8 +142,8 @@ function drawHeatmap(selector, cols, rows) {
     .attr("width", 1)
     ;
 
-  var hlCols = svg.append("g").attr("class","hl-cols")
-
+  var hlCols = svg.append("g").attr("class","hl-cols");
+  var hlRows = svg.append("g").attr("class", "hl-rows");
 
 
   $('.heatmap').scrollTop(45);
@@ -152,14 +151,26 @@ function drawHeatmap(selector, cols, rows) {
   sortbylabel("c",0,true);
   updateLegend();
 
+  // single and double click handlers for columns
   var cc = clickcancel();
   colLabels.call(cc);
   cc.on('click', function(d, i) {
     colSortOrder=!colSortOrder;
-    sortbylabel("c", cols[selectedModel].index ,colSortOrder);
+    sortbylabel("c", cols[SELECTED_MODEL].index, colSortOrder);
   });
   cc.on('dblclick', function(d) {
-    toggleModel(selectedModel);
+    toggleModel(SELECTED_MODEL);
+  });
+
+  // single and double click handlers for rows
+  var rc = clickcancel();
+  rowLabels.call(rc);
+  rc.on('click', function(d, i) {
+    rowSortOrder=!rowSortOrder;
+    sortbylabel("r", rows[SELECTED_EXAMPLE].index, rowSortOrder);
+  });
+  rc.on('dblclick', function(d) {
+    toggleExample(SELECTED_EXAMPLE)
   });
 }
 
@@ -194,6 +205,9 @@ function sortbylabel(rORc,i,sortOrder){
     t.selectAll(".rowLabel")
       .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
       ;
+    t.selectAll(".hl-row")
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      ;
   }
 }
 
@@ -217,6 +231,57 @@ function adjustIndices(data) {
     }
   }
   return idx;
+}
+
+function toggleExample(example) {
+  if (SELECTED_EXAMPLES[example]) {
+    delete SELECTED_EXAMPLES[example];
+    removeExample(example);
+  } else {
+    SELECTED_EXAMPLES[example] = true;
+    addExample(example);
+  }
+}
+
+function addExample(example) {
+  $.get('/examples/' + example, function(response) {
+    var html = new EJS({url: '/ejs/example.ejs'}).render({"example": response});
+    $('.example-container').append($(html));
+    $('.example-container').animate({"right": "20px"});
+    $('.example-container').data('id', example);
+  });
+
+  // highlight row
+  var row = rows[example].index;
+
+  var y = d3.select('.r'+row).attr('y');
+  d3.select('.hl-rows')
+    .selectAll('.hl-rowg')
+    .data([rows[example]])
+    .enter()
+    .append("rect")
+    .attr("height", CELL_SIZE)
+    .attr("width", MATRIX_WIDTH)
+    .attr("x", CELL_SIZE + GT_OFFSET)
+    .attr("y", y)
+    .attr("class", "hl-row hl-row-" + row)
+    .style("opacity", "0.7")
+    .style("fill", "none")
+    .style("stroke", "#000")
+    .style("stroke-width", "1.5")
+  ;
+}
+
+function removeExample(example) {
+  var row = rows[example].index;
+  d3.select(".hl-row-" + row).remove();
+  if ($('.example').length == 1) {
+    $('.example-container').animate({"right": "-250px"}, function() {
+      $('.example').remove();
+    });
+  } else {
+    $('.example[data-id="' + example + '"]').remove();
+  }
 }
 
 function toggleModel(model) {

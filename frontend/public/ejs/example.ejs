@@ -1,0 +1,20 @@
+<div class="example" data-id="<%= example.id %>">
+
+  <h2>Example data</h2>
+
+  <% for (var key in example) { %>
+    <% if (example.hasOwnProperty(key)) { %>
+
+      <div class="kv"
+        data-key="<%= key %>""
+        data-val="<%= example[key] %>"
+      >
+        <%= key %>: <%= example[key] %>
+      </div>
+
+    <% } %>
+  <% } %>
+
+  <div class="example-container-close">X</div>
+
+</div>

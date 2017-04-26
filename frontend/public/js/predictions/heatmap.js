@@ -16,35 +16,41 @@ var heatmap = function(src, selector, cellSize) {
 };
 
 function drawHeatmap(selector, cols, rows) {
-  var margin = { top: 70, right:0, bottom:0, left: 70 };
-  var rowLabel = Object.keys(rows);
-  var colLabel = Object.keys(cols);
-  MATRIX_NUMROWS = rowLabel.length;
-  MATRIX_NUMCOLS = colLabel.length;
+  $('.heatmap-svg').remove();
+  var margin = { top: 70, right:0, bottom:20, left: 70 };
+
+  MATRIX_NUMROWS = adjustIndices(rows);
+  MATRIX_NUMCOLS = adjustIndices(cols);
+
   var width = CELL_SIZE * MATRIX_NUMCOLS + GT_OFFSET; // - margin.left - margin.right,
   var height = CELL_SIZE * MATRIX_NUMROWS; // - margin.top - margin.bottom,
   MATRIX_HEIGHT = height;
   MATRIX_WIDTH = width;
 
   var svg = d3.select(selector).append("svg")
+    .attr("class", "heatmap-svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("class", "heatmap-svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     ;
 
   var rowSortOrder=false;
   var colSortOrder=false;
 
+  console.log(rows);
   var rowLabels = svg.append("g")
     .selectAll(".rowLabelg")
-    .data(Object.values(rows))
+    .data(Object.values(rows)
+      .filter(function(d) {
+        return d.show;
+      })
+    )
     .enter()
     .append("text")
     .text(function (d) { return d.id; })
     .attr("x", 0)
-    .attr("y", function (d, i) { return d.index * CELL_SIZE; })
+    .attr("y", function (d, i) { console.log(d); return d.index * CELL_SIZE; })
     .style("text-anchor", "end")
     .attr("transform", "translate(-4," + CELL_SIZE / 1.1 + ")")
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
@@ -55,7 +61,11 @@ function drawHeatmap(selector, cols, rows) {
 
   var colLabels = svg.append("g")
     .selectAll(".colLabelg")
-    .data(Object.values(cols))
+    .data(Object.values(cols)
+      .filter(function(d) {
+        return d.show;
+      })
+    )
     .enter()
     .append("text")
     .text(function (d) { return d.id; })
@@ -73,7 +83,9 @@ function drawHeatmap(selector, cols, rows) {
 
   var heatMap = svg.append("g").attr("class","g3")
     .selectAll(".cellg")
-    .data(MATRIX_DATA,function(d){return rows[d.y].index+":"+cols[d.x].index;})
+    .data(MATRIX_DATA.filter(function(d) {
+      return (cols[d.x].show && rows[d.y].show);
+    }),function(d){return rows[d.y].index+":"+cols[d.x].index;})
     .enter()
     .append("rect")
     .attr("x", function(d) { return (cols[d.x].index * CELL_SIZE) + (cols[d.x].index == 0 ? 0 : GT_OFFSET); })
@@ -99,8 +111,8 @@ function drawHeatmap(selector, cols, rows) {
     .on("mouseover", function(d){
       //highlight text
       d3.select(this).classed("cell-hover",true);
-      d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r==d.y;});
-      d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c==d.x;});
+      d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r.id==d.y;});
+      d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c.id==d.x;});
 
       //Update the tooltip position and value
       d3.select("#heatmap-tooltip")
@@ -183,6 +195,28 @@ function sortbylabel(rORc,i,sortOrder){
       .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
       ;
   }
+}
+
+function adjustIndices(data) {
+  var idx = 0;
+  var vals = Object.values(data);
+  vals.sort(function(a,b) {
+    if (a.o_index == null || b.o_index == null) {
+      return a.index - b.index;
+    } else {
+      return a.o_index - b.o_index;
+    }
+  });
+  for (var i=0; i<vals.length; i++) {
+    var o = data[vals[i].id].index;
+    if (data[vals[i].id].o_index == null) {
+      data[vals[i].id].o_index = o;
+    }
+    if (data[vals[i].id].show) {
+      data[vals[i].id].index = idx++;
+    }
+  }
+  return idx;
 }
 
 function toggleModel(model) {
@@ -347,7 +381,7 @@ var updateColorScale = function(scale) {
       .style("fill", function(d) {
         // use distance from ground truth
         var val;
-        d3.select('.gt' + rows[d.y]).filter(function(e) {
+        d3.select('.gt' + rows[d.y].index).filter(function(e) {
           val = COLOR_SCALE(Math.abs(d.value - e.value));
         });
 
@@ -361,7 +395,7 @@ var updateColorScale = function(scale) {
     d3.selectAll(".cell:not(.cc0)")
       .style("fill", function(d) {
         var val;
-        d3.select('.gt' + rows[d.y]).filter(function(e) {
+        d3.select('.gt' + rows[d.y].index).filter(function(e) {
           if (e.value < 0.5) {
             val = CORRECTNESS_SCALE_GT0(d.value);
           } else {

@@ -30,14 +30,15 @@ $(function() {
 
 
   // handlers
-  $(document).on('click', '.add-filter-group', function() {
+  $(document).on('click', '.add-filter-group-btn', function() {
     var html = new EJS({url: '/ejs/filter-group.ejs'}).render({"keys": Object.keys(RAW_DATA_KEYS)});
     $('.filter-groups-container').append($(html));
+    $('.filter-groups-container').find('.filter-group:last').slideDown();
   });
 
   $(document).on('click', '.filter-group-close', function() {
     var elt = $(this).closest('.filter-group');
-    elt.remove();
+    elt.slideUp("normal", function() { $(this).remove(); } );
   });
 
   $(document).on('click', '.example-filter-add', function() {

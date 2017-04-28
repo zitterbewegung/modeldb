@@ -163,34 +163,31 @@ input.threshold::-webkit-slider-thumb:after {
   margin-bottom: 10px;
   padding: 10px;
   background-color: #D9E0E8;
+  text-align: center;
+  transition: all 0.3s ease;
 }
 
-.add-filter-group:hover .add-filter-group-btn {
-  opacity: 0.8;
-}
-
-.add-filter-group:active .add-filter-group-btn {
-  opacity: 1;
+.add-filter-group-btn:hover {
+  background-color: #AEBDCD
 }
 
 .add-filter-group-btn {
   display: inline-block;
   vertical-align: top;
-  font-size: 30px;
-  line-height: 26px;
-  width: 30px;
-  height: 30px;
+  font-size: 40px;
+  line-height: 48px;
+  width: 50px;
+  height: 50px;
   text-align: center;
-  background-color: #AEBDCD;
-  opacity: 0.6;
+  background-color: #D9E0E8;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .add-filter-group-label {
   display: inline-block;
   vertical-align: top;
   line-height: 30px;
-  margin-left: 10px;
   font-size: 16px;
 }
 
@@ -199,6 +196,7 @@ input.threshold::-webkit-slider-thumb:after {
   padding: 10px;
   position: relative;
   margin-bottom: 10px;
+  display: none;
 }
 
 .filter-group-name {
@@ -274,9 +272,13 @@ input.threshold::-webkit-slider-thumb:after {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
+  vertical-align: top;
+  width: 138px;
+  margin-right: 4px;
 }
 
-.filter-btn:hover {
+.filter-btn:hover, .add-filter-group:hover {
   background-color: #AEBDCD;
 }
 

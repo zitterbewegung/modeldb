@@ -34,7 +34,7 @@ var removePRPoints = function(model) {
 
 var updatePRVega = function(selector) {
   var specs = {
-    "width": 400,
+    "width": 350,
     "height": 200,
     "data": [
       {
@@ -70,7 +70,7 @@ var updatePRVega = function(selector) {
         {
           "fill": "color",
           "title": "Model",
-          "offset": -120,
+          "offset": -70,
           "properties": {
             "symbols": {
               "fillOpacity": {"value": 0.5},

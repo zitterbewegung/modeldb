@@ -103,12 +103,11 @@ text.text-hover {
 }
 
 .heatmap {
-  margin: 20px;
   margin-top: 0;
   overflow: auto;
   text-align: center;
-  max-height: 623px;
-  max-width: 500px;
+  max-height: 650px;
+  max-width: 750px;
 }
 
 

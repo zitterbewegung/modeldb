@@ -1,11 +1,9 @@
 .roc-container, .pr-container {
   padding-top: 40px;
-  margin-top: 20px;
+  margin: 0 20px 0 0;
   position: relative;
-}
-
-.pr-container {
-  margin-top: 30px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .roc-title, .pr-title {
@@ -23,5 +21,5 @@
   line-height: 280px;
   font-size: 14px;
   text-align: center;
-  background-color: rgba(220,220,220,0.8)
+  background-color: rgba(220,220,220,0.8);
 }

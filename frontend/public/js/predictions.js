@@ -1,7 +1,6 @@
 $(function() {
 
   heatmap('/heatmap', '#heatmap');
-  table('/table-columns', '/table-data', '#table');
   updateROCVega('.roc-container');
   updatePRVega('.pr-container');
 
@@ -44,5 +43,22 @@ $(function() {
   $(document).on('click', '.example-container-close', function() {
     removeExample($($(this).parent()).data('id'));
   });
+
+  $('.tab').scroll(function(e){
+    var scroll = e.target.scrollTop;
+    var height = $('.heatmap-container').height();
+    if (scroll + $('.examples-menu').height() - 20 < height) {
+      $('.examples-menu').addClass('fixed');
+      $('.examples-menu').css({
+        'margin-top': '0'
+      });
+    } else {
+      $('.examples-menu').removeClass('fixed');
+      $('.examples-menu').css({
+        'margin-top': (height - $('.examples-menu').height() + 20) + 'px'
+      });
+    }
+  });
+
 
 });

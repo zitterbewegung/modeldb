@@ -17,7 +17,7 @@ var heatmap = function(src, selector, cellSize) {
 
 function drawHeatmap(selector, cols, rows) {
   $('.heatmap-svg').remove();
-  var margin = { top: 70, right:0, bottom:20, left: 70 };
+  var margin = { top: 70, right:20, bottom:20, left: 70 };
 
   MATRIX_NUMROWS = adjustIndices(rows);
   MATRIX_NUMCOLS = adjustIndices(cols);
@@ -244,12 +244,10 @@ function toggleExample(example) {
 }
 
 function addExample(example) {
-  $.get('/examples/' + example, function(response) {
-    var html = new EJS({url: '/ejs/example.ejs'}).render({"example": response});
-    $('.example-container').append($(html));
-    $('.example-container').animate({"right": "20px"});
-    $('.example-container').data('id', example);
-  });
+  var html = new EJS({url: '/ejs/example.ejs'}).render({"example": RAW_DATA[example]});
+  $('.example-container').append($(html));
+  $('.example-container').animate({"right": "20px"});
+  $('.example-container').data('id', example);
 
   // highlight row
   var row = rows[example].index;
@@ -344,8 +342,8 @@ function removeModel(model, col) {
 var updateLegend = function() {
   d3.select('.heatmap-legend svg').remove();
   var cellSize = 12;
-  var legendCellSize = 23;
-  var width = 480;
+  var legendCellSize = 36;
+  var width = 750;
   var height = 50;
   var left = "";
   var right = "";

@@ -35,7 +35,7 @@ router.get('/heatmap', function(req, res, next) {
   response.cols = {};
 
   var numRows = 50;
-  var numCols = 50;
+  var numCols = 60;
 
   c1 = 0;
   c2 = 1;
@@ -109,7 +109,7 @@ router.get('/pipeline/:id', function(req, res, next) {
 router.get('/table-columns', function(req, res, next) {
   var response = [];
 
-  for (var i=0; i<20; i++) {
+  for (var i=0; i<10; i++) {
     response.push({
       data: "col " + i,
       title: "col " + i
@@ -128,6 +128,19 @@ router.get('/table-data', function(req, res, next) {
       row["col " + j] = (Math.random().toString(36).substr(2, 5));
     }
     response.push(row);
+  }
+  res.json(response);
+});
+
+router.get('/examples', function(req, res, next) {
+  var numRows = 50;
+  var response = [];
+  for (var i=0; i<numRows; i++) {
+    var example = {'id': i};
+    for (var j=0; j<10; j++) {
+      example['col ' + j] = Math.floor(Math.random() * (10)) + 1;
+    }
+    response.push(example);
   }
   res.json(response);
 });

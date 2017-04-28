@@ -47,7 +47,6 @@ MATRIX_HEIGHT = 0;
 MATRIX_WIDTH = 0;
 GT_OFFSET = 8;
 
-
 /* matrix data */
 SELECTED_MODELS = {};
 SELECTED_EXAMPLES = {};
@@ -56,3 +55,10 @@ MATRIX_NUMROWS = 0;
 MATRIX_NUMCOLS = 0;
 SELECTED_MODEL = null;
 SELECTED_EXAMPLE = null;
+
+/* example data */
+TABLE_COLUMNS = null;
+RAW_DATA_KEYS = {};
+RAW_DATA = {};
+FILTER_GROUPS = {};
+GROUPS = {};

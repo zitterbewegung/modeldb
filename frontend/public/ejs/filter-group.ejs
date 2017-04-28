@@ -1,0 +1,15 @@
+<div class="filter-group">
+  <div class="filter-group-close">X</div>
+  <input class="filter-group-name" placeholder="Group name"></input>
+  <div class="example-filter">
+    <select class="example-filter-key">
+      <option selected disabled value="None">key</option>
+      <% for (var i=0; i<keys.length; i++) { %>
+        <option value="<%= keys[i]%>"><%= keys[i] %></option>
+      <% } %>
+    </select>
+    :
+    <input class="example-filter-val placeholder="value"></input>
+    <div class="example-filter-add last">+</div>
+  </div>
+</div>

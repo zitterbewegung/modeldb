@@ -61,7 +61,7 @@ $(function() {
   $(document).on('change', '.examples-group-by select', function(e) {
     var key = e.target.value;
     if (key == "None") {
-      $('.agg-heatmap .heatmap-svg').remove();
+      hideAggregateHeatmap();
       showAllExamples();
     } else {
       generateGroupsForKey(key);
@@ -72,6 +72,7 @@ $(function() {
     if (this.checked) {
       $('.example-filter-groups').slideUp();
       $('.examples-group-by').slideUp();
+      hideAggregateHeatmap();
       showAllExamples();
     }
   });
@@ -123,7 +124,7 @@ var calculateAggregateData = function() {
 var aggregateHeatmap = function() {
   if ($.isEmptyObject(GROUPS)) {
     if ($('.agg-heatmap .heatmap-svg').length > 0) {
-      $('.agg-heatmap .heatmap-svg').remove();
+      hideAggregateHeatmap();
       showAllExamples();
     }
     return;
@@ -257,6 +258,10 @@ function generateGroupsForKey(key) {
 
   aggregateHeatmap();
 };
+
+function hideAggregateHeatmap() {
+  $('.agg-heatmap .heatmap-svg').remove();
+}
 
 function showAllExamples() {
   for (var key in ROWS) {

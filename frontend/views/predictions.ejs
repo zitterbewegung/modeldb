@@ -31,6 +31,7 @@
     <script src='/js/tooltip.js'></script>
     <script src='/js/predictions/config.js'></script>
     <script src='/js/predictions/heatmap.js'></script>
+    <script src='/js/predictions/agg_heatmap.js'></script>
     <script src='/js/predictions/pipeline.js'></script>
     <script src='/js/predictions/table.js'></script>
     <script src='/js/predictions/confusion_matrix.js'></script>
@@ -46,7 +47,7 @@
       <div class="menu">
 
         <div class="menu-section-container">
-          <h2>Models:</h2>
+          <h2>Models</h2>
           <div class="predictions-selected-models">
             Double click on a column label in the prediction matrix to select a model
           </div>
@@ -76,17 +77,43 @@
       <div class="tab" data-id="0">
         <div class="heatmap-container">
           <div class="heatmap-legend"></div>
+          <div class="agg-heatmap"></div>
           <div id="heatmap" class="heatmap"></div>
         </div>
         <div class="examples-menu-container">
           <div class="examples-menu">
-            <div class="filter-groups-container">
+
+            <div class="examples-menu-radio">
+              <input id="radio-random" type="radio" name="select" value="random" checked/>
+              <label for="radio-random">Random sample</label>
             </div>
-            <div class="add-filter-group">
-              <div class="add-filter-group-btn">+</div>
-              <div class="add-filter-group-label">Add filter group</div>
+
+            <div class="examples-menu-radio">
+              <input id="radio-filter" type="radio" name="select" value="filter"/>
+              <label for="radio-filter">Filter</label>
+              <div class="example-filter-groups">
+                <div class="filter-groups-container">
+                </div>
+                <div class="add-filter-group">
+                  <div class="add-filter-group-btn">+</div>
+                  <div class="add-filter-group-label">Add filter group</div>
+                </div>
+                <div class="filter-btn">Filter data</div>
+              </div>
             </div>
-            <div class="filter-btn">Filter examples</div>
+
+
+            <div class="examples-menu-radio">
+              <input id="radio-group" type="radio" name="select" value="group"/>
+              <label for="radio-group">Group</label>
+              <div class="examples-group-by">
+                group by:
+                <select>
+                  <option selected value="None">None</option>
+                </select>
+              </div>
+            </div>
+
           </div>
         </div>
         <div id="charts">

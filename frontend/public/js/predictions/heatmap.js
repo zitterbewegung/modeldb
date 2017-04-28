@@ -1,22 +1,43 @@
-var cols;
-var rows;
+$(function() {
+  $('.heatmap').scroll(function(e) {
+    $('.agg-heatmap').scrollLeft($(e.target).scrollLeft());
+  });
+
+  $('.agg-heatmap').scroll(function(e) {
+    $('.heatmap').scrollLeft($(e.target).scrollLeft());
+  });
+});
 
 var heatmap = function(src, selector, cellSize) {
-  rows = {};
-  cols = {};
+  ROWS = {};
+  COLS = {};
 
   $.get(src, function(response) {
     MATRIX_DATA = response.data;
-    rows = response.rows;
-    cols = response.cols;
 
-    drawHeatmap(selector, cols, rows);
+    // store in object form
+    for (var i=0; i<MATRIX_DATA.length; i++) {
+      var x = MATRIX_DATA[i].x;
+      var y = MATRIX_DATA[i].y;
+      var val = MATRIX_DATA[i].value;
+      if (MATRIX_OBJ[x] == null) {
+        MATRIX_OBJ[x] = {};
+        MATRIX_OBJ[x][y] = val;
+      } else {
+        MATRIX_OBJ[x][y] = val;
+      }
+    }
+
+    ROWS = response.rows;
+    COLS = response.cols;
+
+    drawHeatmap(selector, ROWS, COLS, MATRIX_DATA);
   });
 
 };
 
-function drawHeatmap(selector, cols, rows) {
-  $('.heatmap-svg').remove();
+function drawHeatmap(selector, rows, cols, data) {
+  $(selector).find('.heatmap-svg').remove();
   var margin = { top: 70, right:20, bottom:20, left: 70 };
 
   MATRIX_NUMROWS = adjustIndices(rows);
@@ -82,7 +103,7 @@ function drawHeatmap(selector, cols, rows) {
 
   var heatMap = svg.append("g").attr("class","g3")
     .selectAll(".cellg")
-    .data(MATRIX_DATA.filter(function(d) {
+    .data(data.filter(function(d) {
       return (cols[d.x].show && rows[d.y].show);
     }),function(d){return rows[d.y].index+":"+cols[d.x].index;})
     .enter()
@@ -146,9 +167,9 @@ function drawHeatmap(selector, cols, rows) {
   var hlRows = svg.append("g").attr("class", "hl-rows");
 
 
-  $('.heatmap').scrollTop(45);
-  $('.heatmap').scrollLeft(45);
-  sortbylabel("c",0,true);
+  $(selector).scrollTop(45);
+  $(selector).scrollLeft(45);
+  sortbylabel(selector, "c",0,true, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   updateLegend();
 
   // single and double click handlers for columns
@@ -156,7 +177,7 @@ function drawHeatmap(selector, cols, rows) {
   colLabels.call(cc);
   cc.on('click', function(d, i) {
     colSortOrder=!colSortOrder;
-    sortbylabel("c", cols[SELECTED_MODEL].index, colSortOrder);
+    sortbylabel(selector, "c", cols[SELECTED_MODEL].index, colSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   });
   cc.on('dblclick', function(d) {
     toggleModel(SELECTED_MODEL);
@@ -167,26 +188,26 @@ function drawHeatmap(selector, cols, rows) {
   rowLabels.call(rc);
   rc.on('click', function(d, i) {
     rowSortOrder=!rowSortOrder;
-    sortbylabel("r", rows[SELECTED_EXAMPLE].index, rowSortOrder);
+    sortbylabel(selector, "r", rows[SELECTED_EXAMPLE].index, rowSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   });
   rc.on('dblclick', function(d) {
     toggleExample(SELECTED_EXAMPLE)
   });
 }
 
-function sortbylabel(rORc,i,sortOrder){
-  var svg = d3.select('.heatmap-svg');
+function sortbylabel(selector, rORc,i,sortOrder, rows, cols, numRows, numCols){
+  var svg = d3.select(selector + ' .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
   var vals=[];
   var sorted; // sorted is zero-based index
-  d3.selectAll(".c"+rORc+(i))
+  d3.selectAll(selector + " .c"+rORc+(i))
    .filter(function(ce){
       vals.push(ce.value);
     })
   ;
   if(rORc=="r"){
     vals.pop();
-    sorted=d3.range(1, MATRIX_NUMCOLS).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
+    sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
     sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
       .attr("x", function(d) { return sorted.indexOf(cols[d.x].index) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
@@ -198,7 +219,7 @@ function sortbylabel(rORc,i,sortOrder){
       .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
       ;
   } else {
-    sorted=d3.range(MATRIX_NUMROWS).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
+    sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
       .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
       ;
@@ -250,17 +271,17 @@ function addExample(example) {
   $('.example-container').data('id', example);
 
   // highlight row
-  var row = rows[example].index;
+  var row = ROWS[example].index;
 
-  var y = d3.select('.r'+row).attr('y');
+  var y = d3.select('.heatmap .r'+row).attr('y');
   d3.select('.hl-rows')
     .selectAll('.hl-rowg')
-    .data([rows[example]])
+    .data([ROWS[example]])
     .enter()
     .append("rect")
     .attr("height", CELL_SIZE)
     .attr("width", MATRIX_WIDTH)
-    .attr("x", CELL_SIZE + GT_OFFSET)
+    .attr("x", CELL_SIZE + GT_OFFSET - 20)
     .attr("y", y)
     .attr("class", "hl-row hl-row-" + row)
     .style("opacity", "0.7")
@@ -271,7 +292,7 @@ function addExample(example) {
 }
 
 function removeExample(example) {
-  var row = rows[example].index;
+  var row = ROWS[example].index;
   d3.select(".hl-row-" + row).remove();
   if ($('.example').length == 1) {
     $('.example-container').animate({"right": "-250px"}, function() {
@@ -288,10 +309,10 @@ function toggleModel(model) {
   }
   if (SELECTED_MODELS[model]) {
     delete SELECTED_MODELS[model];
-    removeModel(model, cols[model].index);
+    removeModel(model, COLS[model].index);
   } else {
     SELECTED_MODELS[model] = true;
-    addModel(model, cols[model].index);
+    addModel(model, COLS[model].index);
   }
 }
 
@@ -302,10 +323,10 @@ function addModel(model, col) {
   $('.predictions-selected-models').append(div);
 
   // highlight column in prediction matrix
-  var x = d3.select('.c'+col).attr('y');
+  var x = d3.select('.heatmap .c'+col).attr('y');
   d3.select('.hl-cols')
     .selectAll('.hl-colg')
-    .data([cols[model]])
+    .data([COLS[model]])
     .enter()
     .append("rect")
     .attr("height", MATRIX_HEIGHT)
@@ -436,29 +457,29 @@ var updateLegend = function() {
 var updateColorScale = function(scale) {
   COLOR_SCALE = SCALES[scale];
   if (scale == "MONO_SCALE") {
-    d3.selectAll(".cell.cc0")
+    d3.selectAll(".heatmap .cell.cc0")
       .style("fill", function(d) {
         return COLOR_SCALE(d.value);
       });
-    d3.selectAll(".cell:not(.cc0)")
+    d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         // use distance from ground truth
         var val;
-        d3.select('.gt' + rows[d.y].index).filter(function(e) {
+        d3.select('.gt' + ROWS[d.y].index).filter(function(e) {
           val = COLOR_SCALE(Math.abs(d.value - e.value));
         });
 
         return val;
       });
   } else if (scale == "CORRECTNESS_SCALE") {
-    d3.selectAll(".cell.cc0")
+    d3.selectAll(".heatmap .cell.cc0")
       .style("fill", function(d) {
         return MONO_SCALE(d.value);
       });
-    d3.selectAll(".cell:not(.cc0)")
+    d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         var val;
-        d3.select('.gt' + rows[d.y].index).filter(function(e) {
+        d3.select('.gt' + ROWS[d.y].index).filter(function(e) {
           if (e.value < 0.5) {
             val = CORRECTNESS_SCALE_GT0(d.value);
           } else {
@@ -469,7 +490,7 @@ var updateColorScale = function(scale) {
         return val;
       });
   } else {
-    d3.selectAll(".cell")
+    d3.selectAll(".heatmap .cell")
       .style("fill", function(d) {
         return COLOR_SCALE(d.value);
       });
@@ -478,7 +499,7 @@ var updateColorScale = function(scale) {
   // make correction to GT when
   // binary scale threshold = 0
   if (scale == "BINARY_SCALE") {
-    d3.selectAll(".cell.cc0")
+    d3.selectAll(".heatmap .cell.cc0")
       .style("fill", function(d) {
         return (d.value < 0.5) ? "#D9E0E8" : "#2c3e50";
       });

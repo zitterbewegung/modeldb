@@ -47,7 +47,7 @@ $(function() {
   $('.tab').scroll(function(e){
     var scroll = e.target.scrollTop;
     var height = $('.heatmap-container').height();
-    if (scroll + $('.examples-menu').height() - 20 < height) {
+    if (scroll + $('.examples-menu').height() < height) {
       $('.examples-menu').addClass('fixed');
       $('.examples-menu').css({
         'margin-top': '0'
@@ -55,7 +55,7 @@ $(function() {
     } else {
       $('.examples-menu').removeClass('fixed');
       $('.examples-menu').css({
-        'margin-top': (height - $('.examples-menu').height() + 20) + 'px'
+        'margin-top': (height - $('.examples-menu').height()) + 'px'
       });
     }
   });

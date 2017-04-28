@@ -102,6 +102,11 @@ text.text-hover {
   margin-bottom: 1px;
 }
 
+.agg-heatmap {
+  overflow: auto;
+  max-width: 750px;
+}
+
 .heatmap {
   margin-top: 0;
   overflow: auto;

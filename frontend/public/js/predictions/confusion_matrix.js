@@ -102,11 +102,11 @@ var countExamples = function(col) {
   };
 
   // go through examples for selected model
-  d3.selectAll('.cc' + col)
+  d3.selectAll('.heatmap .cc' + col)
     .filter(function(d){
 
       // get ground truth
-      d3.select('.cc' + 0 + '.cr' + d.y)
+      d3.select('.heatmap .cc' + 0 + '.cr' + ROWS[d.y].index)
         .filter(function (e, i) {
           var GT = e.value;
 

@@ -76,6 +76,7 @@ input.threshold::-webkit-slider-thumb:after {
 #heatmap {
   display: inline-block;
   vertical-align: top;
+  min-height: 300px;
 }
 
 #charts {
@@ -152,9 +153,14 @@ input.threshold::-webkit-slider-thumb:after {
   right:0;
 }
 
+.example-filter-groups {
+  margin-top: 10px;
+  display: none;
+}
+
 .add-filter-group {
   cursor: pointer;
-  margin: 10px 0;
+  margin-bottom: 10px;
   padding: 10px;
   background-color: #D9E0E8;
 }
@@ -272,4 +278,27 @@ input.threshold::-webkit-slider-thumb:after {
 
 .filter-btn:hover {
   background-color: #AEBDCD;
+}
+
+.examples-group-by {
+  margin: 10px 0;
+  display: none;
+}
+
+.examples-group-by select {
+  width: 155px;
+  margin-left: 6px;
+}
+
+.examples-menu-radio {
+  padding: 10px 0;
+}
+
+.examples-menu-radio > input {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.examples-menu-radio > label {
+  cursor: pointer;
 }

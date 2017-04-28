@@ -1,3 +1,6 @@
+var numRows = 1000;
+var numCols = 60;
+
 var express = require('express');
 var router = express.Router();
 var api = require('../util/api.js');
@@ -34,8 +37,6 @@ router.get('/heatmap', function(req, res, next) {
   response.rows = {};
   response.cols = {};
 
-  var numRows = 50;
-  var numCols = 60;
 
   c1 = 0;
   c2 = 1;
@@ -50,7 +51,7 @@ router.get('/heatmap', function(req, res, next) {
     response.rows[i] = {
       'id': i,
       'index': c1++,
-      'show': true
+      'show': Math.random() < 0.07
     };
   }
 
@@ -111,8 +112,8 @@ router.get('/table-columns', function(req, res, next) {
 
   for (var i=0; i<10; i++) {
     response.push({
-      data: "col " + i,
-      title: "col " + i
+      data: "col-" + i,
+      title: "col-" + i
     });
   }
 
@@ -125,7 +126,7 @@ router.get('/table-data', function(req, res, next) {
   for (var i=0; i<100; i++) {
     var row = {};
     for (var j=0; j<20; j++) {
-      row["col " + j] = (Math.random().toString(36).substr(2, 5));
+      row["col" + j] = (Math.random().toString(36).substr(2, 5));
     }
     response.push(row);
   }
@@ -133,12 +134,11 @@ router.get('/table-data', function(req, res, next) {
 });
 
 router.get('/examples', function(req, res, next) {
-  var numRows = 50;
   var response = [];
   for (var i=0; i<numRows; i++) {
     var example = {'id': i};
     for (var j=0; j<10; j++) {
-      example['col ' + j] = Math.floor(Math.random() * (10)) + 1;
+      example['col-' + j] = Math.floor(Math.random() * (10)) + 1;
     }
     response.push(example);
   }

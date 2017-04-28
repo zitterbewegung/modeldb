@@ -12,13 +12,19 @@ $(function() {
       RAW_DATA_KEYS[response[i].title] = true;
     }
 
+    for (var i=0; i<response.length; i++) {
+      var option = $('<option value="' + response[i].title + '">' + response[i].title + '</option>');
+      $('.examples-group-by select').append(option);
+    }
+
     // fetch example data
     $.get('/examples', function(response) {
       for (var i=0; i<response.length; i++) {
         RAW_DATA[response[i].id] = response[i];
       }
+      SHOW_RATIO = 50/response.length;
 
-    table(TABLE_COLUMNS, Object.values(RAW_DATA), '#table');
+      table(TABLE_COLUMNS, Object.values(RAW_DATA), '#table');
     });
   });
 
@@ -51,7 +57,130 @@ $(function() {
   $(document).on('click', '.filter-btn', function() {
     generateFilterGroups();
   });
+
+  $(document).on('change', '.examples-group-by select', function(e) {
+    var key = e.target.value;
+    if (key == "None") {
+      $('.agg-heatmap .heatmap-svg').remove();
+      showAllExamples();
+    } else {
+      generateGroupsForKey(key);
+    }
+  });
+
+  $(document).on('click', '#radio-random', function() {
+    if (this.checked) {
+      $('.example-filter-groups').slideUp();
+      $('.examples-group-by').slideUp();
+      showAllExamples();
+    }
+  });
+
+  $(document).on('change', '#radio-filter', function() {
+    if (this.checked) {
+      $('.example-filter-groups').slideDown();
+      $('.examples-group-by').slideUp();
+    }
+  });
+
+  $(document).on('change', '#radio-group', function() {
+    if (this.checked) {
+      $('.example-filter-groups').slideUp();
+      $('.examples-group-by').slideDown();
+    }
+  });
 });
+
+var calculateAggregateData = function() {
+  var data = [];
+  for (var key in GROUPS) {
+    if (GROUPS.hasOwnProperty(key)) {
+      var examples = GROUPS[key];
+
+      // go through each model and calculate average
+      for (var col in COLS) {
+        if (COLS.hasOwnProperty(col)) {
+          var total = 0;
+
+          for (var i=0; i<examples.length; i++) {
+            total += MATRIX_OBJ[COLS[col].id][examples[i]];
+          }
+
+          data.push({
+            'x': COLS[col].id,
+            'y': key,
+            'value': total/examples.length
+          })
+        }
+      }
+
+    }
+  }
+
+  return data;
+}
+
+var aggregateHeatmap = function() {
+  if ($.isEmptyObject(GROUPS)) {
+    if ($('.agg-heatmap .heatmap-svg').length > 0) {
+      $('.agg-heatmap .heatmap-svg').remove();
+      showAllExamples();
+    }
+    return;
+  }
+
+  AGG_ROWS = {};
+  for (var key in GROUPS) {
+    if (GROUPS.hasOwnProperty(key)) {
+      AGG_ROWS[key] = {
+        'id': key,
+        'show': true
+      }
+    }
+  }
+
+  AGG_DATA = calculateAggregateData();
+  drawAggregateHeatmap('.agg-heatmap', AGG_ROWS, COLS, AGG_DATA);
+  SELECTED_GROUP = null;
+}
+
+// group is JSON object where the key/value pairs
+// define a group of filters on the raw data examples
+var getExamplesInGroup = function(group) {
+  var exampleIDs = Object.keys(RAW_DATA);
+  var examples = {};
+  for (var i=0; i<exampleIDs.length; i++) {
+    // initialize all examples to true
+    examples[exampleIDs[i]] = true;
+  }
+
+  // go through each filter of the filter group
+  for (f in group) {
+    if (group.hasOwnProperty(f)) {
+
+      // go through each example and see if filter is met
+      for (ex in examples) {
+        if (examples.hasOwnProperty(ex)) {
+          if (RAW_DATA[ex][f] != group[f]) {
+            examples[ex] = false;
+          }
+        }
+      } // end loop over examples
+
+    }
+  } // end loop over group
+
+  var filtered = [];
+  for (ex in examples) {
+    if (examples.hasOwnProperty(ex)) {
+      if (examples[ex]) {
+        filtered.push(ex);
+      }
+    }
+  }
+
+  return filtered;
+}
 
 var generateFilterGroups = function() {
   var counter = 0;
@@ -99,41 +228,58 @@ var generateFilterGroups = function() {
     if (result.hasOwnProperty(key)) {
       var group = result[key];
 
-      // apply filters to examples
-      var exampleIDs = Object.keys(RAW_DATA);
-      var examples = {};
-      for (var i=0; i<exampleIDs.length; i++) {
-        // initialize all examples to true
-        examples[exampleIDs[i]] = true;
-      }
-
-      // go through each filter of the filter group
-      for (f in group) {
-        if (group.hasOwnProperty(f)) {
-
-          // go through each example and see if filter is met
-          for (ex in examples) {
-            if (examples.hasOwnProperty(ex)) {
-              if (RAW_DATA[ex][f] != group[f]) {
-                examples[ex] = false;
-              }
-            }
-          } // end loop over examples
-
-        }
-      } // end loop over group
-
-      var filtered = [];
-      for (ex in examples) {
-        if (examples.hasOwnProperty(ex)) {
-          if (examples[ex]) {
-            filtered.push(ex);
-          }
-        }
-      }
-
-      GROUPS[key] = filtered;
+      GROUPS[key] = getExamplesInGroup(group);
 
     } // end loop over result
   }
+
+  aggregateHeatmap();
+}
+
+function generateGroupsForKey(key) {
+  FILTER_GROUPS = {};
+  GROUPS = {};
+  for (var d in RAW_DATA) {
+    var val = RAW_DATA[d][key];
+    FILTER_GROUPS[key + ": " + val] = {};
+    FILTER_GROUPS[key + ": " + val][key] = val;
+  }
+
+  // go through each filter group
+  for (var key in FILTER_GROUPS) {
+    if (FILTER_GROUPS.hasOwnProperty(key)) {
+      var group = FILTER_GROUPS[key];
+
+      GROUPS[key] = getExamplesInGroup(group);
+
+    } // end loop over result
+  }
+
+  aggregateHeatmap();
+};
+
+function showAllExamples() {
+  for (var key in ROWS) {
+    if (ROWS.hasOwnProperty(key)) {
+      ROWS[key].show = Math.random() < SHOW_RATIO;
+    }
+  }
+  drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
+
+  // unselect all models
+  for (var model in SELECTED_MODELS) {
+    toggleModel(model);
+  }
+}
+
+function showFilteredExamples(group) {
+  var examples = GROUPS[group];
+  for (var key in ROWS) {
+    if (examples.indexOf(ROWS[key].id + '') < 0) {
+      ROWS[key].show = false;
+    } else {
+      ROWS[key].show = true;
+    }
+  }
+  drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
 }

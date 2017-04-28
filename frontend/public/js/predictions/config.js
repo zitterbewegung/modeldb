@@ -46,13 +46,17 @@ CELL_SIZE = 12;
 MATRIX_HEIGHT = 0;
 MATRIX_WIDTH = 0;
 GT_OFFSET = 8;
+SHOW_RATIO = 0;
 
 /* matrix data */
 SELECTED_MODELS = {};
 SELECTED_EXAMPLES = {};
+MATRIX_OBJ = {};
 MATRIX_DATA = [];
 MATRIX_NUMROWS = 0;
 MATRIX_NUMCOLS = 0;
+ROWS = {};
+COLS = {};
 SELECTED_MODEL = null;
 SELECTED_EXAMPLE = null;
 
@@ -62,3 +66,6 @@ RAW_DATA_KEYS = {};
 RAW_DATA = {};
 FILTER_GROUPS = {};
 GROUPS = {};
+AGG_ROWS = {};
+AGG_DATA = [];
+SELECTED_GROUP = null; // group selected in aggregate view

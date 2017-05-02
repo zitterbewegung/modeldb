@@ -93,7 +93,7 @@ $(function() {
   });
 });
 
-var calculateAggregateData = function() {
+var calculateAggregateDataAvg = function() {
   var data = [];
   for (var key in GROUPS) {
     if (GROUPS.hasOwnProperty(key)) {
@@ -106,6 +106,45 @@ var calculateAggregateData = function() {
 
           for (var i=0; i<examples.length; i++) {
             total += MATRIX_OBJ[COLS[col].id][examples[i]];
+          }
+
+          data.push({
+            'x': COLS[col].id,
+            'y': key,
+            'value': total/examples.length
+          })
+        }
+      }
+
+    }
+  }
+
+  return data;
+}
+
+var calculateAggregateDataAcc = function() {
+  var data = [];
+  for (var key in GROUPS) {
+    if (GROUPS.hasOwnProperty(key)) {
+      var examples = GROUPS[key];
+
+      // go through each model and calculate average
+      for (var col in COLS) {
+        if (COLS.hasOwnProperty(col)) {
+          var total = 0;
+
+          for (var i=0; i<examples.length; i++) {
+            if (col == 'GT') {
+              // calculate average value
+              total += MATRIX_OBJ[COLS[col].id][examples[i]];
+            } else {
+              // calculate accuracy
+              var GT = MATRIX_OBJ['GT'][examples[i]] > 0.5;
+              var prediction = MATRIX_OBJ[COLS[col].id][examples[i]] > THRESHOLD;
+              if (GT == prediction) {
+                total += 1
+              }
+            }
           }
 
           data.push({
@@ -141,7 +180,7 @@ var aggregateHeatmap = function() {
     }
   }
 
-  AGG_DATA = calculateAggregateData();
+  AGG_DATA = calculateAggregateDataAcc();
   drawAggregateHeatmap('.agg-heatmap', AGG_ROWS, COLS, AGG_DATA);
   SELECTED_GROUP = null;
 }

@@ -96,17 +96,27 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
       d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return r.id==d.y;});
       d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c.id==d.x;});
 
+
+      var tooltip = '<div><div class="heatmap-tooltip-key">example id:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.y + '</div></div>'+
+          '<div><div class="heatmap-tooltip-key">model id:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.x + '</div></div>';
+
+      if (d.x == 'GT') {
+        tooltip += '<div><div class="heatmap-tooltip-key">average:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>';
+      } else {
+        tooltip += '<div><div class="heatmap-tooltip-key">accuracy:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>';
+      }
+
       //Update the tooltip position and value
       d3.select("#heatmap-tooltip")
         .style("left", (d3.event.pageX+10) + "px")
         .style("top", (d3.event.pageY-10) + "px")
         .select("#value")
-        .html('<div><div class="heatmap-tooltip-key">example id:</div>' +
-          '<div class="heatmap-tooltip-value">' + d.y + '</div></div>'+
-          '<div><div class="heatmap-tooltip-key">model id:</div>' +
-          '<div class="heatmap-tooltip-value">' + d.x + '</div></div>'+
-          '<div><div class="heatmap-tooltip-key">prediction:</div>' +
-          '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>');
+        .html(tooltip)
+      ;
       //Show the tooltip
       d3.select("#heatmap-tooltip").classed("hidden", false);
     })

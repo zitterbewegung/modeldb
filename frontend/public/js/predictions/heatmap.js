@@ -230,6 +230,9 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
       .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
       ;
   }
+
+  // reset select to None so we can resort by model or example
+  $('.predictions-sort').val('None')
 }
 
 function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
@@ -270,9 +273,6 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
       .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
       ;
   }
-
-  // reset select to None so we can resort by model or example
-  $('.predictions-sort').val('None')
 }
 
 function adjustIndices(data) {

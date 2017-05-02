@@ -38,7 +38,7 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
     .on("mouseover", function(d) {SELECTED_EXAMPLE = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_EXAMPLE = null; d3.select(this).classed("text-hover",false);})
-    //.on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r", d.index, rowSortOrder);})
+    //.on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortByPrediction("r", d.index, rowSortOrder);})
     ;
 
   var colLabels = svg.append("g")
@@ -60,7 +60,7 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
     .on("mouseover", function(d) {SELECTED_MODEL = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_MODEL = null; d3.select(this).classed("text-hover",false);})
-    //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
+    //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortByPrediction("c",cols[d],colSortOrder);})
     ;
 
   var heatMap = svg.append("g").attr("class","g3")
@@ -129,14 +129,14 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
 
   $(selector).scrollTop(45);
   $(selector).scrollLeft(45);
-  sortbylabel(selector, "c", 0, true, rows, cols, numrows, numcols);
+  sortByPrediction(selector, "c", 0, true, rows, cols, numrows, numcols);
 
   // single and double click handlers for columns
   var cc = clickcancel();
   colLabels.call(cc);
   cc.on('click', function(d, i) {
     colSortOrder=!colSortOrder;
-    sortbylabel(selector, "c", cols[SELECTED_MODEL].index, colSortOrder, rows, cols, numrows, numcols);
+    sortByPrediction(selector, "c", cols[SELECTED_MODEL].index, colSortOrder, rows, cols, numrows, numcols);
   });
 
   // single and double click handlers for rows
@@ -144,7 +144,7 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
   rowLabels.call(rc);
   rc.on('click', function(d, i) {
     rowSortOrder=!rowSortOrder;
-    sortbylabel(selector, "r", rows[SELECTED_EXAMPLE].index, rowSortOrder, rows, cols, numrows, numcols);
+    sortByPrediction(selector, "r", rows[SELECTED_EXAMPLE].index, rowSortOrder, rows, cols, numrows, numcols);
   });
   rc.on('dblclick', function(d) {
     toggleGroup(SELECTED_EXAMPLE);

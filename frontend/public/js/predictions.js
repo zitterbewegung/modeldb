@@ -60,5 +60,32 @@ $(function() {
     }
   });
 
+  $(document).on('change', '.predictions-sort', function(event) {
+    var type = event.target.value;
+    var rORc;
+    var order;
+
+    switch(type) {
+      case 'ex_inc':
+        rORc = 'r';
+        order = true;
+        break;
+      case 'ex_dec':
+        rORc = 'r';
+        order = false;
+        break;
+      case 'm_inc':
+        rORc = 'c';
+        order = true;
+        break;
+      case 'm_dec':
+        rORc = 'c';
+        order = false;
+        break;
+      default:
+        return;
+    }
+    sortByLabel('.heatmap', rORc, !order, ROWS, COLS, MATRIX_NUMROWS, MATRIX_NUMCOLS);
+  });
 
 });

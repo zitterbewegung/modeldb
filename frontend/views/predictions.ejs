@@ -67,8 +67,24 @@
           </div>
         </div>
 
+        <div class="menu-section-container predictions-sort-container">
+          <h2>Sort</h2>
+          Order the rows and columns of the prediction matrix.
+          <div class="select-container">
+            <select class="predictions-sort">
+              <option selected value="None">None</option>
+              <option value="ex_inc">Example ID (increasing)</option>
+              <option value="ex_dec">Example ID (decreasing)</option>
+              <option value="m_inc">Model ID (increasing)</option>
+              <option value="m_dec">Model ID (decreasing)</option>
+              <option value="cluster">Cluster examples</option>
+            </select>
+          </div>
+        </div>
+
         <div class="menu-section-container predictions-threshold-container">
           <h2>Threshold</h2>
+          Select threshold for binary classification.
           <input type="range" min="0" max="1" value="0.5" step="0.01" class="threshold">
           <div class="predictions-threshold-value">0.5</div>
         </div>

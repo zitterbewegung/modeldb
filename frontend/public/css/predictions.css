@@ -304,3 +304,7 @@ input.threshold::-webkit-slider-thumb:after {
 .examples-menu-radio > label {
   cursor: pointer;
 }
+
+.predictions-sort-container select {
+  width: 100%;
+}

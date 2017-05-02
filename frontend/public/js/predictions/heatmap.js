@@ -76,7 +76,7 @@ function drawHeatmap(selector, rows, cols, data) {
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
     .on("mouseover", function(d) {SELECTED_EXAMPLE = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_EXAMPLE = null; d3.select(this).classed("text-hover",false);})
-    //.on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortbylabel("r", d.index, rowSortOrder);})
+    //.on("click", function(d,i) {rowSortOrder=!rowSortOrder; sortByPrediction("r", d.index, rowSortOrder);})
     ;
 
   var colLabels = svg.append("g")
@@ -98,7 +98,7 @@ function drawHeatmap(selector, rows, cols, data) {
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
     .on("mouseover", function(d) {SELECTED_MODEL = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_MODEL = null; d3.select(this).classed("text-hover",false);})
-    //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortbylabel("c",cols[d],colSortOrder);})
+    //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortByPrediction("c",cols[d],colSortOrder);})
     ;
 
   var heatMap = svg.append("g").attr("class","g3")
@@ -169,7 +169,7 @@ function drawHeatmap(selector, rows, cols, data) {
 
   $(selector).scrollTop(45);
   $(selector).scrollLeft(45);
-  sortbylabel(selector, "c",0,true, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
+  sortByPrediction(selector, "c", 0, true, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   updateLegend();
 
   // single and double click handlers for columns
@@ -177,7 +177,7 @@ function drawHeatmap(selector, rows, cols, data) {
   colLabels.call(cc);
   cc.on('click', function(d, i) {
     colSortOrder=!colSortOrder;
-    sortbylabel(selector, "c", cols[SELECTED_MODEL].index, colSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
+    sortByPrediction(selector, "c", cols[SELECTED_MODEL].index, colSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   });
   cc.on('dblclick', function(d) {
     toggleModel(SELECTED_MODEL);
@@ -188,16 +188,16 @@ function drawHeatmap(selector, rows, cols, data) {
   rowLabels.call(rc);
   rc.on('click', function(d, i) {
     rowSortOrder=!rowSortOrder;
-    sortbylabel(selector, "r", rows[SELECTED_EXAMPLE].index, rowSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
+    sortByPrediction(selector, "r", rows[SELECTED_EXAMPLE].index, rowSortOrder, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   });
   rc.on('dblclick', function(d) {
     toggleExample(SELECTED_EXAMPLE)
   });
 }
 
-function sortbylabel(selector, rORc,i,sortOrder, rows, cols, numRows, numCols){
+function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCols){
   var svg = d3.select(selector + ' .heatmap-svg');
-  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
+  var t = svg.transition().duration(1000 - 5*(numRows + numCols));
   var vals=[];
   var sorted; // sorted is zero-based index
   d3.selectAll(selector + " .c"+rORc+(i))
@@ -230,6 +230,49 @@ function sortbylabel(selector, rORc,i,sortOrder, rows, cols, numRows, numCols){
       .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
       ;
   }
+}
+
+function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
+  var svg = d3.select(selector + ' .heatmap-svg');
+  var t = svg.transition().duration(1000 - 5*(numRows + numCols));
+  var vals=[];
+  var sorted; // sorted is zero-based index
+
+  var type = rORc == "r" ? ".rowLabel" : ".colLabel";
+  d3.selectAll(selector + ' ' + type)
+   .filter(function(ce){
+      vals.push(ce.id);
+    })
+  ;
+
+  if(rORc=="c"){
+    vals.pop();
+    sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
+    sorted.unshift(cols['GT'].index);
+    t.selectAll(".cell:not(.cc0)")
+      .attr("x", function(d) { return sorted.indexOf(cols[d.x].index) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+      ;
+    t.selectAll(".colLabel:not(.c0)")
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      ;
+    t.selectAll(".hl-col")
+      .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+      ;
+  } else {
+    sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
+    t.selectAll(".cell")
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
+      ;
+    t.selectAll(".rowLabel")
+      .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
+      ;
+    t.selectAll(".hl-row")
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      ;
+  }
+
+  // reset select to None so we can resort by model or example
+  $('.predictions-sort').val('None')
 }
 
 function adjustIndices(data) {

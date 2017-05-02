@@ -38,6 +38,7 @@ $(function() {
     }
 
     updateConfusionMatrices();
+    aggregateHeatmap();
   });
 
   $(document).on('click', '.example-container-close', function() {

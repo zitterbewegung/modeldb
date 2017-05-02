@@ -38,7 +38,7 @@ SCALES = {
   'CORRECTNESS_SCALE': CORRECTNESS_SCALE
 };
 
-COLOR_SCALE = RG_SCALE;
+COLOR_SCALE = OB_SCALE;
 
 
 /* matrix constants  */

@@ -81,7 +81,13 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     })
     .attr("width", CELL_SIZE)
     .attr("height", CELL_SIZE)
-    .style("fill", function(d) { return COLOR_SCALE(d.value); })
+    .style("fill", function(d) {
+      if (d.x == 'GT') {
+        return MONO_SCALE(d.value);
+      } else {
+        return RG_SCALE(d.value);
+      }
+    })
     /* .on("click", function(d) {
            var rowtext=d3.select(".r"+(d.row-1));
            if(rowtext.classed("text-selected")==false){

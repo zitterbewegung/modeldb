@@ -38,10 +38,15 @@ var addConfusionMatrix = function(model, selector, col) {
   .interpolate(d3.interpolateHcl)
   .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
 
-  TP.css('background-color', blueScale(vals['TP']));
-  FN.css('background-color', blueScale(vals['FN']));
-  FP.css('background-color', blueScale(vals['FP']));
-  TN.css('background-color', blueScale(vals['TN']));
+  var count = vals['count'];
+
+  // correct
+  TP.css('background-color', RG_SCALE(0.5 + 0.5*vals['TP']/count));
+  TN.css('background-color', RG_SCALE(0.5 + 0.5*vals['TN']/count));
+
+  // incorrect
+  FN.css('background-color', RG_SCALE(0.5 - 0.5*vals['FN']/count));
+  FP.css('background-color', RG_SCALE(0.5 - 0.5*vals['FP']/count));
 
   matrix.append(TP);
   matrix.append(FN);
@@ -65,29 +70,28 @@ var updateConfusionMatrices = function() {
   for (var i=0; i<matrices.length; i++) {
     var matrix = $(matrices[i]);
     var model = matrix.data('model');
-    console.log(model);
 
     vals = countExamples(model);
 
-    var blueScale = d3.scale.linear()
-      .domain([0, vals['count']])
-      .interpolate(d3.interpolateHcl)
-      .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
-
     TP = matrix.find('.cfm-tp');
-    FN = matrix.find('.cfm-tn');
+    FN = matrix.find('.cfm-fn');
     FP = matrix.find('.cfm-fp');
-    TN = matrix.find('.cfm-fn');
+    TN = matrix.find('.cfm-tn');
 
     TP.html(vals['TP']);
     TN.html(vals['TN']);
     FP.html(vals['FP']);
     TN.html(vals['FN']);
 
-    TP.css('background-color', blueScale(vals['TP']));
-    FN.css('background-color', blueScale(vals['FN']));
-    FP.css('background-color', blueScale(vals['FP']));
-    TN.css('background-color', blueScale(vals['TN']));
+    var count = vals['count'];
+
+    // correct
+    TP.css('background-color', RG_SCALE(0.5 + 0.5*vals['TP']/count));
+    TN.css('background-color', RG_SCALE(0.5 + 0.5*vals['TN']/count));
+
+    // incorrect
+    FN.css('background-color', RG_SCALE(0.5 - 0.5*vals['FN']/count));
+    FP.css('background-color', RG_SCALE(0.5 - 0.5*vals['FP']/count));
 
   }
 }

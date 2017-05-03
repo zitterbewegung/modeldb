@@ -89,4 +89,58 @@ $(function() {
     sortByLabel('.heatmap', rORc, !order, ROWS, COLS, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   });
 
+  $(document).on('click', '.examples-menu-close', function() {
+    // hide menu
+    $('.menu-icon').addClass('rotated');
+    $('.examples-menu').animate({'right': '-250px'});
+    $('.examples-menu').css({'margin-left': '250px'});
+
+    // expand matrix
+    $('.heatmap').css({'max-width': '100%'});
+    $('.agg-heatmap').css({'max-width': '100%'});
+    $('.heatmap-container').css({'width': '100%'});
+  });
+
+  $(document).on('click', '.menu-icon', function() {
+    var closed = $(this).hasClass('rotated');
+    var fixed = $('.examples-menu').hasClass('fixed');
+
+    if (closed) {
+
+      // open menu
+      if (fixed) {
+        $('.examples-menu').animate({'right': '0px'});
+        $('.examples-menu').css({'margin-left': '0px'});
+      } else {
+        $('.examples-menu').animate({'margin-left': '0px'});
+        $('.examples-menu').css({'right': '0px'});
+      }
+
+      // shrink matrix
+      $('.heatmap-container').css({'width': '770px'});
+      $('.heatmap').css({'max-width': '750px'});
+      $('.agg-heatmap').css({'max-width': '750px'});
+      setTimeout(function() {
+        $('.heatmap').scrollLeft(45);
+        $('.agg-heatmap').scrollLeft(45);
+      }, 100)
+    } else {
+
+      // close menu
+      if (fixed) {
+        $('.examples-menu').animate({'right': '-250px'});
+        $('.examples-menu').css({'margin-left': '250px'});
+      } else {
+        $('.examples-menu').animate({'margin-left': '250px'});
+        $('.examples-menu').css({'right': '-250px'});
+      }
+
+      // expand matrix
+      $('.heatmap').css({'max-width': '100%'});
+      $('.agg-heatmap').css({'max-width': '100%'});
+      $('.heatmap-container').css({'width': '100%'});
+    }
+    $(this).toggleClass('rotated');
+  });
+
 });

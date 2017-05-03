@@ -66,13 +66,6 @@ input.threshold::-webkit-slider-thumb:after {
   box-sizing: border-box;
 }
 
-.heatmap-container {
-  display: inline-block;
-  vertical-align: top;
-  width: 750px;
-  padding: 20px;
-}
-
 #heatmap {
   display: inline-block;
   vertical-align: top;
@@ -123,7 +116,7 @@ input.threshold::-webkit-slider-thumb:after {
 }
 
 .example-container-close:hover {
-  opacity: 7;
+  opacity: 1;
 }
 
 .example {
@@ -142,7 +135,7 @@ input.threshold::-webkit-slider-thumb:after {
 
 .examples-menu {
   width: 100%;
-  padding: 20px 20px 20px 0;
+  padding: 10px 20px 10px 0;
   box-sizing: border-box;
 }
 
@@ -307,4 +300,30 @@ input.threshold::-webkit-slider-thumb:after {
 
 .predictions-sort-container select {
   width: 100%;
+}
+
+.examples-menu-close {
+  position: absolute;
+  padding: 10px 13px;
+  right: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+  background-color: #D9E0E8;
+  margin-top: 2px;
+}
+
+.examples-menu-close:hover {
+  opacity: 1;
+}
+
+.menu-icon {
+  transition: all 2s ease;
+}
+
+.menu-icon.rotated {
+  -moz-transform: rotate(90deg);
+  -webkit-transform:rotate(90deg);
+  -ms-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
 }

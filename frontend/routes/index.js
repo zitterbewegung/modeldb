@@ -1,5 +1,5 @@
 var numRows = 1000;
-var numCols = 60;
+var numCols = 70;
 
 var express = require('express');
 var router = express.Router();
@@ -17,7 +17,7 @@ router.get('/predictions', function(req, res, next) {
         'labels': ['Predictions'],
         'links': ['/predictions']
       },
-      menu: false
+      menu: true
   });
 });
 

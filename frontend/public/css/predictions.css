@@ -134,9 +134,10 @@ input.threshold::-webkit-slider-thumb:after {
 }
 
 .examples-menu {
-  width: 100%;
+  width: 235px;
   padding: 10px 20px 10px 0;
   box-sizing: border-box;
+  position: fixed;
 }
 
 .examples-menu.fixed {

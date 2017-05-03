@@ -317,6 +317,7 @@ function showAllExamples() {
     }
   }
   drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
+  unfilterTable();
 
   // unselect all models
   for (var model in SELECTED_MODELS) {
@@ -334,4 +335,5 @@ function showFilteredExamples(group) {
     }
   }
   drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
+  filterTable();
 }

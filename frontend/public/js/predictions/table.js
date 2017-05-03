@@ -5,6 +5,8 @@ var table = function(columns, data, selector) {
     "columns": columns
   });
 
+  TABLE = dt;
+
   // set column count
   $(selector).data('numColumns', columns.length);
 
@@ -94,6 +96,16 @@ var table = function(columns, data, selector) {
 
 };
 
+function filterTable() {
+  TABLE_FILTER = true;
+  TABLE.rows().invalidate().draw();
+}
+
+function unfilterTable() {
+  TABLE_FILTER = false;
+  TABLE.rows().invalidate().draw();
+}
+
 (function($) {
 
   $.fn.rkmd_checkboxRipple = function() {
@@ -125,5 +137,19 @@ var table = function(columns, data, selector) {
 
     });
   }
+
+  $.fn.dataTableExt.afnFiltering.push(
+    function( oSettings, aData, iDataIndex ) {
+      if (!TABLE_FILTER || jQuery.isEmptyObject(ROWS)) {
+        return true;
+      } else {
+        if (ROWS[aData[0]].show != null) {
+          return ROWS[aData[0]].show;
+        } else {
+          return true;
+        }
+      }
+    }
+  );
 
 }(jQuery));

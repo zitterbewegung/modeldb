@@ -33,11 +33,6 @@ var addConfusionMatrix = function(model, selector, col) {
   FP.html(vals['FP']);
   TN.html(vals['TN']);
 
-  var blueScale = d3.scale.linear()
-  .domain([0, vals['count']])
-  .interpolate(d3.interpolateHcl)
-  .range([d3.rgb("#D9E0E8"), d3.rgb("#2c3e50")]);
-
   var count = vals['count'];
 
   // correct
@@ -81,7 +76,7 @@ var updateConfusionMatrices = function() {
     TP.html(vals['TP']);
     TN.html(vals['TN']);
     FP.html(vals['FP']);
-    TN.html(vals['FN']);
+    FN.html(vals['FN']);
 
     var count = vals['count'];
 

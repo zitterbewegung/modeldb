@@ -56,7 +56,8 @@ $(function() {
     } else {
       $('.examples-menu').removeClass('fixed');
       $('.examples-menu').css({
-        'margin-top': (height - $('.examples-menu').height()) + 'px'
+        //'margin-top': (height - $('.examples-menu').height()) + 'px'
+        'margin-top': (-1 * (scroll - height) - $('.examples-menu').height()) + 'px'
       });
     }
   });

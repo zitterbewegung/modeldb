@@ -61,7 +61,9 @@ SELECTED_MODEL = null;
 SELECTED_EXAMPLE = null;
 
 /* example data */
+TABLE = null;
 TABLE_COLUMNS = null;
+TABLE_FILTER = false;
 RAW_DATA_KEYS = {};
 RAW_DATA = {};
 FILTER_GROUPS = {};

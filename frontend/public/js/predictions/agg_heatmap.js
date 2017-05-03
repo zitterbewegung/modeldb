@@ -109,8 +109,10 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
           '<div class="heatmap-tooltip-value">' + d.x + '</div></div>';
 
       if (d.x == 'GT') {
-        tooltip += '<div><div class="heatmap-tooltip-key">average:</div>' +
-          '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>';
+        tooltip += '<div><div class="heatmap-tooltip-key"># positive:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.pos + '</div></div>' +
+          '<div><div class="heatmap-tooltip-key"># negative:</div>' +
+          '<div class="heatmap-tooltip-value">' + d.neg + '</div></div>';
       } else {
         tooltip += '<div><div class="heatmap-tooltip-key">accuracy:</div>' +
           '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>';

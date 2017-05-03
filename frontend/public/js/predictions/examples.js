@@ -147,11 +147,18 @@ var calculateAggregateDataAcc = function() {
             }
           }
 
-          data.push({
+          obj = {
             'x': COLS[col].id,
             'y': key,
             'value': total/examples.length
-          })
+          };
+
+          if (col == 'GT') {
+            obj['pos'] = total;
+            obj['neg'] = examples.length - total;
+          }
+
+          data.push(obj);
         }
       }
 

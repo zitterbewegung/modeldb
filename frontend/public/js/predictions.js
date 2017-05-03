@@ -117,7 +117,7 @@ $(function() {
       }
 
       // shrink matrix
-      $('.heatmap-container').css({'width': '770px'});
+      $('.heatmap-container').css({'width': '790px'});
       $('.heatmap').css({'max-width': '750px'});
       $('.agg-heatmap').css({'max-width': '750px'});
       setTimeout(function() {

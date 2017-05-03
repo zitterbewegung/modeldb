@@ -119,7 +119,13 @@ function drawHeatmap(selector, rows, cols, data) {
     })
     .attr("width", CELL_SIZE)
     .attr("height", CELL_SIZE)
-    .style("fill", function(d) { return COLOR_SCALE(d.value); })
+    .style("fill", function(d) {
+      if (d.x == 'GT') {
+        return MONO_SCALE(d.value);
+      } else {
+        return COLOR_SCALE(d.value);
+      }
+    })
     /* .on("click", function(d) {
            var rowtext=d3.select(".r"+(d.row-1));
            if(rowtext.classed("text-selected")==false){
@@ -406,8 +412,11 @@ function removeModel(model, col) {
 var updateLegend = function() {
   d3.select('.heatmap-legend svg').remove();
   var cellSize = 12;
-  var legendCellSize = 36;
+  var legendCellSize = 25;
   var width = 750;
+  var scaleWidth = 522;
+  var gtWidth = 100;
+  var margin = 26;
   var height = 50;
   var left = "";
   var right = "";
@@ -455,7 +464,14 @@ var updateLegend = function() {
   legendTitle.append("text")
     .attr("class", "mono")
     .text(right)
-    .attr("x", width - right.length * 7)
+    .attr("x", scaleWidth - right.length * 7)
+    .attr("y", 12)
+    ;
+
+  legendTitle.append("text")
+    .attr("class", "mono")
+    .text("Ground Truth (GT)")
+    .attr("x", scaleWidth + margin)
     .attr("y", 12)
     ;
 
@@ -471,6 +487,22 @@ var updateLegend = function() {
         return COLOR_SCALE(d);
       }
     });
+
+  legend.append("rect")
+    .attr("x", scaleWidth + margin)
+    .attr("y", 18)
+    .attr("width", gtWidth)
+    .attr("height", cellSize)
+    .style("fill", "#D9E0E8")
+  ;
+
+  legend.append("rect")
+    .attr("x", scaleWidth + margin + gtWidth)
+    .attr("y", 18)
+    .attr("width", gtWidth)
+    .attr("height", cellSize)
+    .style("fill", "#2c3e50")
+  ;
 
   // adjust halfway point for binary scale
   if (scale == "BINARY_SCALE") {
@@ -495,15 +527,27 @@ var updateLegend = function() {
     })
     .attr("x", function(d, i) { return legendCellSize * i; })
     .attr("y", 42);
+
+  legend.append("text")
+    .attr("class", "mono")
+    .text("0")
+    .attr("x", scaleWidth + margin)
+    .attr("y", 42);
+
+  legend.append("text")
+    .attr("class", "mono")
+    .text("1")
+    .attr("x", width - 10)
+    .attr("y", 42);
 }
 
 var updateColorScale = function(scale) {
   COLOR_SCALE = SCALES[scale];
+  d3.selectAll(".heatmap .cell.cc0")
+  .style("fill", function(d) {
+    return MONO_SCALE(d.value);
+  });
   if (scale == "MONO_SCALE") {
-    d3.selectAll(".heatmap .cell.cc0")
-      .style("fill", function(d) {
-        return COLOR_SCALE(d.value);
-      });
     d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         // use distance from ground truth
@@ -515,10 +559,6 @@ var updateColorScale = function(scale) {
         return val;
       });
   } else if (scale == "CORRECTNESS_SCALE") {
-    d3.selectAll(".heatmap .cell.cc0")
-      .style("fill", function(d) {
-        return MONO_SCALE(d.value);
-      });
     d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         var val;
@@ -533,7 +573,7 @@ var updateColorScale = function(scale) {
         return val;
       });
   } else {
-    d3.selectAll(".heatmap .cell")
+    d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         return COLOR_SCALE(d.value);
       });

@@ -83,6 +83,13 @@ $(function() {
         rORc = 'c';
         order = false;
         break;
+      case 'h_cluster':
+        hcluster();
+        return;
+      case 'k_means':
+        var k = prompt('Enter k for k-means clustering of examples based on prediction values:');
+        kmeans(k);
+        return;
       default:
         return;
     }

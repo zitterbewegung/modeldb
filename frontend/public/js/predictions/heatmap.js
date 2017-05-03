@@ -281,6 +281,103 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
   }
 }
 
+function hcluster() {
+  var rows = {};
+  var sorted = {};
+  var inorder = [];
+
+  // collect vectors
+  for (var i=0; i<MATRIX_NUMROWS; i++) {
+    var row = [];
+    d3.selectAll(".heatmap .cr" + (i))
+     .filter(function(ce){
+        row.push(ce.value);
+      })
+    ;
+    rows[i] = row;
+  }
+
+  // cluster
+  var node = clusterfck.hcluster(Object.values(rows));
+
+  console.log(node);
+  // traverse tree to get order
+  traverse(node, inorder);
+  for (var id in rows) {
+    sorted[id] = inorder.indexOf(rows[id]);
+  }
+
+  // animate changes
+  var svg = d3.select('.heatmap .heatmap-svg');
+  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
+  t.selectAll(".cell")
+    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE; })
+    ;
+  t.selectAll(".rowLabel")
+    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE; })
+    ;
+  t.selectAll(".hl-row")
+    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE; })
+    ;
+
+}
+
+function kmeans(k) {
+  var rows = {};
+  var vals = [];
+  var sorted = {};
+  var inorder = [];
+
+  // collect vectors
+  for (var i=0; i<MATRIX_NUMROWS; i++) {
+    var row = [];
+    d3.selectAll(".heatmap .cr" + (i))
+     .filter(function(ce){
+        row.push(ce.value);
+      })
+    ;
+    rows[row] = i;
+    vals.push(row);
+  }
+
+  var counter = 0;
+  var clusters = clusterfck.kmeans(vals, k);
+
+  for (var i=0; i<clusters.length; i++) {
+    for (var j=0; j<clusters[i].length; j++) {
+      sorted[rows[clusters[i][j]]] = counter++;
+    }
+  }
+
+  // animate changes
+  var svg = d3.select('.heatmap .heatmap-svg');
+  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
+  t.selectAll(".cell")
+    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE; })
+    ;
+  t.selectAll(".rowLabel")
+    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE; })
+    ;
+  t.selectAll(".hl-row")
+    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE; })
+    ;
+}
+
+// inorder traversal of hcluster tree
+function traverse(node, result) {
+  if (node == null) {
+    return;
+  }
+
+  traverse(node.left, result);
+  if (node.left == null && node.right == null) {
+    result.push(node.value);
+  }
+  traverse(node.right, result);
+}
+
+
+
 function adjustIndices(data) {
   var idx = 0;
   var vals = Object.values(data);

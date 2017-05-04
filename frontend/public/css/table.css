@@ -59,3 +59,15 @@
   text-transform: uppercase;
   display: none;
 }
+
+.columns-container-container {
+  padding-top: 20px;
+}
+
+.columns-container {
+  white-space: normal;
+  display: none;
+  margin: 20px 0;
+  overflow: auto;
+  max-height: 120px;
+}

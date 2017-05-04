@@ -3,9 +3,8 @@
 $(function() {
 
   // fetch columns
-  $.get('/table-columns', function(response) {
+  $.get('/columns', function(response) {
     TABLE_COLUMNS = response;
-    TABLE_COLUMNS.unshift({'data': 'id', 'title': 'id'});
 
     // store columns
     for (var i=0; i<response.length; i++) {

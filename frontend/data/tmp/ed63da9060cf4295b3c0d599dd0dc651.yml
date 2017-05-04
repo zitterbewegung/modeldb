@@ -1,0 +1,83 @@
+DATASETS: {}
+MODEL:
+  CONFIG:
+    C: 1000
+    class_weight: null
+    dual: false
+    fit_intercept: true
+    intercept_scaling: 1
+    max_iter: 100
+    multi_class: ovr
+    n_jobs: 1
+    penalty: l2
+    random_state: null
+    solver: liblinear
+    tol: 0.0001
+    verbose: 0
+    warm_start: false
+  METRICS:
+  - TYPE: accuracy
+    VALUE: 0.8798185941043084
+  NAME: LogisticRegression
+  TYPE: LogisticRegression
+  features:
+  - Age
+  - DailyRate
+  - DistanceFromHome
+  - EmployeeCount
+  - EmployeeNumber
+  - HourlyRate
+  - JobInvolvement
+  - JobLevel
+  - MonthlyIncome
+  - MonthlyRate
+  - NumCompaniesWorked
+  - PercentSalaryHike
+  - StandardHours
+  - StockOptionLevel
+  - TotalWorkingYears
+  - TrainingTimesLastYear
+  - YearsAtCompany
+  - YearsInCurrentRole
+  - YearsSinceLastPromotion
+  - YearsWithCurrManager
+  - BusinessTravel_Non-Travel
+  - BusinessTravel_Travel_Frequently
+  - Department_Human Resources
+  - Department_Research & Development
+  - Education_1
+  - Education_2
+  - Education_3
+  - Education_4
+  - EducationField_Human Resources
+  - EducationField_Life Sciences
+  - EducationField_Marketing
+  - EducationField_Medical
+  - EducationField_Other
+  - EnvironmentSatisfaction_1
+  - EnvironmentSatisfaction_2
+  - EnvironmentSatisfaction_3
+  - JobSatisfaction_1
+  - JobSatisfaction_2
+  - JobSatisfaction_3
+  - PerformanceRating_3
+  - JobRole_Healthcare Representative
+  - JobRole_Human Resources
+  - JobRole_Laboratory Technician
+  - JobRole_Manager
+  - JobRole_Manufacturing Director
+  - JobRole_Research Director
+  - JobRole_Research Scientist
+  - JobRole_Sales Executive
+  - MaritalStatus_Divorced
+  - MaritalStatus_Married
+  - OverTime_No
+  - RelationshipSatisfaction_1
+  - RelationshipSatisfaction_2
+  - RelationshipSatisfaction_3
+  - Gender_Female
+  - WorkLifeBalance_1
+  - WorkLifeBalance_2
+  - WorkLifeBalance_3
+  model_id: ed63da9060cf4295b3c0d599dd0dc651
+  predictions_file: tmp/ed63da9060cf4295b3c0d599dd0dc651_pred.txt

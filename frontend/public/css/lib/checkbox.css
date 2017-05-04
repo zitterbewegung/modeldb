@@ -1,11 +1,5 @@
 /* taken from https://codepen.io/rkchauhan/pen/ONJEYL */
 
-.columns-container {
-  white-space: normal;
-  padding: 10px;
-  display: none;
-}
-
 .column-checkbox {
   margin: 5px;
   min-width: 100px;

@@ -1,0 +1,86 @@
+DATASETS: {}
+MODEL:
+  CONFIG:
+    alpha: 0.0001
+    average: false
+    class_weight: null
+    epsilon: 0.1
+    eta0: 0.0
+    fit_intercept: true
+    l1_ratio: 0.15
+    learning_rate: optimal
+    loss: log
+    n_iter: 5
+    n_jobs: 1
+    penalty: elasticnet
+    power_t: 0.5
+    random_state: null
+    shuffle: true
+    verbose: 0
+    warm_start: false
+  METRICS:
+  - TYPE: accuracy
+    VALUE: 0.8390022675736961
+  NAME: SGDClassifier
+  TYPE: SGDClassifier
+  features:
+  - Age
+  - DailyRate
+  - DistanceFromHome
+  - EmployeeCount
+  - EmployeeNumber
+  - HourlyRate
+  - JobInvolvement
+  - JobLevel
+  - MonthlyIncome
+  - MonthlyRate
+  - NumCompaniesWorked
+  - PercentSalaryHike
+  - StandardHours
+  - StockOptionLevel
+  - TotalWorkingYears
+  - TrainingTimesLastYear
+  - YearsAtCompany
+  - YearsInCurrentRole
+  - YearsSinceLastPromotion
+  - YearsWithCurrManager
+  - BusinessTravel_Non-Travel
+  - BusinessTravel_Travel_Frequently
+  - Department_Human Resources
+  - Department_Research & Development
+  - Education_1
+  - Education_2
+  - Education_3
+  - Education_4
+  - EducationField_Human Resources
+  - EducationField_Life Sciences
+  - EducationField_Marketing
+  - EducationField_Medical
+  - EducationField_Other
+  - EnvironmentSatisfaction_1
+  - EnvironmentSatisfaction_2
+  - EnvironmentSatisfaction_3
+  - JobSatisfaction_1
+  - JobSatisfaction_2
+  - JobSatisfaction_3
+  - PerformanceRating_3
+  - JobRole_Healthcare Representative
+  - JobRole_Human Resources
+  - JobRole_Laboratory Technician
+  - JobRole_Manager
+  - JobRole_Manufacturing Director
+  - JobRole_Research Director
+  - JobRole_Research Scientist
+  - JobRole_Sales Executive
+  - MaritalStatus_Divorced
+  - MaritalStatus_Married
+  - OverTime_No
+  - RelationshipSatisfaction_1
+  - RelationshipSatisfaction_2
+  - RelationshipSatisfaction_3
+  - Gender_Female
+  - WorkLifeBalance_1
+  - WorkLifeBalance_2
+  - WorkLifeBalance_3
+  model_id: 23a534cccbe34793ba95844966f1e14c
+  predictions_file: tmp/23a534cccbe34793ba95844966f1e14c_pred.txt

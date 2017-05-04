@@ -38,20 +38,15 @@ var table = function(columns, data, selector) {
 
     columnsContainer.append(col);
   }
-  columnsContainer.insertBefore('.table-scroll-wrapper');
+
+  // wrap in another div because of how margin top works with clear: both;
+  var container = $('<div class="columns-container-container"></div>');
+  container.append(columnsContainer);
+  container.insertBefore('.table-scroll-wrapper');
 
   // add placeholder for when all columns unselected
   var placeholder = $('<div class="table-placeholder">Select a column to display</div>');
   placeholder.insertBefore('.table-scroll-wrapper');
-
-  // figure out column widths
-  var maxWidth = 0;
-  var cols = $('.column-checkbox');
-  for (var i=0; i<cols.length; i++) {
-    var width = $(cols[i]).width();
-    maxWidth = Math.max(maxWidth, width);
-  }
-  $('.column-checkbox').css('width', maxWidth);
 
   // handlers
   $(document).on('click', '.table-sliders-icon', function() {
@@ -143,6 +138,8 @@ function unfilterTable() {
       if (!TABLE_FILTER || jQuery.isEmptyObject(ROWS)) {
         return true;
       } else {
+        console.log(ROWS[aData[0]]);
+        console.log(aData[0]);
         if (ROWS[aData[0]].show != null) {
           return ROWS[aData[0]].show;
         } else {

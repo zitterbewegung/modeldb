@@ -4,6 +4,10 @@ var numCols = 70;
 var express = require('express');
 var router = express.Router();
 var api = require('../util/api.js');
+var csv = require('csvtojson');
+var fs = require('fs');
+var path = require('path');
+var readline = require('readline');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -107,7 +111,27 @@ router.get('/pipeline/:id', function(req, res, next) {
   res.json(response);
 });
 
-router.get('/table-columns', function(req, res, next) {
+router.get('/columns', function(req, res, next) {
+  var rd = readline.createInterface({
+      input: fs.createReadStream(path.resolve('data/columns.csv')),
+      output: process.stdout,
+      console: false
+  });
+
+  rd.on('line', function(line) {
+    var cols = line.split(',');
+    var response = [];
+    cols.forEach(function(col) {
+      response.push({
+        data: col,
+        title: col
+      });
+    });
+    res.json(response);
+  });
+
+  /*
+  // dummy test data
   var response = [];
 
   for (var i=0; i<10; i++) {
@@ -118,22 +142,16 @@ router.get('/table-columns', function(req, res, next) {
   }
 
   res.json(response);
-});
-
-router.get('/table-data', function(req, res, next) {
-  var response = [];
-
-  for (var i=0; i<100; i++) {
-    var row = {};
-    for (var j=0; j<20; j++) {
-      row["col" + j] = (Math.random().toString(36).substr(2, 5));
-    }
-    response.push(row);
-  }
-  res.json(response);
+  */
 });
 
 router.get('/examples', function(req, res, next) {
+  csv().fromFile(path.resolve('data/X_test.csv'), function(err, result) {
+    res.json(result);
+  });
+
+  /*
+  // dummy test data
   var response = [];
   for (var i=0; i<numRows; i++) {
     var example = {'id': i};
@@ -143,6 +161,7 @@ router.get('/examples', function(req, res, next) {
     response.push(example);
   }
   res.json(response);
+  */
 });
 
 module.exports = router;

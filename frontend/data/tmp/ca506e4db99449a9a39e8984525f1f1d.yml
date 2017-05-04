@@ -1,0 +1,85 @@
+DATASETS: {}
+MODEL:
+  CONFIG:
+    bootstrap: true
+    class_weight: null
+    criterion: gini
+    max_depth: null
+    max_features: auto
+    max_leaf_nodes: null
+    min_impurity_split: 1.0e-07
+    min_samples_leaf: 1
+    min_samples_split: 2
+    min_weight_fraction_leaf: 0.0
+    n_estimators: 100
+    n_jobs: 1
+    oob_score: false
+    random_state: null
+    verbose: 0
+    warm_start: false
+  METRICS:
+  - TYPE: accuracy
+    VALUE: 0.854875283446712
+  NAME: RandomForestClassifier
+  TYPE: RandomForestClassifier
+  features:
+  - Age
+  - DailyRate
+  - DistanceFromHome
+  - EmployeeCount
+  - EmployeeNumber
+  - HourlyRate
+  - JobInvolvement
+  - JobLevel
+  - MonthlyIncome
+  - MonthlyRate
+  - NumCompaniesWorked
+  - PercentSalaryHike
+  - StandardHours
+  - StockOptionLevel
+  - TotalWorkingYears
+  - TrainingTimesLastYear
+  - YearsAtCompany
+  - YearsInCurrentRole
+  - YearsSinceLastPromotion
+  - YearsWithCurrManager
+  - BusinessTravel_Non-Travel
+  - BusinessTravel_Travel_Frequently
+  - Department_Human Resources
+  - Department_Research & Development
+  - Education_1
+  - Education_2
+  - Education_3
+  - Education_4
+  - EducationField_Human Resources
+  - EducationField_Life Sciences
+  - EducationField_Marketing
+  - EducationField_Medical
+  - EducationField_Other
+  - EnvironmentSatisfaction_1
+  - EnvironmentSatisfaction_2
+  - EnvironmentSatisfaction_3
+  - JobSatisfaction_1
+  - JobSatisfaction_2
+  - JobSatisfaction_3
+  - PerformanceRating_3
+  - JobRole_Healthcare Representative
+  - JobRole_Human Resources
+  - JobRole_Laboratory Technician
+  - JobRole_Manager
+  - JobRole_Manufacturing Director
+  - JobRole_Research Director
+  - JobRole_Research Scientist
+  - JobRole_Sales Executive
+  - MaritalStatus_Divorced
+  - MaritalStatus_Married
+  - OverTime_No
+  - RelationshipSatisfaction_1
+  - RelationshipSatisfaction_2
+  - RelationshipSatisfaction_3
+  - Gender_Female
+  - WorkLifeBalance_1
+  - WorkLifeBalance_2
+  - WorkLifeBalance_3
+  model_id: ca506e4db99449a9a39e8984525f1f1d
+  predictions_file: tmp/ca506e4db99449a9a39e8984525f1f1d_pred.txt

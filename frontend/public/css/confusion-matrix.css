@@ -37,7 +37,10 @@
   font-weight: bold;
   font-size: 14px;
   top: 200px;
-  left: 50%;
+  left: 75px;
+  text-overflow: ellipsis;
+  width: 110px;
+  overflow: hidden;
 }
 
 .cfm-p1 {

@@ -212,7 +212,7 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
     })
   ;
   if(rORc=="r"){
-    vals.pop();
+    vals.shift(); // remove GT, assumes it is first one
     sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
     sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
@@ -225,14 +225,18 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
       .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
       ;
   } else {
+    console.log(vals);
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
       .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
       ;
     t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE; })
       ;
     t.selectAll(".hl-row")
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      ;
+    t.selectAll(".hl-agg-row")
       .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
       ;
   }

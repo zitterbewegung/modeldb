@@ -168,6 +168,7 @@ var calculateAggregateDataAcc = function() {
 }
 
 var aggregateHeatmap = function() {
+  var c = 0;
   if ($.isEmptyObject(GROUPS)) {
     if ($('.agg-heatmap .heatmap-svg').length > 0) {
       hideAggregateHeatmap();
@@ -181,7 +182,8 @@ var aggregateHeatmap = function() {
     if (GROUPS.hasOwnProperty(key)) {
       AGG_ROWS[key] = {
         'id': key,
-        'show': true
+        'show': true,
+        'index': c++
       }
     }
   }

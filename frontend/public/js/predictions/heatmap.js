@@ -225,7 +225,6 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
       .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
       ;
   } else {
-    console.log(vals);
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
       .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
@@ -287,8 +286,8 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
 
 function hcluster() {
   var rows = {};
-  var sorted = {};
-  var inorder = [];
+  var sortedRows = {};
+  var inorderRows = [];
 
   // collect vectors
   for (var i=0; i<MATRIX_NUMROWS; i++) {
@@ -304,24 +303,58 @@ function hcluster() {
   // cluster
   var node = clusterfck.hcluster(Object.values(rows));
 
-  console.log(node);
   // traverse tree to get order
-  traverse(node, inorder);
+  traverse(node, inorderRows);
   for (var id in rows) {
-    sorted[id] = inorder.indexOf(rows[id]);
+    sortedRows[id] = inorderRows.indexOf(rows[id]);
   }
 
   // animate changes
   var svg = d3.select('.heatmap .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
   t.selectAll(".cell")
-    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE; })
+    .attr("y", function(d) { return sortedRows[ROWS[d.y].index] * CELL_SIZE; })
     ;
   t.selectAll(".rowLabel")
-    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE; })
+    .attr("y", function (d, i) { return sortedRows[d.index] * CELL_SIZE; })
     ;
   t.selectAll(".hl-row")
-    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE; })
+    .attr("y", function(d) { return sortedRows[d.index] * CELL_SIZE; })
+    ;
+
+  // cluster columns
+  var cols = {};
+  var sortedCols = {};
+  var inorderCols = [];
+
+  for (var i=1; i<MATRIX_NUMCOLS; i++) {
+    var col = [];
+    d3.selectAll(".heatmap .cc" + (i))
+     .filter(function(ce){
+        col.push(ce.value);
+      })
+    ;
+    cols[i] = col;
+  }
+
+  // cluster
+  var node = clusterfck.hcluster(Object.values(cols));
+
+  // traverse tree to get order
+  traverse(node, inorderCols);
+  for (var id in cols) {
+    sortedCols[id] = inorderCols.indexOf(cols[id]) + 1;
+  }
+
+  // animate changes
+  t.selectAll(".cell:not(.cc0)")
+    .attr("x", function(d) { return sortedCols[COLS[d.x].index] * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+    ;
+  t.selectAll(".colLabel:not(.c0)")
+    .attr("y", function (d, i) { return sortedCols[d.index] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+    ;
+  t.selectAll(".hl-col")
+    .attr("x", function(d) { return sortedCols[d.index] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
     ;
 
 }

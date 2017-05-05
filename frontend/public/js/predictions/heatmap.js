@@ -209,6 +209,7 @@ function drawHeatmap(selector, rows, cols, data) {
   $(selector).scrollLeft(45);
   sortByPrediction(selector, "c", 0, true, rows, cols, MATRIX_NUMROWS, MATRIX_NUMCOLS);
   updateLegend();
+  updateColorScale("CORRECTNESS_SCALE");
 
   // single and double click handlers for columns
   var cc = clickcancel();

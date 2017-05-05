@@ -138,8 +138,6 @@ function unfilterTable() {
       if (!TABLE_FILTER || jQuery.isEmptyObject(ROWS)) {
         return true;
       } else {
-        console.log(ROWS[aData[0]]);
-        console.log(aData[0]);
         if (ROWS[aData[0]].show != null) {
           return ROWS[aData[0]].show;
         } else {

@@ -310,6 +310,7 @@ function generateGroupsForKey(key) {
 };
 
 function hideAggregateHeatmap() {
+  GROUPS = {};
   $('.agg-heatmap .heatmap-svg').remove();
 }
 
@@ -320,6 +321,8 @@ function showAllExamples() {
     }
   }
   drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
+  var scheme = $('select.color-scheme').val();
+  updateColorScale(scheme);
   unfilterTable();
 
   // unselect all models

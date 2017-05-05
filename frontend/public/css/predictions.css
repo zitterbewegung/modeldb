@@ -91,6 +91,7 @@ input.threshold::-webkit-slider-thumb:after {
   padding: 10px;
   box-sizing: border-box;
   overflow: auto;
+  white-space: nowrap;
 }
 
 .example-container h2 {
@@ -120,8 +121,15 @@ input.threshold::-webkit-slider-thumb:after {
 }
 
 .example {
-  margin-bottom: 10px;
   position: relative;
+  margin-right: 20px;
+  width: 100%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.example:last-child {
+  margin-right: 0;
 }
 
 .examples-menu-container {

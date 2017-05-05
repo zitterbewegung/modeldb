@@ -336,5 +336,7 @@ function showFilteredExamples(group) {
     }
   }
   drawHeatmap('.heatmap', ROWS, COLS, MATRIX_DATA);
+  var scheme = $('select.color-scheme').val();
+  updateColorScale(scheme);
   filterTable();
 }

@@ -696,7 +696,7 @@ var updateColorScale = function(scale) {
     d3.selectAll(".heatmap .cell:not(.cc0)")
       .style("fill", function(d) {
         var val;
-        d3.select('.gt' + ROWS[d.y].index).filter(function(e) {
+        d3.select('.heatmap .gt' + ROWS[d.y].index).filter(function(e) {
           if (e.value < 0.5) {
             val = CORRECTNESS_SCALE_GT0(d.value);
           } else {

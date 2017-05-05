@@ -2,8 +2,10 @@
 
 $(function() {
 
+  var id = $('body').data('id');
+
   // fetch columns
-  $.get('/columns', function(response) {
+  $.get('/projects/' + id + '/predictions/columns', function(response) {
     TABLE_COLUMNS = response;
 
     // store columns
@@ -17,7 +19,7 @@ $(function() {
     }
 
     // fetch example data
-    $.get('/examples', function(response) {
+    $.get('/projects/' + id + '/predictions/examples', function(response) {
       for (var i=0; i<response.length; i++) {
         RAW_DATA[response[i].id] = response[i];
       }

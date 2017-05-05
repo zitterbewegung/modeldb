@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var api = require('../util/api.js');
 
+
 /* GET projects listing. */
 router.get('/', function(req, res, next) {
   api.getProjects(function(response) {
@@ -60,6 +61,44 @@ router.get('/:id/table', function(req, res, next) {
     res.render('card', {
       models: response
     });
+  });
+});
+
+// render the predictions page for a selected project
+router.get('/:id/predictions', function(req, res, next) {
+  var id = req.params.id;
+  res.render('predictions', {
+    title: 'Predictions',
+      path: {
+        'labels': ['Projects', 'Models', 'Predictions'],
+        'links': ['/projects', '/projects/' + id + '/models', 'projects' + id + '/predictions']
+      },
+      menu: true,
+      id: id
+  });
+});
+
+// get raw predictions values in a selected project
+router.get('/:id/predictions/predictions', function(req, res, next) {
+  var projectId = req.params.id;
+  api.getProjectPredictions(projectId, function(response) {
+    res.json(response);
+  });
+});
+
+// get columns (features) of raw data in a selected project
+router.get('/:id/predictions/columns', function(req, res, next) {
+  var projectId = req.params.id;
+  api.getProjectColumns(projectId, function(response) {
+    res.json(response);
+  });
+});
+
+// get raw data for examples in a selected project
+router.get('/:id/predictions/examples', function(req, res, next) {
+  var projectId = req.params.id;
+  api.getProjectExamples(projectId, function(response) {
+    res.json(response);
   });
 });
 

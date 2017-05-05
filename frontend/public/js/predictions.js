@@ -1,6 +1,8 @@
 $(function() {
 
-  heatmap('/heatmap', '#heatmap');
+  var id = $('body').data('id');
+
+  heatmap('/projects/' + id + '/predictions/predictions', '#heatmap');
   updateROCVega('.roc-container');
   updatePRVega('.pr-container');
 

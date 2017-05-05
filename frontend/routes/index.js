@@ -4,10 +4,6 @@ var numCols = 70;
 var express = require('express');
 var router = express.Router();
 var api = require('../util/api.js');
-var csv = require('csvtojson');
-var fs = require('fs');
-var path = require('path');
-var readline = require('readline');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

@@ -8,7 +8,7 @@ $(function() {
   });
 });
 
-var heatmap = function(src, selector, cellSize) {
+var heatmap = function(src, selector, model) {
   ROWS = {};
   COLS = {};
 
@@ -30,6 +30,12 @@ var heatmap = function(src, selector, cellSize) {
 
     ROWS = response.rows;
     COLS = response.cols;
+
+    if (model != null) {
+      for (col in COLS) {
+        COLS[col].show = (col == 'GT' || col == model);
+      }
+    }
 
     drawHeatmap(selector, ROWS, COLS, MATRIX_DATA);
   });

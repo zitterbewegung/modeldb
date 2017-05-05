@@ -168,6 +168,14 @@ $(function() {
     }
   });
 
+  // link to model predictions
+  $(document).on('click', '.view-predictions', function(event) {
+    var projectId = $('body').data('id');
+    var modelId = $(this).data('id');
+    var query = $.param({'id': modelId});
+    window.location.href = "/projects/" + projectId + "/predictions/?" + query;
+  });
+
   function attachModalListeners() {
     var json = $('#md-json');
     var leaves = $('#md-json .leaf-container');

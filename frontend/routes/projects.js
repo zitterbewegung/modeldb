@@ -67,6 +67,7 @@ router.get('/:id/table', function(req, res, next) {
 // render the predictions page for a selected project
 router.get('/:id/predictions', function(req, res, next) {
   var id = req.params.id;
+  var modelId = req.query.id;
   res.render('predictions', {
     title: 'Predictions',
       path: {
@@ -74,7 +75,8 @@ router.get('/:id/predictions', function(req, res, next) {
         'links': ['/projects', '/projects/' + id + '/models', 'projects' + id + '/predictions']
       },
       menu: true,
-      id: id
+      id: id,
+      modelId: modelId
   });
 });
 

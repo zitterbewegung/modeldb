@@ -895,3 +895,26 @@ li.json-kv.ui-draggable-dragging {
   display: inline-block;
   font-size: 15px;
 }
+
+/* view predictions */
+.model:hover .view-predictions {
+  opacity: 0.3;
+}
+
+.view-predictions {
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  position: absolute;
+  top: 12px;
+  left: 5px;
+  background-image: url('/images/link.png');
+  background-size: 20px 20px;
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.model .view-predictions:hover {
+  opacity: 0.7;
+}

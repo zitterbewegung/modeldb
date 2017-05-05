@@ -96,8 +96,34 @@ function drawHeatmap(selector, rows, cols, data) {
     .style("text-anchor", "left")
     .attr("transform", "translate("+CELL_SIZE/1.2 + ",-6) rotate (-90)")
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
-    .on("mouseover", function(d) {SELECTED_MODEL = d.id; d3.select(this).classed("text-hover",true);})
-    .on("mouseout" , function(d) {SELECTED_MODEL = null; d3.select(this).classed("text-hover",false);})
+    .on("mouseover", function(d) {
+      SELECTED_MODEL = d.id;
+      d3.select(this).classed("text-hover",true);
+
+      if (d.id == 'GT') { return; }
+
+      var model = MODELS[d.id];
+      var tooltip = '<div><div class="heatmap-tooltip-key">type:</div>' +
+          '<div class="heatmap-tooltip-value">' + model.specification.transformerType + '</div></div>';
+      for (var i=0; i<model.metrics.length; i++) {
+        tooltip += '<div><div class="heatmap-tooltip-key">' + model.metrics[i].key + ':</div>';
+        tooltip += '<div class="heatmap-tooltip-value">' + model.metrics[i].val + '</div></div>';
+      }
+
+      //Update the tooltip position and value
+      d3.select("#heatmap-tooltip")
+        .style("left", (d3.event.pageX+10) + "px")
+        .style("top", (d3.event.pageY-10) + "px")
+        .select("#value")
+        .html(tooltip);
+      //Show the tooltip
+      d3.select("#heatmap-tooltip").classed("hidden", false);
+    })
+    .on("mouseout" , function(d) {
+      SELECTED_MODEL = null;
+      d3.select(this).classed("text-hover",false);
+      d3.select("#heatmap-tooltip").classed("hidden", true);
+    })
     //.on("click", function(d,i) {colSortOrder=!colSortOrder; sortByPrediction("c",cols[d],colSortOrder);})
     ;
 

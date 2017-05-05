@@ -3,6 +3,7 @@ $(function() {
   var id = $('body').data('id');
 
   heatmap('/projects/' + id + '/predictions/predictions', '#heatmap');
+  getModels(id);
   updateROCVega('.roc-container');
   updatePRVega('.pr-container');
 
@@ -154,3 +155,15 @@ $(function() {
   });
 
 });
+
+function getModels(projectId) {
+  $.get('/projects/' + projectId + '/ms', function(response) {
+    for (var i=0; i<response.length; i++) {
+      var model = response[i];
+      var metadata = JSON.parse(model.metadata);
+      model.metadata = metadata;
+
+      MODELS[metadata['model_id']] = model;
+    }
+  });
+}

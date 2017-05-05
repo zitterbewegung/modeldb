@@ -71,3 +71,6 @@ GROUPS = {};
 AGG_ROWS = {};
 AGG_DATA = [];
 SELECTED_GROUP = null; // group selected in aggregate view
+
+/* model data */
+MODELS = {};

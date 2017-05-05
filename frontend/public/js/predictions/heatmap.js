@@ -332,6 +332,20 @@ function hcluster() {
     rows[i] = row;
   }
 
+  /*
+  // cluster based on raw data space, but
+  // doesn't seem to work very well
+  for (var i=0; i<MATRIX_NUMROWS; i++) {
+    d3.select(".heatmap .r" + i).filter(function(ce) {
+      var row = RAW_DATA[ce.id];
+      for (key in row) {
+        row[key] = parseFloat(row[key]);
+      }
+      rows[i] = row;
+    });
+  }
+  */
+
   // cluster
   var node = clusterfck.hcluster(Object.values(rows));
 

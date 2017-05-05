@@ -103,7 +103,7 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
       d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return c.id==d.x;});
 
 
-      var tooltip = '<div><div class="heatmap-tooltip-key">example id:</div>' +
+      var tooltip = '<div><div class="heatmap-tooltip-key">filter group:</div>' +
           '<div class="heatmap-tooltip-value">' + d.y + '</div></div>'+
           '<div><div class="heatmap-tooltip-key">model id:</div>' +
           '<div class="heatmap-tooltip-value">' + d.x + '</div></div>';

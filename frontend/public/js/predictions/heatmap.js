@@ -31,7 +31,7 @@ var heatmap = function(src, selector, model) {
     ROWS = response.rows;
     COLS = response.cols;
 
-    if (model != null) {
+    if (model != null && model.length > 0) {
       for (col in COLS) {
         COLS[col].show = (col == 'GT' || col == model);
       }

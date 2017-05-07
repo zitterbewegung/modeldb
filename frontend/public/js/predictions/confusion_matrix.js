@@ -6,7 +6,17 @@ var addConfusionMatrix = function(model, selector, col) {
 
   var predictedLabel = $('<div class="cfm-predicted-label">Predicted</div>');
   var actualLabel = $('<div class="cfm-actual-label">Actual</div>');
-  var modelLabel = $('<div class="cfm-model-label">Model ' + model + '</div>');
+
+  var modelLabel = $('<div class="cfm-model-label tooltip-trigger">Model ' + model + '</div>');
+
+  var keys = ['id', 'type']
+  var vals = [MODELS[model].id, MODELS[model].specification.transformerType];
+  for (var i=0; i<MODELS[model].metrics.length; i++) {
+    keys.push(MODELS[model].metrics[i].key);
+    vals.push(MODELS[model].metrics[i].val);
+  }
+  modelLabel.data('keys', keys);
+  modelLabel.data('values', vals);
 
   var p0 = $('<div class="cfm-p0">0</div>');
   var p1 = $('<div class="cfm-p1">1</div>');

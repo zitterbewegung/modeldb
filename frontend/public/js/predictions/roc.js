@@ -11,6 +11,7 @@ var removeROC = function(model, selector) {
 };
 
 var addROCPoints = function(model, col) {
+  var name = MODELS[model].specification.transformerType + ' (id: ' + MODELS[model].id + ')';
   var points = []
 
   for (var t=0; t<=1; t+= STEP_SIZE) {
@@ -21,7 +22,7 @@ var addROCPoints = function(model, col) {
     points.push({
       'x': FPR,
       'y': TPR,
-      'model': model
+      'model': name
     });
   }
 

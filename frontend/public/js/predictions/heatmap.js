@@ -49,8 +49,11 @@ function drawHeatmap(selector, rows, cols, data) {
   MATRIX_NUMROWS = adjustIndices(rows);
   MATRIX_NUMCOLS = adjustIndices(cols);
 
-  var width = CELL_SIZE * MATRIX_NUMCOLS + GT_OFFSET; // - margin.left - margin.right,
-  var height = CELL_SIZE * MATRIX_NUMROWS; // - margin.top - margin.bottom,
+  CELL_SIZE_X = Math.max(12, Math.round(700/MATRIX_NUMCOLS));
+  CELL_SIZE_Y = Math.max(12, Math.round(CELL_SIZE_X*0.4));
+
+  var width = CELL_SIZE_Y + CELL_SIZE_X * (MATRIX_NUMCOLS - 1) + GT_OFFSET; // GT + offset + cells
+  var height = CELL_SIZE_Y * MATRIX_NUMROWS;
   MATRIX_HEIGHT = height;
   MATRIX_WIDTH = width;
 
@@ -76,9 +79,9 @@ function drawHeatmap(selector, rows, cols, data) {
     .append("text")
     .text(function (d) { return d.id; })
     .attr("x", 0)
-    .attr("y", function (d, i) { return d.index * CELL_SIZE; })
+    .attr("y", function (d, i) { return d.index * CELL_SIZE_Y; })
     .style("text-anchor", "end")
-    .attr("transform", "translate(-4," + CELL_SIZE / 1.1 + ")")
+    .attr("transform", "translate(-4," + CELL_SIZE_Y / 1.1 + ")")
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
     .on("mouseover", function(d) {SELECTED_EXAMPLE = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_EXAMPLE = null; d3.select(this).classed("text-hover",false);})
@@ -97,10 +100,10 @@ function drawHeatmap(selector, rows, cols, data) {
     .text(function (d) { return d.id; })
     .attr("x", 0)
     .attr("y", function (d, i) {
-      return d.index * CELL_SIZE + (d.index == 0 ? 0 : GT_OFFSET);
+      return d.index * CELL_SIZE_X + (d.index == 0 ? 0 : GT_OFFSET);
     })
     .style("text-anchor", "left")
-    .attr("transform", "translate("+CELL_SIZE/1.2 + ",-6) rotate (-90)")
+    .attr("transform", "translate("+CELL_SIZE_Y/1.2 + ",-6) rotate (-90)")
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
     .on("mouseover", function(d) {
       SELECTED_MODEL = d.id;
@@ -140,8 +143,14 @@ function drawHeatmap(selector, rows, cols, data) {
     }),function(d){return rows[d.y].index+":"+cols[d.x].index;})
     .enter()
     .append("rect")
-    .attr("x", function(d) { return (cols[d.x].index * CELL_SIZE) + (cols[d.x].index == 0 ? 0 : GT_OFFSET); })
-    .attr("y", function(d) { return rows[d.y].index * CELL_SIZE; })
+    .attr("x", function(d) {
+      if (cols[d.x].index == 0) {
+        return 0;
+      } else {
+        return (cols[d.x].index - 1) * CELL_SIZE_X + CELL_SIZE_Y + GT_OFFSET;
+      }
+    })
+    .attr("y", function(d) { return rows[d.y].index * CELL_SIZE_Y; })
     .attr("class", function(d){
       var result = "cell cell-border cr"+(rows[d.y].index)+" cc"+(cols[d.x].index);
       if (d.x == "GT") {
@@ -149,8 +158,8 @@ function drawHeatmap(selector, rows, cols, data) {
       }
       return result;
     })
-    .attr("width", CELL_SIZE)
-    .attr("height", CELL_SIZE)
+    .attr("width", function(d) { return (cols[d.x].index == 0 ? CELL_SIZE_Y : CELL_SIZE_X); })
+    .attr("height", CELL_SIZE_Y)
     .style("fill", function(d) {
       if (d.x == 'GT') {
         return MONO_SCALE(d.value);
@@ -195,7 +204,7 @@ function drawHeatmap(selector, rows, cols, data) {
     ;
 
   var border = svg.append("rect").attr("class","gt-border")
-    .attr("x", CELL_SIZE + 1)
+    .attr("x", CELL_SIZE_Y + 1)
     .attr("y", 0)
     .attr("height", height)
     .attr("width", 1)
@@ -249,27 +258,27 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
     sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
     sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
-      .attr("x", function(d) { return sorted.indexOf(cols[d.x].index) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(cols[d.x].index) - 1) * CELL_SIZE_X + GT_OFFSET; })
       ;
     t.selectAll(".colLabel:not(.c0)")
-      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE_X + (cols[d] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".hl-col")
-      .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(d.index) -1 ) * CELL_SIZE_X + GT_OFFSET; })
       ;
   } else {
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
-      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE_Y; })
       ;
     t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
       ;
     t.selectAll(".hl-row")
-      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
       ;
     t.selectAll(".hl-agg-row")
-      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
       ;
   }
 
@@ -291,28 +300,34 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
   ;
 
   if(rORc=="c"){
-    vals.pop();
-    sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
+    vals.shift();
+    sorted=d3.range(1, numCols).sort(function(a,b){
+      if (vals[a-1] < vals[b-1]) {
+        return sortOrder ? 1 : -1;
+      } else {
+        return sortOrder ? -1 : 1;
+      }
+    });
     sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
-      .attr("x", function(d) { return sorted.indexOf(cols[d.x].index) * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(cols[d.x].index) - 1) * CELL_SIZE_X + GT_OFFSET; })
       ;
     t.selectAll(".colLabel:not(.c0)")
-      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE_X + (cols[d] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".hl-col")
-      .attr("x", function(d) { return sorted.indexOf(d.index) * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(d.index) -1 ) * CELL_SIZE_X + GT_OFFSET; })
       ;
   } else {
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
-      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE_Y; })
       ;
     t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE; })
+      .attr("y", function (d, i) { return sorted.indexOf(i) * CELL_SIZE_Y; })
       ;
     t.selectAll(".hl-row")
-      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE; })
+      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
       ;
   }
 }
@@ -360,13 +375,13 @@ function hcluster() {
   var svg = d3.select('.heatmap .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
   t.selectAll(".cell")
-    .attr("y", function(d) { return sortedRows[ROWS[d.y].index] * CELL_SIZE; })
+    .attr("y", function(d) { return sortedRows[ROWS[d.y].index] * CELL_SIZE_Y; })
     ;
   t.selectAll(".rowLabel")
-    .attr("y", function (d, i) { return sortedRows[d.index] * CELL_SIZE; })
+    .attr("y", function (d, i) { return sortedRows[d.index] * CELL_SIZE_Y; })
     ;
   t.selectAll(".hl-row")
-    .attr("y", function(d) { return sortedRows[d.index] * CELL_SIZE; })
+    .attr("y", function(d) { return sortedRows[d.index] * CELL_SIZE_Y; })
     ;
 
   // cluster columns
@@ -395,13 +410,13 @@ function hcluster() {
 
   // animate changes
   t.selectAll(".cell:not(.cc0)")
-    .attr("x", function(d) { return sortedCols[COLS[d.x].index] * CELL_SIZE + (cols[d.x] == 0 ? 0 : GT_OFFSET); })
+    .attr("x", function(d) { return CELL_SIZE_Y + (sortedCols[COLS[d.x].index] - 1) * CELL_SIZE_X + GT_OFFSET; })
     ;
   t.selectAll(".colLabel:not(.c0)")
-    .attr("y", function (d, i) { return sortedCols[d.index] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET); })
+    .attr("y", function (d, i) { return sortedCols[d.index] * CELL_SIZE_X + GT_OFFSET; })
     ;
   t.selectAll(".hl-col")
-    .attr("x", function(d) { return sortedCols[d.index] * CELL_SIZE + (cols[d] == 0 ? 0 : GT_OFFSET);})
+    .attr("x", function(d) { return CELL_SIZE_Y + (sortedCols[d.index] - 1) * CELL_SIZE_X + GT_OFFSET;})
     ;
 
 }
@@ -437,13 +452,13 @@ function kmeans(k) {
   var svg = d3.select('.heatmap .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
   t.selectAll(".cell")
-    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE; })
+    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE_Y; })
     ;
   t.selectAll(".rowLabel")
-    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE; })
+    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE_Y; })
     ;
   t.selectAll(".hl-row")
-    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE; })
+    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE_Y; })
     ;
 }
 
@@ -509,9 +524,9 @@ function addExample(example) {
     .data([ROWS[example]])
     .enter()
     .append("rect")
-    .attr("height", CELL_SIZE)
-    .attr("width", MATRIX_WIDTH)
-    .attr("x", CELL_SIZE + GT_OFFSET - 20)
+    .attr("height", CELL_SIZE_Y)
+    .attr("width", MATRIX_WIDTH - (CELL_SIZE_Y + GT_OFFSET))
+    .attr("x", CELL_SIZE_Y + GT_OFFSET)
     .attr("y", y)
     .attr("class", "hl-row hl-row-" + row)
     .style("opacity", "0.7")
@@ -560,8 +575,8 @@ function addModel(model, col) {
     .enter()
     .append("rect")
     .attr("height", MATRIX_HEIGHT)
-    .attr("width", CELL_SIZE)
-    .attr("x", x)
+    .attr("width", CELL_SIZE_X)
+    .attr("x", x - (CELL_SIZE_X - CELL_SIZE_Y))
     .attr("y", 0)
     .attr("class", "hl-col hl-col-" + col)
     .style("opacity", "0.7")

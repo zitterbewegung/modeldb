@@ -6,9 +6,13 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
   var numrows = adjustIndices(rows);
   var numcols = adjustIndices(cols);
 
+  CELL_SIZE_X_AGG = CELL_SIZE_X;
+  CELL_SIZE_Y_AGG = Math.min(20, Math.max(12, Math.round(650/numrows)));
 
-  var width = CELL_SIZE_Y + CELL_SIZE_X * (numcols - 1) + GT_OFFSET; // - margin.left - margin.right,
-  var height = CELL_SIZE_Y * numrows; // - margin.top - margin.bottom,
+  var width = CELL_SIZE_Y_AGG + CELL_SIZE_X_AGG * (numcols - 1) + GT_OFFSET; // - margin.left - margin.right,
+  var height = CELL_SIZE_Y_AGG * numrows; // - margin.top - margin.bottom,
+
+  MATRIX_WIDTH_AGG = width;
 
   var svg = d3.select(selector).append("svg")
     .attr("class", "heatmap-svg")
@@ -32,9 +36,9 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     .append("text")
     .text(function (d) { return d.id; })
     .attr("x", 0)
-    .attr("y", function (d, i) { return d.index * CELL_SIZE_Y; })
+    .attr("y", function (d, i) { return d.index * CELL_SIZE_Y_AGG; })
     .style("text-anchor", "end")
-    .attr("transform", "translate(-4," + CELL_SIZE_Y / 1.1 + ")")
+    .attr("transform", "translate(-4," + CELL_SIZE_Y_AGG / 1.1 + ")")
     .attr("class", function (d,i) { return "rowLabel mono r"+d.index;} )
     .on("mouseover", function(d) {SELECTED_EXAMPLE = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_EXAMPLE = null; d3.select(this).classed("text-hover",false);})
@@ -53,10 +57,10 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     .text(function (d) { return d.id; })
     .attr("x", 0)
     .attr("y", function (d, i) {
-      return d.index * CELL_SIZE_X + (d.index == 0 ? 0 : GT_OFFSET);
+      return d.index * CELL_SIZE_X_AGG + (d.index == 0 ? 0 : GT_OFFSET);
     })
     .style("text-anchor", "left")
-    .attr("transform", "translate("+CELL_SIZE_Y/1.2 + ",-6) rotate (-90)")
+    .attr("transform", "translate("+CELL_SIZE_Y_AGG/1.2 + ",-6) rotate (-90)")
     .attr("class",  function (d,i) { return "colLabel mono c"+d.index;} )
     .on("mouseover", function(d) {SELECTED_MODEL = d.id; d3.select(this).classed("text-hover",true);})
     .on("mouseout" , function(d) {SELECTED_MODEL = null; d3.select(this).classed("text-hover",false);})
@@ -74,10 +78,10 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
       if (cols[d.x].index == 0) {
         return 0;
       } else {
-        return (cols[d.x].index - 1) * CELL_SIZE_X + CELL_SIZE_Y + GT_OFFSET;
+        return (cols[d.x].index - 1) * CELL_SIZE_X_AGG + CELL_SIZE_Y_AGG + GT_OFFSET;
       }
     })
-    .attr("y", function(d) { return rows[d.y].index * CELL_SIZE_Y; })
+    .attr("y", function(d) { return rows[d.y].index * CELL_SIZE_Y_AGG; })
     .attr("class", function(d){
       var result = "cell cell-border cr"+(rows[d.y].index)+" cc"+(cols[d.x].index);
       if (d.x == "GT") {
@@ -85,8 +89,8 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
       }
       return result;
     })
-    .attr("width", function(d) { return (cols[d.x].index == 0 ? CELL_SIZE_Y : CELL_SIZE_X); })
-    .attr("height", CELL_SIZE_Y)
+    .attr("width", function(d) { return (cols[d.x].index == 0 ? CELL_SIZE_Y_AGG : CELL_SIZE_X_AGG); })
+    .attr("height", CELL_SIZE_Y_AGG)
     .style("fill", function(d) {
       if (d.x == 'GT') {
         return MONO_SCALE(d.value);
@@ -143,7 +147,7 @@ function drawAggregateHeatmap(selector, rows, cols, data) {
     ;
 
   var border = svg.append("rect").attr("class","gt-border")
-    .attr("x", CELL_SIZE_Y + 1)
+    .attr("x", CELL_SIZE_Y_AGG + 1)
     .attr("y", 0)
     .attr("height", height)
     .attr("width", 1)
@@ -194,9 +198,9 @@ function toggleGroup(group) {
       .data([AGG_ROWS[group]])
       .enter()
       .append("rect")
-      .attr("height", CELL_SIZE_Y)
-      .attr("width", MATRIX_WIDTH - (CELL_SIZE_Y + GT_OFFSET))
-      .attr("x", CELL_SIZE_Y + GT_OFFSET)
+      .attr("height", CELL_SIZE_Y_AGG)
+      .attr("width", MATRIX_WIDTH_AGG - (CELL_SIZE_Y_AGG + GT_OFFSET))
+      .attr("x", CELL_SIZE_Y_AGG + GT_OFFSET)
       .attr("y", y)
       .attr("class", "hl-agg-row hl-agg-row-" + row)
       .style("opacity", "0.7")

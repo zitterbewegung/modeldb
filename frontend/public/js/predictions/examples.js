@@ -344,4 +344,9 @@ function showFilteredExamples(group) {
   var scheme = $('select.color-scheme').val();
   updateColorScale(scheme);
   filterTable();
+
+  // unselect all models
+  for (var model in SELECTED_MODELS) {
+    toggleModel(model);
+  }
 }

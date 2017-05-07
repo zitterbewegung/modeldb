@@ -3,7 +3,7 @@ $(function() {
   var id = $('body').data('id');
   var modelId = $('body').data('model');
 
-  heatmap('/projects/' + id + '/predictions/predictions', '#heatmap', modelId);
+  heatmap('/projects/' + id + '/predictions/predictions', '.heatmap', modelId);
   getModels(id);
   updateROCVega('.roc-container');
   updatePRVega('.pr-container');

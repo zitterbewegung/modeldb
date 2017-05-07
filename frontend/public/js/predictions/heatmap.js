@@ -50,7 +50,7 @@ function drawHeatmap(selector, rows, cols, data) {
   MATRIX_NUMCOLS = adjustIndices(cols);
 
   CELL_SIZE_X = Math.max(12, Math.round(700/MATRIX_NUMCOLS));
-  CELL_SIZE_Y = Math.max(12, Math.round(CELL_SIZE_X*0.4));
+  CELL_SIZE_Y = Math.min(20, Math.max(12, Math.round(650/MATRIX_NUMROWS)));
 
   var width = CELL_SIZE_Y + CELL_SIZE_X * (MATRIX_NUMCOLS - 1) + GT_OFFSET; // GT + offset + cells
   var height = CELL_SIZE_Y * MATRIX_NUMROWS;
@@ -244,6 +244,9 @@ function drawHeatmap(selector, rows, cols, data) {
 }
 
 function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCols){
+  var cell_size_x = (selector == ".heatmap") ? CELL_SIZE_X : CELL_SIZE_X_AGG;
+  var cell_size_y = (selector == ".heatmap") ? CELL_SIZE_Y : CELL_SIZE_Y_AGG;
+
   var svg = d3.select(selector + ' .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(numRows + numCols));
   var vals=[];
@@ -258,27 +261,27 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
     sorted=d3.range(1, numCols).sort(function(a,b){ if(sortOrder){ return vals[b-1]-vals[a-1];}else{ return vals[a-1]-vals[b-1];}});
     sorted.unshift(cols['GT'].index);
     t.selectAll(".cell:not(.cc0)")
-      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(cols[d.x].index) - 1) * CELL_SIZE_X + GT_OFFSET; })
+      .attr("x", function(d) { return cell_size_y + (sorted.indexOf(cols[d.x].index) - 1) * cell_size_x + GT_OFFSET; })
       ;
     t.selectAll(".colLabel:not(.c0)")
-      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE_X + (cols[d] == 0 ? 0 : GT_OFFSET); })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * cell_size_x + (cols[d] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".hl-col")
-      .attr("x", function(d) { return CELL_SIZE_Y + (sorted.indexOf(d.index) -1 ) * CELL_SIZE_X + GT_OFFSET; })
+      .attr("x", function(d) { return cell_size_x + (sorted.indexOf(d.index) -1 ) * cell_size_x + GT_OFFSET; })
       ;
   } else {
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
     t.selectAll(".cell")
-      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * CELL_SIZE_Y; })
+      .attr("y", function(d) { return sorted.indexOf(rows[d.y].index) * cell_size_y; })
       ;
     t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
+      .attr("y", function (d, i) { return sorted.indexOf(d.index) * cell_size_y; })
       ;
     t.selectAll(".hl-row")
-      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
+      .attr("y", function(d) { return sorted.indexOf(d.index) * cell_size_y; })
       ;
     t.selectAll(".hl-agg-row")
-      .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
+      .attr("y", function(d) { return sorted.indexOf(d.index) * cell_size_y; })
       ;
   }
 
@@ -286,7 +289,7 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
   $('.predictions-sort').val('None')
 }
 
-function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols) {
+function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols, agg) {
   var svg = d3.select(selector + ' .heatmap-svg');
   var t = svg.transition().duration(1000 - 5*(numRows + numCols));
   var vals=[];

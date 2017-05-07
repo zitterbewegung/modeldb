@@ -455,6 +455,7 @@ function addModel(model, col) {
   addConfusionMatrix(model, '#confusion-matrices', col);
   addROC(model, '.roc-container', col);
   addPR(model, '.pr-container', col);
+  updateThresholdSlider();
 }
 
 function removeModel(model, col) {
@@ -469,6 +470,8 @@ function removeModel(model, col) {
   removeConfusionMatrix(model);
   removeROC(model, '.roc-container');
   removePR(model, '.pr-container');
+
+  updateThresholdSlider();
 }
 
 var updateLegend = function() {
@@ -651,6 +654,23 @@ var updateColorScale = function(scale) {
   }
 
   updateLegend();
+  updateThresholdSlider();
+}
+
+function updateThresholdSlider() {
+  console.log('update');
+  var scale = $('.color-scheme').val();
+  // hide threshold if necessary
+  if (scale == "OB_SCALE" || scale == "MONO_SCALE") {
+    if (jQuery.isEmptyObject(SELECTED_MODELS) &&
+      jQuery.isEmptyObject(GROUPS)) {
+      $('.predictions-threshold-container').slideUp();
+    } else {
+      $('.predictions-threshold-container').slideDown();
+    }
+  } else {
+    $('.predictions-threshold-container').slideDown();
+  }
 }
 
 function clickcancel() {

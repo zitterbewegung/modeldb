@@ -193,6 +193,8 @@ var aggregateHeatmap = function() {
   AGG_DATA = calculateAggregateDataAcc();
   drawAggregateHeatmap('.agg-heatmap', AGG_ROWS, COLS, AGG_DATA);
   SELECTED_GROUP = null;
+
+  updateThresholdSlider();
 }
 
 // group is JSON object where the key/value pairs

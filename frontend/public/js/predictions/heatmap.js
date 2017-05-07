@@ -8,7 +8,7 @@ $(function() {
   });
 });
 
-var heatmap = function(src, selector, model) {
+var heatmap = function(src, selector, models) {
   ROWS = {};
   COLS = {};
 
@@ -31,13 +31,17 @@ var heatmap = function(src, selector, model) {
     ROWS = response.rows;
     COLS = response.cols;
 
-    if (model != null && model.length > 0) {
+    if (models != null && models.length > 0) {
       for (col in COLS) {
-        COLS[col].show = (col == 'GT' || col == model);
+        COLS[col].show = (col == 'GT' || models.indexOf(col) > -1);
+        COLS[col].index = models.indexOf(col);
       }
     }
 
     drawHeatmap(selector, ROWS, COLS, MATRIX_DATA);
+    setTimeout(function() {
+      toggleModel(models[models.length-1]);
+    }, 500)
   });
 
 };
@@ -351,7 +355,7 @@ function hcluster() {
     rows[i] = row;
   }
 
-  /*
+
   // cluster based on raw data space, but
   // doesn't seem to work very well
   for (var i=0; i<MATRIX_NUMROWS; i++) {
@@ -363,7 +367,6 @@ function hcluster() {
       rows[i] = row;
     });
   }
-  */
 
   // cluster
   var node = clusterfck.hcluster(Object.values(rows));

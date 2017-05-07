@@ -11,7 +11,13 @@ var removeROC = function(model, selector) {
 };
 
 var addROCPoints = function(model, col) {
-  var name = MODELS[model].specification.transformerType + ' (id: ' + MODELS[model].id + ')';
+  var name;
+  if (jQuery.isEmptyObject(MODELS)) {
+    name = model;
+  } else {
+    name = MODELS[model].specification.transformerType + ' (id: ' + MODELS[model].id + ')';
+  }
+
   var points = []
 
   for (var t=0; t<=1; t+= STEP_SIZE) {

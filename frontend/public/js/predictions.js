@@ -1,9 +1,9 @@
 $(function() {
 
   var id = $('body').data('id');
-  var modelId = $('body').data('model');
+  var modelIds = $('body').data('modelids').split(',');
 
-  heatmap('/projects/' + id + '/predictions/predictions', '.heatmap', modelId);
+  heatmap('/projects/' + id + '/predictions/predictions', '.heatmap', modelIds);
   getModels(id);
   updateROCVega('.roc-container');
   updatePRVega('.pr-container');

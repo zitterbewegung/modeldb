@@ -171,8 +171,21 @@ $(function() {
   // link to model predictions
   $(document).on('click', '.view-predictions', function(event) {
     var projectId = $('body').data('id');
-    var modelId = $(this).data('id');
-    var query = $.param({'id': modelId});
+    var modelId = $(this).data('modelid');
+    var metadataId = $(this).data('metadataid');
+
+    var ids = [];
+
+    // hacky way of getting previous model
+    for (var i=0; i<models.length; i++) {
+      if (models[i].id == modelId - 1) {
+        ids.push(JSON.parse(models[i].metadata)["model_id"]);
+      }
+    }
+
+    ids.push(metadataId);
+
+    var query = $.param({'ids': ids});
     window.location.href = "/projects/" + projectId + "/predictions/?" + query;
   });
 

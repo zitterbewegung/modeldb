@@ -67,7 +67,7 @@ router.get('/:id/table', function(req, res, next) {
 // render the predictions page for a selected project
 router.get('/:id/predictions', function(req, res, next) {
   var id = req.params.id;
-  var modelId = req.query.id;
+  var modelIds = req.query.ids;
   res.render('predictions', {
     title: 'Predictions',
       path: {
@@ -76,7 +76,7 @@ router.get('/:id/predictions', function(req, res, next) {
       },
       menu: true,
       id: id,
-      modelId: modelId
+      modelIds: modelIds
   });
 });
 

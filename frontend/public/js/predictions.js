@@ -141,7 +141,7 @@ $(function() {
       setTimeout(function() {
         $('.heatmap').scrollLeft(45);
         $('.agg-heatmap').scrollLeft(45);
-      }, 100)
+      }, 200)
     } else {
 
       // close menu

@@ -658,7 +658,6 @@ var updateColorScale = function(scale) {
 }
 
 function updateThresholdSlider() {
-  console.log('update');
   var scale = $('.color-scheme').val();
   // hide threshold if necessary
   if (scale == "OB_SCALE" || scale == "MONO_SCALE") {

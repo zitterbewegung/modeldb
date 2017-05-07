@@ -72,7 +72,7 @@ router.get('/:id/predictions', function(req, res, next) {
     title: 'Predictions',
       path: {
         'labels': ['Projects', 'Models', 'Predictions'],
-        'links': ['/projects', '/projects/' + id + '/models', 'projects' + id + '/predictions']
+        'links': ['/projects', '/projects/' + id + '/models', '/projects/' + id + '/predictions']
       },
       menu: true,
       id: id,

@@ -39,9 +39,13 @@ var heatmap = function(src, selector, models) {
     }
 
     drawHeatmap(selector, ROWS, COLS, MATRIX_DATA);
+
     setTimeout(function() {
-      toggleModel(models[models.length-1]);
+      if (models != null && models.length > 0) {
+        toggleModel(models[models.length-1]);
+      }
     }, 500)
+
   });
 
 };
@@ -338,150 +342,6 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols, ag
       ;
   }
 }
-
-function hcluster() {
-  var rows = {};
-  var sortedRows = {};
-  var inorderRows = [];
-
-  // collect vectors
-  for (var i=0; i<MATRIX_NUMROWS; i++) {
-    var row = [];
-    d3.selectAll(".heatmap .cr" + (i))
-     .filter(function(ce){
-        row.push(ce.value);
-      })
-    ;
-    rows[i] = row;
-  }
-
-
-  // cluster based on raw data space, but
-  // doesn't seem to work very well
-  for (var i=0; i<MATRIX_NUMROWS; i++) {
-    d3.select(".heatmap .r" + i).filter(function(ce) {
-      var row = RAW_DATA[ce.id];
-      for (key in row) {
-        row[key] = parseFloat(row[key]);
-      }
-      rows[i] = row;
-    });
-  }
-
-  // cluster
-  var node = clusterfck.hcluster(Object.values(rows));
-
-  // traverse tree to get order
-  traverse(node, inorderRows);
-  for (var id in rows) {
-    sortedRows[id] = inorderRows.indexOf(rows[id]);
-  }
-
-  // animate changes
-  var svg = d3.select('.heatmap .heatmap-svg');
-  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
-  t.selectAll(".cell")
-    .attr("y", function(d) { return sortedRows[ROWS[d.y].index] * CELL_SIZE_Y; })
-    ;
-  t.selectAll(".rowLabel")
-    .attr("y", function (d, i) { return sortedRows[d.index] * CELL_SIZE_Y; })
-    ;
-  t.selectAll(".hl-row")
-    .attr("y", function(d) { return sortedRows[d.index] * CELL_SIZE_Y; })
-    ;
-
-  // cluster columns
-  var cols = {};
-  var sortedCols = {};
-  var inorderCols = [];
-
-  for (var i=1; i<MATRIX_NUMCOLS; i++) {
-    var col = [];
-    d3.selectAll(".heatmap .cc" + (i))
-     .filter(function(ce){
-        col.push(ce.value);
-      })
-    ;
-    cols[i] = col;
-  }
-
-  // cluster
-  var node = clusterfck.hcluster(Object.values(cols));
-
-  // traverse tree to get order
-  traverse(node, inorderCols);
-  for (var id in cols) {
-    sortedCols[id] = inorderCols.indexOf(cols[id]) + 1;
-  }
-
-  // animate changes
-  t.selectAll(".cell:not(.cc0)")
-    .attr("x", function(d) { return CELL_SIZE_Y + (sortedCols[COLS[d.x].index] - 1) * CELL_SIZE_X + GT_OFFSET; })
-    ;
-  t.selectAll(".colLabel:not(.c0)")
-    .attr("y", function (d, i) { return sortedCols[d.index] * CELL_SIZE_X + GT_OFFSET; })
-    ;
-  t.selectAll(".hl-col")
-    .attr("x", function(d) { return CELL_SIZE_Y + (sortedCols[d.index] - 1) * CELL_SIZE_X + GT_OFFSET;})
-    ;
-
-}
-
-function kmeans(k) {
-  var rows = {};
-  var vals = [];
-  var sorted = {};
-  var inorder = [];
-
-  // collect vectors
-  for (var i=0; i<MATRIX_NUMROWS; i++) {
-    var row = [];
-    d3.selectAll(".heatmap .cr" + (i))
-     .filter(function(ce){
-        row.push(ce.value);
-      })
-    ;
-    rows[row] = i;
-    vals.push(row);
-  }
-
-  var counter = 0;
-  var clusters = clusterfck.kmeans(vals, k);
-
-  for (var i=0; i<clusters.length; i++) {
-    for (var j=0; j<clusters[i].length; j++) {
-      sorted[rows[clusters[i][j]]] = counter++;
-    }
-  }
-
-  // animate changes
-  var svg = d3.select('.heatmap .heatmap-svg');
-  var t = svg.transition().duration(1000 - 5*(MATRIX_NUMROWS + MATRIX_NUMCOLS));
-  t.selectAll(".cell")
-    .attr("y", function(d) { return sorted[ROWS[d.y].index] * CELL_SIZE_Y; })
-    ;
-  t.selectAll(".rowLabel")
-    .attr("y", function (d, i) { return sorted[d.index] * CELL_SIZE_Y; })
-    ;
-  t.selectAll(".hl-row")
-    .attr("y", function(d) { return sorted[d.index] * CELL_SIZE_Y; })
-    ;
-}
-
-// inorder traversal of hcluster tree
-function traverse(node, result) {
-  if (node == null) {
-    return;
-  }
-
-  traverse(node.left, result);
-  if (node.left == null && node.right == null) {
-    result.push(node.value);
-  }
-  traverse(node.right, result);
-}
-
-
 
 function adjustIndices(data) {
   var idx = 0;

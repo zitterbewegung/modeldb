@@ -1,7 +1,10 @@
 $(function() {
 
   var id = $('body').data('id');
-  var modelIds = $('body').data('modelids').split(',');
+  var modelIds = $('body').data('modelids');
+  if (modelIds.length > 0) {
+    modelIds = modelIds.split(',');
+  }
 
   heatmap('/projects/' + id + '/predictions/predictions', '.heatmap', modelIds);
   getModels(id);
@@ -88,12 +91,15 @@ $(function() {
         rORc = 'c';
         order = false;
         break;
-      case 'h_cluster':
-        hcluster();
+      case 'h_cluster_pred':
+        hcluster_pred();
+        return;
+      case 'h_cluster_data':
+        hcluster_data();
         return;
       case 'k_means':
         var k = prompt('Enter k for k-means clustering of examples based on prediction values:');
-        kmeans(k);
+        kmeans_pred(k);
         return;
       default:
         return;

@@ -320,6 +320,7 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
 
   // reset select to None so we can resort by model or example
   $('.predictions-sort').val('None')
+  nnRedraw();
 }
 
 function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols, agg) {
@@ -366,6 +367,8 @@ function sortByLabel(selector, rORc, sortOrder, rows, cols, numRows, numCols, ag
       .attr("y", function(d) { return sorted.indexOf(d.index) * CELL_SIZE_Y; })
       ;
   }
+
+  nnRedraw();
 }
 
 function adjustIndices(data) {

@@ -93,18 +93,22 @@ $(function() {
         break;
       case 'h_cluster_pred':
         hcluster_pred();
+        nnRedraw();
         return;
       case 'h_cluster_data':
         hcluster_data();
+        nnRedraw();
         return;
       case 'k_means':
         var k = prompt('Enter k for k-means clustering of examples based on prediction values:');
         kmeans_pred(k);
+        nnRedraw();
         return;
       default:
         return;
     }
     sortByLabel('.heatmap', rORc, !order, ROWS, COLS, MATRIX_NUMROWS, MATRIX_NUMCOLS);
+    nnRedraw();
   });
 
   $(document).on('click', '.examples-menu-close', function() {

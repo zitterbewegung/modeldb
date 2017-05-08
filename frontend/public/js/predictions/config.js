@@ -51,6 +51,7 @@ MATRIX_HEIGHT = 0;
 MATRIX_WIDTH = 0;
 GT_OFFSET = 8;
 SHOW_RATIO = 0;
+SELECTED_NN = null;
 
 /* matrix data */
 SELECTED_MODELS = {};

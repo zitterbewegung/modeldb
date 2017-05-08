@@ -29,7 +29,27 @@ rect.cell-border {
 
 rect.cell-hover {
   stroke: #F00;
-  stroke-width:0.3px;
+  stroke-width:1px;
+}
+
+rect.gt-hover {
+  stroke: #000;
+  stroke-width:1px;
+}
+
+rect.gt-selected {
+  stroke: #000;
+  stroke-width:1px;
+}
+
+rect.nn-hover-selected {
+  stroke: #F00;
+  stroke-width:1px;
+}
+
+rect.nn-hover {
+  stroke: #F00;
+  stroke-width:1px;
 }
 
 rect.col-selected {

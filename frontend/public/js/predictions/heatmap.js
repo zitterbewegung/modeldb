@@ -175,6 +175,23 @@ function drawHeatmap(selector, rows, cols, data) {
         return COLOR_SCALE(d.value);
       }
     })
+    .on("click", function(d) {
+      if (SELECTED_NN == null) {
+        nn(ROWS[d.y].index, 3, true);
+        SELECTED_NN = ROWS[d.y].index;
+      } else if (SELECTED_NN == ROWS[d.y].index) {
+        d3.selectAll('.heatmap .path').remove();
+        d3.selectAll('.heatmap .gt-selected').classed('gt-selected', false);
+        d3.selectAll('.heatmap .nn-hover-selected').classed('nn-hover-selected', false);
+        SELECTED_NN = null;
+      } else {
+        d3.selectAll('.heatmap .path').remove();
+        d3.selectAll('.heatmap .gt-selected').classed('gt-selected', false);
+        d3.selectAll('.heatmap .nn-hover-selected').classed('nn-hover-selected', false);
+        nn(ROWS[d.y].index, 3, true);
+        SELECTED_NN = ROWS[d.y].index;
+      }
+    })
     /* .on("click", function(d) {
            var rowtext=d3.select(".r"+(d.row-1));
            if(rowtext.classed("text-selected")==false){
@@ -202,12 +219,20 @@ function drawHeatmap(selector, rows, cols, data) {
           '<div class="heatmap-tooltip-value">' + d.value.toFixed(2) + '</div></div>');
       //Show the tooltip
       d3.select("#heatmap-tooltip").classed("hidden", false);
+
+      // show nearest neighbors
+      if (SELECTED_NN == null) {
+        nn(ROWS[d.y].index, 3);
+      }
     })
-    .on("mouseout", function(){
-           d3.select(this).classed("cell-hover",false);
-           d3.selectAll(".rowLabel").classed("text-highlight",false);
-           d3.selectAll(".colLabel").classed("text-highlight",false);
-           d3.select("#heatmap-tooltip").classed("hidden", true);
+    .on("mouseout", function(d){
+       d3.select(this).classed("cell-hover",false);
+       d3.selectAll(".rowLabel").classed("text-highlight",false);
+       d3.selectAll(".colLabel").classed("text-highlight",false);
+       d3.select("#heatmap-tooltip").classed("hidden", true);
+       d3.selectAll('.gt-hover').classed("gt-hover", false);
+       d3.selectAll('.nn-hover').classed("nn-hover", false);
+       d3.selectAll('.path:not(.path-selected)').remove();
     })
     ;
 
@@ -220,7 +245,7 @@ function drawHeatmap(selector, rows, cols, data) {
 
   var hlCols = svg.append("g").attr("class","hl-cols");
   var hlRows = svg.append("g").attr("class", "hl-rows");
-
+  var paths = svg.append("g").attr("class", "paths");
 
   $(selector).scrollTop(45);
   $(selector).scrollLeft(45);

@@ -37,19 +37,23 @@ rect.gt-hover {
   stroke-width:1px;
 }
 
+rect.nn-hover {
+  stroke: #F00;
+  stroke-width:1px;
+}
+
 rect.gt-selected {
   stroke: #000;
-  stroke-width:1px;
+  stroke-width: 2px;
 }
 
 rect.nn-hover-selected {
   stroke: #F00;
-  stroke-width:1px;
+  stroke-width: 2px;
 }
 
-rect.nn-hover {
-  stroke: #F00;
-  stroke-width:1px;
+.path-selected {
+  stroke-width: 2px;
 }
 
 rect.col-selected {

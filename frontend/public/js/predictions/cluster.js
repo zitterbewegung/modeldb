@@ -75,7 +75,9 @@ function hcluster_data() {
       rows[i] = row;
     });
   }
-  normalizeRows(rows);
+
+  // normalizeRows(rows);
+  standardizeRows(rows);
 
   // cluster
   var node = clusterfck.hcluster(Object.values(rows));
@@ -135,52 +137,6 @@ function traverse(node, result) {
     result.push(node.value);
   }
   traverse(node.right, result);
-}
-
-function getMinValues(rows) {
-  var vals = {};
-  for (row in rows) {
-    for (key in rows[row]) {
-      if (vals.hasOwnProperty(key)) {
-        vals[key] = Math.min(vals[key], rows[row][key]);
-      } else {
-        vals[key] = rows[row][key];
-      }
-    }
-  }
-  return vals;
-}
-
-function getMaxValues(rows) {
-  var vals = {};
-  for (row in rows) {
-    for (key in rows[row]) {
-      if (vals.hasOwnProperty(key)) {
-        vals[key] = Math.max(vals[key], rows[row][key]);
-      } else {
-        vals[key] = rows[row][key];
-      }
-    }
-  }
-  return vals;
-}
-
-function normalizeRows(rows) {
-  var minValues = getMinValues(rows);
-  var maxValues = getMaxValues(rows);
-
-  for (id in rows) {
-    var row = rows[id];
-    var arr = [];
-    for (x in row) {
-      if (maxValues[x] == minValues[x]) {
-        arr.push(0.5);
-      } else {
-        arr.push((row[x] - minValues[x]) / (maxValues[x] - minValues[x]));
-      }
-    }
-    rows[id] = arr;
-  }
 }
 
 function animateCols(sortedCols, t) {

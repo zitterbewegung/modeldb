@@ -155,9 +155,11 @@ function normalizeRows(rows) {
 
 function nnRedraw() {
   d3.selectAll('.heatmap .path').remove();
-  setTimeout(function() {
-    d3.selectAll('.heatmap .gt-selected').classed('gt-selected', false);
-    d3.selectAll('.heatmap .nn-hover-selected').classed('nn-hover-selected', false);
-    nn(SELECTED_NN, 3, true);
-  }, 1000)
+  if (SELECTED_NN != null) {
+    setTimeout(function() {
+      d3.selectAll('.heatmap .gt-selected').classed('gt-selected', false);
+      d3.selectAll('.heatmap .nn-hover-selected').classed('nn-hover-selected', false);
+      nn(SELECTED_NN, 3, true);
+    }, 1000)
+  }
 }

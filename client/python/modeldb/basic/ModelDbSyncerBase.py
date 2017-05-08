@@ -14,6 +14,7 @@ from Structs import (NewOrExistingProject, ExistingProject,
      NewExperimentRun, ExistingExperimentRun, ThriftConfig, VersioningConfig,
      Dataset, ModelConfig, Model, ModelMetrics)
 
+from ..thrift.modeldb import ModelDBAPI
 from ..thrift.modeldb import ModelDBService
 from ..thrift.modeldb import ttypes as modeldb_types
 from ..utils.ConfigUtils import ConfigReader
@@ -221,6 +222,11 @@ class Syncer(object):
 
         # Create a client to use the protocol encoder
         self.client = ModelDBService.Client(protocol)
+
+        # Create a metadata api client for the protocol encoder
+        self.api_client = ModelDBAPI.Client(protocol)
+
+        # ModelDBAPI.Client(protocol)
         self.transport.open()
 
     def closeThriftClient(self):
@@ -365,7 +371,11 @@ class Syncer(object):
         with open(metadata_path) as data_file:
             metadata = yaml.load(data_file)
 
-        import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace(self.project)
+        # test the project creation api
+        self.api_client.createProject(self.project)
+
+
         print self.client.createVector(1, 'l2', {})
         print self.client.updateVectorField(1, 'CONFIG.l1', 0, 'hes')
         print self.client.getModelIds({"name":"test"})

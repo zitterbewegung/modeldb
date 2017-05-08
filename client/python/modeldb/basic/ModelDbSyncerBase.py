@@ -1,7 +1,6 @@
 import sys
 import os
 import yaml
-from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
@@ -361,3 +360,47 @@ class Syncer(object):
                 model_dataset, model, "label_col", "prediction_col",
                 metric_type, metric_value)
             Syncer.instance.add_to_buffer(metric_event)
+
+    def sync_test(self, metadata_path):
+        with open(metadata_path) as data_file:
+            metadata = yaml.load(data_file)
+
+        import pdb; pdb.set_trace()
+        print self.client.createVector(1, 'l2', {})
+        print self.client.updateVectorField(1, 'CONFIG.l1', 0, 'hes')
+        print self.client.getModelIds({"name":"test"})
+        print self.client.getModelIds({"METRICS.0.TYPE":"accuracy"})
+        print self.client.updateProject(1, 'namE', 'Sample Projects')
+
+
+        # sync datasets
+        datasets = {}
+        for dataset_dict in metadata[metadata_constants.DATASETS_KEY]:
+            dataset = self.dataset_from_dict(dataset_dict)
+            datasets[dataset.tag] = dataset
+        self.sync_datasets(datasets)
+
+        # get model details
+        model_data = metadata[metadata_constants.MODEL_KEY]
+        model_type = model_data[metadata_constants.TYPE_KEY]
+        model_name = model_data[metadata_constants.NAME_KEY]
+        model_path = model_data.get(metadata_constants.PATH_KEY, None)
+        model_tag = model_data.get(metadata_constants.TAG_KEY, None)
+        model = Model(model_type, model_name, model_path, model_tag)
+
+        model_dataset = self.get_dataset_for_tag(model_tag)
+        config = model_data[metadata_constants.CONFIG_KEY]
+        fit_event = FitEvent(model, ModelConfig(model_type, config, model_tag),
+                             model_dataset, model_data)
+        Syncer.instance.add_to_buffer(fit_event)
+
+        # sync metrics
+        metrics_data = model_data.get(metadata_constants.METRICS_KEY, [])
+        for metric in metrics_data:
+            metric_type = metric[metadata_constants.METRIC_TYPE_KEY]
+            metric_value = metric[metadata_constants.METRIC_VALUE_KEY]
+            metric_event = MetricEvent(
+                model_dataset, model, "label_col", "prediction_col",
+                metric_type, metric_value)
+            Syncer.instance.add_to_buffer(metric_event)
+

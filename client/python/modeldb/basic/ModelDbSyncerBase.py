@@ -271,6 +271,7 @@ class Syncer(object):
             metadata.append(kv)
         return modeldb_types.DataFrame(-1, [], -1, dataset.tag,
                                        dataset.filename, metadata)
+
     '''
     End. Functions that convert ModelDBSyncerLight classes into ModelDB
     thrift classes
@@ -371,7 +372,7 @@ class Syncer(object):
         with open(metadata_path) as data_file:
             metadata = yaml.load(data_file)
 
-        import pdb; pdb.set_trace(self.project)
+        import pdb; pdb.set_trace()
         # test the project creation api
         self.api_client.createProject(self.project)
 

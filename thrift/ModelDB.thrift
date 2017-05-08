@@ -1005,6 +1005,9 @@ service ModelDBAPI {
 }
 
 service ModelDBService {
+  i32 createProject(1: Project project)
+    throws (1: ServerLogicException svEx),
+
   /*
    Tests connection to the server. This just returns 200.
    */

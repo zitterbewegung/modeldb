@@ -23,7 +23,8 @@ import java.util.Map;
  *
  * For documentation on the API methods, see the ModelDB.thrift file.
  */
-public class ModelDbServer implements ModelDBService.Iface {
+
+public class ModelDbServer implements ModelDBService.Iface, ModelDBAPI.Iface {
   /**
    * The database context.
    */
@@ -46,17 +47,17 @@ public class ModelDbServer implements ModelDBService.Iface {
    * @param metadataDbType - type of DB used for metadata
    */
   public ModelDbServer(
-    String username, 
-    String password, 
-    String jdbcUrl, 
-    ModelDbConfig.DatabaseType dbType, 
-    String metadataDbHost, 
-    int metadataDbPort, 
-    String metadataDbName, 
+    String username,
+    String password,
+    String jdbcUrl,
+    ModelDbConfig.DatabaseType dbType,
+    String metadataDbHost,
+    int metadataDbPort,
+    String metadataDbName,
     ModelDbConfig.MetadataDbType metadataDbType) {
     try {
       this.ctx = ContextFactory.create(username, password, jdbcUrl, dbType);
-      this.metadataDb = ContextFactory.createMetadataDb(metadataDbHost, 
+      this.metadataDb = ContextFactory.createMetadataDb(metadataDbHost,
         metadataDbPort, metadataDbName, metadataDbType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -71,6 +72,11 @@ public class ModelDbServer implements ModelDBService.Iface {
     return 200;
   }
 
+  public int createProject(Project project) throws TException {
+    // System.out.println("\n\ncreateProject reached\n\n");
+    return (int)5;
+  }
+
   public int storeDataFrame(DataFrame df, int experimentRunId) throws TException {
     return ExceptionWrapper.run(experimentRunId, ctx, () -> {
       DataframeRecord dfRec = DataFrameDao.store(df, experimentRunId, ctx);
@@ -78,7 +84,7 @@ public class ModelDbServer implements ModelDBService.Iface {
     });
   }
 
-  public FitEventResponse storeFitEvent(FitEvent fe) throws TException {    
+  public FitEventResponse storeFitEvent(FitEvent fe) throws TException {
     return ExceptionWrapper.run(fe.experimentRunId, ctx, metadataDb, () -> {
       FitEventResponse fer = FitEventDao.store(fe, ctx);
       if (!MetadataDao.store(fer, fe, metadataDb)) {

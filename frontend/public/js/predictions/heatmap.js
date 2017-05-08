@@ -232,7 +232,7 @@ function drawHeatmap(selector, rows, cols, data) {
        d3.select("#heatmap-tooltip").classed("hidden", true);
        d3.selectAll('.gt-hover').classed("gt-hover", false);
        d3.selectAll('.nn-hover').classed("nn-hover", false);
-       d3.selectAll('.path:not(.path-selected)').remove();
+       d3.selectAll('.heatmap .path:not(.path-selected)').remove();
     })
     ;
 

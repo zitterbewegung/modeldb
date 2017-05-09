@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# update_thrift_file.py language src_path_for_thrift_file dest_path_folder 
+# update_thrift_file.py language src_path_for_thrift_file dest_path_folder
 
 '''
 The client has to be built using Apache thrift. In order to build the client, thrift needs
@@ -40,7 +40,7 @@ dest_path = sys.argv[3]
 
 # Make the directory if it needs to be made
 try:
-    os.makedirs(dest_path)
+    os.makedirs(os.path.dirname(dest_path, '..'))
 except:
     pass
 
@@ -48,7 +48,7 @@ except:
 data = open(src_path, "r").read()
 
 # Open the output file (where to copy to)
-f = open(dest_path + "/ModelDB.thrift", "w")
+f = open(dest_path, "w")
 
 # If it's in scala, write the namespace first, else do nothing
 if lang == "scala":

@@ -437,6 +437,7 @@ function removeExample(example) {
   d3.select(".hl-row-" + row).remove();
   if ($('.example').length == 1) {
     $('.example-plot').hide();
+    $('.example-plot-btn').html("<< Plot examples");
     $('.example-container').animate({"right": "-250px"}, function() {
       $('.example').remove();
     });

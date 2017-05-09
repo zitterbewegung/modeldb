@@ -85,12 +85,10 @@ input.threshold::-webkit-slider-thumb:after {
   position: fixed;
   right: -250px;
   top: 69px;
-  max-height: calc(100vh - 89px);
+  height: calc(100vh - 89px);
   width: 250px;
   background: #D9E0E8;
-  padding: 10px;
   box-sizing: border-box;
-  overflow: auto;
   white-space: nowrap;
 }
 
@@ -102,6 +100,10 @@ input.threshold::-webkit-slider-thumb:after {
   transition: all 0.3s ease;
   padding: 4px 7px;
   margin: 8px 0;
+}
+
+.example-container .kv:hover{
+  background-color: #D9E0E8;
 }
 
 .example-container-close {
@@ -118,6 +120,47 @@ input.threshold::-webkit-slider-thumb:after {
 
 .example-container-close:hover {
   opacity: 1;
+}
+
+.example-plot-btn {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #AEBDCD;
+  opacity: 0.7;
+  z-index: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.example-plot-btn:hover {
+  opacity: 1;
+}
+
+.example-plot {
+  width: 700px;
+  height: calc(100vh - 129px);
+  background-color: #D9E0E8;
+  position: absolute;
+  left: -700px;
+  top: 0;
+  display: none;
+  box-sizing: border-box;
+  padding: 20px;
+  overflow: scroll;
+  box-sizing: border-box;
+}
+
+.examples {
+  max-height: calc(100vh - 129px);
+  padding: 10px;
+  overflow: scroll;
+  box-sizing: border-box;
 }
 
 .example {

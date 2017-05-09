@@ -300,7 +300,7 @@ function sortByPrediction(selector, rORc,i,sortOrder, rows, cols, numRows, numCo
       .attr("y", function (d, i) { return sorted.indexOf(d.index) * cell_size_x + (cols[d] == 0 ? 0 : GT_OFFSET); })
       ;
     t.selectAll(".hl-col")
-      .attr("x", function(d) { return cell_size_x + (sorted.indexOf(d.index) -1 ) * cell_size_x + GT_OFFSET; })
+      .attr("x", function(d) { return cell_size_y + (sorted.indexOf(d.index) -1 ) * cell_size_x + GT_OFFSET; })
       ;
   } else {
     sorted=d3.range(numRows).sort(function(a,b){if(sortOrder){ return vals[b]-vals[a];}else{ return vals[a]-vals[b];}});
@@ -405,7 +405,7 @@ function toggleExample(example) {
 
 function addExample(example) {
   var html = new EJS({url: '/ejs/example.ejs'}).render({"example": RAW_DATA[example]});
-  $('.example-container').append($(html));
+  $('.examples').append($(html));
   $('.example-container').animate({"right": "20px"});
   $('.example-container').data('id', example);
 
@@ -428,18 +428,23 @@ function addExample(example) {
     .style("stroke", "#000")
     .style("stroke-width", "1.5")
   ;
+
+  addDataPlot(example, '.example-plot');
 }
 
 function removeExample(example) {
   var row = ROWS[example].index;
   d3.select(".hl-row-" + row).remove();
   if ($('.example').length == 1) {
+    $('.example-plot').hide();
     $('.example-container').animate({"right": "-250px"}, function() {
       $('.example').remove();
     });
   } else {
     $('.example[data-id="' + example + '"]').remove();
   }
+
+  removeDataPlot(example, '.example-plot');
 }
 
 function toggleModel(model) {

@@ -92,6 +92,17 @@ $(function() {
       $('.examples-group-by').slideDown();
     }
   });
+
+  $(document).on('click', '.example-plot-btn', function() {
+    if ($(this).hasClass('open')) {
+      $(this).html("<< Plot examples");
+    } else {
+      $(this).html(">> Hide plot");
+    }
+
+    $('.example-plot').fadeToggle();
+    $(this).toggleClass('open');
+  });
 });
 
 var calculateAggregateDataAvg = function() {

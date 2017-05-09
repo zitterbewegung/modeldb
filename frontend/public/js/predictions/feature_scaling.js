@@ -103,3 +103,22 @@ function standardizeRows(rows) {
     rows[id] = arr;
   }
 }
+
+// normalize rows to value between 0 and 1,
+// where values are percentage of the max value
+function getNormalizedExample(rows, id) {
+  var maxValues = getMaxValues(rows);
+
+  var row = rows[id];
+  var result = {};
+
+  for (x in row) {
+    if (maxValues[x] == 0) {
+      result[x] = 0.5;
+    } else {
+      result[x] = row[x]/maxValues[x];
+    }
+  }
+
+  return result;
+}

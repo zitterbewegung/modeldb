@@ -1,4 +1,5 @@
-/* 
+
+/*
   The thrift file specifies the structs and functions that are shared
   among modeldb projects. Thrift automatically generates classes to manipulate
   the data in each language.
@@ -15,8 +16,8 @@
 namespace java modeldb
 namespace py modeldb
 
-/* 
-  A project is the highest level in the grouping hierarchy. A project can 
+/*
+  A project is the highest level in the grouping hierarchy. A project can
   contain multiple experiments, which in turn can contain experiment runs.
 
   Attributes:
@@ -34,10 +35,13 @@ struct Project {
   1: i32 id = -1,
   2: string name,
   3: string author,
-  4: string description
+  4: string description,
+  5: optional string jsonMetadata,
+  6: optional string dateCreated,
+  7: optional string dateLastUpdated
 }
 
-/* 
+/*
   Experiments are the second level in the grouping hierarchy. An experiment can contain
   multiple experiment runs.
 
@@ -53,8 +57,11 @@ struct Experiment {
   2: i32 projectId,
   3: string name,
   4: string description,
-  5: bool isDefault = 0
+  5: bool isDefault = 0,
+  6: optional string jsonMetadata
 }
+
+// TODO: allow user to move model to an experiment
 
 /*
   Experiment runs are contained within experiments. Note that the
@@ -66,16 +73,19 @@ struct Experiment {
     data, method, etc.
   sha: Commit hash of the code used in the current run.
   created: Timestamp for when the ExperimentRun was created.
+
+  TODO: can we remove this or do it differently?
 */
 struct ExperimentRun {
   1: i32 id = -1,
   2: i32 experimentId,
   3: string description,
   4: optional string sha,
-  5: optional string created
+  5: optional string created,
+  6: optional string jsonMetadata
 }
 
-/* 
+/*
   A column in a DataFrame.
 
   name: The name of this column.
@@ -87,7 +97,7 @@ struct DataFrameColumn {
 }
 
 /*
-  A MetadataKV is any key-value pair along with the type of the value. 
+  A MetadataKV is any key-value pair along with the type of the value.
   It is used to associate arbitrary metadata with ModelDB entities
 
   key: key.
@@ -100,7 +110,7 @@ struct MetadataKV {
   3: string valueType
 }
 
-/* 
+/*
   A tabular set of data. Contains many columns, each containing a single type
   of data. Each row in a DataFrame is a distinct example in the dataset.
 
@@ -120,7 +130,7 @@ struct DataFrame {
   6: optional list<MetadataKV> metadata
 }
 
-/* 
+/*
   A HyperParameter guides the fitting of a TransformerSpec to a DataFrame in order to produce a Transformer.
   Some example hyperparameters include the number of trees in a random forest, the regularization parameter in
   linear regression, or the value "k" in k-means clustering.
@@ -139,8 +149,34 @@ struct HyperParameter {
   5: double max
 }
 
-/* 
-  An event that represents the creation of a project. 
+
+struct Model {
+  1: i32 id,
+  2: i32 experimentRunId,
+  3: i32 experimentId,
+  4: i32 projectId,
+  5: list<DataSource> dataSources, //TODO: split test, train, validation data sources?
+  // TODO: optional metrics? register model first and add metrics later
+  6: map<string, map<i32, double>> metrics, //TODO: include datasource id in metrics or create struct for metrics or split metrics for test, train?
+  7: optional string filepath,
+  8: optional string sha,
+  9: optional string timestamp,
+  10: optional list<string> tags,
+  11: optional list<string> comments,
+  12: optional string jsonMetadata
+}
+
+
+// TODO: consolidate with DataFrame ?
+struct DataSource {
+  1: i32 id,
+  2: string filepath,
+  3: optional string jsonMetadata
+}
+
+
+/*
+  An event that represents the creation of a project.
 
   project: The project to be created by this event.
 */
@@ -148,8 +184,8 @@ struct ProjectEvent {
   1: Project project
 }
 
-/* 
-  The server's response to creating a project. 
+/*
+  The server's response to creating a project.
 
   projectId: The id of the created project.
 */
@@ -157,7 +193,7 @@ struct ProjectEventResponse {
   1: i32 projectId
 }
 
-/* 
+/*
   An event representing the creation of an Experiment.
 
   experiment: The created Experiment.
@@ -166,7 +202,7 @@ struct ExperimentEvent {
   1: Experiment experiment
 }
 
-/* 
+/*
   The response given to the creation of an Experiment.
 
   experimentId: The id of the experiment created.
@@ -176,7 +212,7 @@ struct ExperimentEventResponse {
   1: i32 experimentId
 }
 
-/* 
+/*
   An event representing the creation of an Experiment Run.
 
   experimentRun: The ExperimentRun to create.
@@ -185,7 +221,7 @@ struct ExperimentRunEvent {
   1: ExperimentRun experimentRun
 }
 
-/* 
+/*
   The response given to the creation of an Experiment Run.
 
   experimentRunId: The id of the created ExperimentRun.
@@ -195,7 +231,7 @@ struct ExperimentRunEventResponse {
 }
 
 /*
-  A TransformerSpec is a machine learning primitive that describes 
+  A TransformerSpec is a machine learning primitive that describes
   the hyperparameters used to create a model (A Transformer produced
   by fitting a TransformerSpec to a DataFrame).
 
@@ -211,8 +247,8 @@ struct TransformerSpec {
   4: string tag = ""
 }
 
-/* 
-  A transformer is a machine learning primitive that takes in a DataFrame and 
+/*
+  A transformer is a machine learning primitive that takes in a DataFrame and
   outputs another DataFrame.
 
   id: A unique identifier for this transformer.
@@ -222,12 +258,13 @@ struct TransformerSpec {
 */
 struct Transformer {
   1: i32 id = -1,
-  // transformerType is present in spec as well as transformer 
+  // transformerType is present in spec as well as transformer
   // because some transformers may not have a spec associated with them
-  2: string transformerType, 
+  2: string transformerType,
   3: string tag ="",
   4: optional string filepath
 }
+
 
 /*
   The types of problems compatible with modeldb
@@ -247,7 +284,7 @@ enum ProblemType {
   RECOMMENDATION
 }
 
-/* 
+/*
   A term in a linear model.
 
   coefficient: The coefficient of the feature.
@@ -262,7 +299,7 @@ struct LinearModelTerm {
   4: optional double pValue
 }
 
-/* 
+/*
   Contains information about linear model (e.g. linear regression, logistic regression).
 
   interceptTerm: An optional term that represents the intercept of the linear model.
@@ -270,11 +307,11 @@ struct LinearModelTerm {
                 the feature vectors. For example, the first term corresponds to the first entry of the
                 feature vector.
   objectiveHistory: An optional history of every value the objective function has
-                    obtained while being created, where objectiveHistory[i] is 
+                    obtained while being created, where objectiveHistory[i] is
                     the value of the objective function on iteration i.
   rmse: An optional root-mean-square error of this model from the training set.
   explainedVariance: An optional explained variance of the training set.
-      --Explained Variance measures the proportion to which a mathematical model 
+      --Explained Variance measures the proportion to which a mathematical model
       -- accounts for the variation (dispersion) of a given data set (Wikipedia)
   r2: The optional r^2 value that measures how well fitted the model is with respect to its training set.
 */
@@ -383,7 +420,7 @@ struct TransformEvent {
   6: i32 experimentRunId
 }
 
-/* 
+/*
   The response given to the creation of a TransformEvent.
 
   oldDataFrameId: The id of the input DataFrame of the transformation.
@@ -402,7 +439,7 @@ struct TransformEventResponse {
 }
 
 /*
-  An event represents breaking a DataFrame into 
+  An event represents breaking a DataFrame into
   smaller DataFrames randomly according to a weight vector that
   specifies the relative sizes of the smaller DataFrames.
 
@@ -420,7 +457,7 @@ struct RandomSplitEvent {
   5: i32 experimentRunId
 }
 
-/* 
+/*
   The response to the creation of a Random Split event.
 
   oldDataFrameId: The id of the input DataFrame.
@@ -536,7 +573,7 @@ struct AnnotationEventResponse {
 /*
   Represents the ancestry of a DataFrame, that is, the DataFrame it derived
   from, and the one its parent derived from, etc.
-  
+
   ancestors: The list of ancestors of this frame, starting from the oldest DataFrame (i.e. the one DataFrame from which
     the successive DataFrames derive from).
 */
@@ -546,7 +583,7 @@ struct DataFrameAncestry {
 
 /*
   Represents a common ancestor DataFrame used between two models.
-  
+
   ancestor: The common ancestor.
   chainIndexModel1: The number of steps to get from the first model to the common ancestor (e.g. 1 step = parent,
     2 steps = grandparent).
@@ -872,7 +909,7 @@ struct TreeNode {
 
 /*
   A link between a parent and child TreeNode in a decision tree.
-  
+
   parentIndex: The index of the parent in this relation.
   childIndex: The index of the child in this relation.
   isLeft: Whether or not the child is the left child of the parent (true = Left, false = Right).
@@ -901,7 +938,7 @@ struct TreeComponent {
 
 /*
   Represents a tree model.
-  
+
   modelType: The type of model this represents (e.g. decision tree, gradient boosted trees, random forest).
   components: The components of the model. There should be one for each tree in the ensemble. You can view a decision
     tree model as having exactly one component.
@@ -921,8 +958,8 @@ struct TreeModel {
 
  The DataFrame used in the fitting may have been produced by transforming
  other DataFrames. So, we include all the TransformEvents that were involved in
- producing the DataFrame that was fit to produce the given model. 
- They are ordered such that the oldest TransformEvent is first and the 
+ producing the DataFrame that was fit to produce the given model.
+ They are ordered such that the oldest TransformEvent is first and the
  TransformEvent that produced the DataFrame used for fitting is last.
 
  All of the DataFrames stored in the FitEvent and the TransformEvents have
@@ -1002,7 +1039,7 @@ service ModelDBService {
   /*
    Tests connection to the server. This just returns 200.
    */
-  i32 testConnection(), 
+  i32 testConnection(),
 
   /*
    Stores a DataFrame in the database.
@@ -1010,7 +1047,7 @@ service ModelDBService {
    df: The DataFrame.
    experimentRunId: The ID of the experiment run that contains this given DataFrame.
    */
-  i32 storeDataFrame(1: DataFrame df, 2: i32 experimentRunId) 
+  i32 storeDataFrame(1: DataFrame df, 2: i32 experimentRunId)
     throws (1: InvalidExperimentRunException ierEx, 2: ServerLogicException svEx),
 
   /*
@@ -1019,7 +1056,7 @@ service ModelDBService {
 
    transformerId: The ID of a Transformer.
    */
-  string pathForTransformer(1: i32 transformerId) 
+  string pathForTransformer(1: i32 transformerId)
     throws (1: ResourceNotFoundException rnfEx, 2: InvalidFieldException efEx, 3: ServerLogicException svEx),
 
   /*
@@ -1152,7 +1189,7 @@ service ModelDBService {
    modelId: The ID of a Transformer.
    model: The LinearModel metadata to associate with the Transformer with ID modelId.
    */
-  bool storeLinearModel(1: i32 modelId, 2: LinearModel model) 
+  bool storeLinearModel(1: i32 modelId, 2: LinearModel model)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1161,7 +1198,7 @@ service ModelDBService {
 
    dataFrameId: The ID of the DataFrame whose ancestry we seek.
    */
-  DataFrameAncestry getDataFrameAncestry(1: i32 dataFrameId) 
+  DataFrameAncestry getDataFrameAncestry(1: i32 dataFrameId)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1172,7 +1209,7 @@ service ModelDBService {
    dfId1: The ID of a DataFrame.
    dfId2: The ID of another DataFrame.
    */
-  CommonAncestor getCommonAncestor(1: i32 dfId1, 2: i32 dfId2) 
+  CommonAncestor getCommonAncestor(1: i32 dfId1, 2: i32 dfId2)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1182,7 +1219,7 @@ service ModelDBService {
    modelId1: The ID of a model.
    modelId2: The ID of another model.
    */
-  CommonAncestor getCommonAncestorForModels(1: i32 modelId1, 2: i32 modelId2) 
+  CommonAncestor getCommonAncestorForModels(1: i32 modelId1, 2: i32 modelId2)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1190,7 +1227,7 @@ service ModelDBService {
 
    modelId: The ID of a model.
    */
-  i32 getTrainingRowsCount(1: i32 modelId) 
+  i32 getTrainingRowsCount(1: i32 modelId)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1198,7 +1235,7 @@ service ModelDBService {
 
    modelIds: The IDs of models.
    */
-  list<i32> getTrainingRowsCounts(1: list<i32> modelIds) 
+  list<i32> getTrainingRowsCounts(1: list<i32> modelIds)
     throws (1: ServerLogicException svEx),
 
   /*
@@ -1207,7 +1244,7 @@ service ModelDBService {
    modelId1: The ID of a model.
    modelId2: The ID of another model.
    */
-  CompareHyperParametersResponse compareHyperparameters(1: i32 modelId1, 2: i32 modelId2) 
+  CompareHyperParametersResponse compareHyperparameters(1: i32 modelId1, 2: i32 modelId2)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1216,7 +1253,7 @@ service ModelDBService {
    modelId1: The ID of a model.
    modelId2: The ID of another model.
    */
-  CompareFeaturesResponse compareFeatures(1: i32 modelId1, 2: i32 modelId2) 
+  CompareFeaturesResponse compareFeatures(1: i32 modelId1, 2: i32 modelId2)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1238,7 +1275,7 @@ service ModelDBService {
     similar models. The successive metrics will be applied after that to break ties.
    numModels: The maximum number of similar models to find.
    */
-  list<i32> similarModels(1: i32 modelId, 2: list<ModelCompMetric> compMetrics, 3: i32 numModels) 
+  list<i32> similarModels(1: i32 modelId, 2: list<ModelCompMetric> compMetrics, 3: i32 numModels)
     throws (1: ResourceNotFoundException rnfEx, 2: BadRequestException brEx, 3: ServerLogicException svEx),
 
   /*
@@ -1248,7 +1285,7 @@ service ModelDBService {
 
    modelId: The ID of a model.
    */
-  list<string> linearModelFeatureImportances(1: i32 modelId) 
+  list<string> linearModelFeatureImportances(1: i32 modelId)
     throws (1: ResourceNotFoundException rnfEx, 2: IllegalOperationException ioEx, 3: ServerLogicException svEx),
 
   /*
@@ -1257,7 +1294,7 @@ service ModelDBService {
    modelId1: The ID of a model.
    modelId2: The ID of another model.
    */
-  list<FeatureImportanceComparison> compareLinearModelFeatureImportances(1: i32 model1Id, 2: i32 model2Id) 
+  list<FeatureImportanceComparison> compareLinearModelFeatureImportances(1: i32 model1Id, 2: i32 model2Id)
     throws (1: ResourceNotFoundException rnfEx, 2: IllegalOperationException ioEx, 3: ServerLogicException svEx),
 
   /*
@@ -1290,7 +1327,7 @@ service ModelDBService {
    modelId: The ID of the model for which we would like to compute confidence intervals.
    sigLevel: The significance level for which we would like to compute confidence intervals.
    */
-  list<ConfidenceInterval> confidenceIntervals(1: i32 modelId, 2: double sigLevel) 
+  list<ConfidenceInterval> confidenceIntervals(1: i32 modelId, 2: double sigLevel)
     throws (1: ResourceNotFoundException rnfEx, 2: IllegalOperationException ioEx, 3: BadRequestException brEx, 4: ServerLogicException svEx),
 
   /*
@@ -1301,7 +1338,7 @@ service ModelDBService {
   list<i32> modelsWithFeatures(1: list<string> featureNames)
     throws (1: ServerLogicException svEx),
 
-  // Get the IDs of the models that are derived from the DataFrame with the 
+  // Get the IDs of the models that are derived from the DataFrame with the
   // given ID, or one of its descendent DataFrames. This will only consider
   // models and DataFrames in the same project as the given dfId.
   /*
@@ -1309,7 +1346,7 @@ service ModelDBService {
 
    dfId: The ID of a DataFrame.
    */
-  list<i32> modelsDerivedFromDataFrame(1: i32 dfId) 
+  list<i32> modelsDerivedFromDataFrame(1: i32 dfId)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
@@ -1446,15 +1483,15 @@ service ModelDBService {
    modelId: The ID of a model.
    mode: The TreeModel information to associate with the model with the given ID.
    */
-  bool storeTreeModel(1: i32 modelId, 2: TreeModel model) 
+  bool storeTreeModel(1: i32 modelId, 2: TreeModel model)
     throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
   /*
-    An N stage pipeline will store N TransformEvents when it transforms a 
+    An N stage pipeline will store N TransformEvents when it transforms a
     DataFrame. So, the client can make N calls to storeTransformEvent. However,
     N can be very large. For example, consider a pre-processing pipeline that
     does string indexing and one-hot encoding for 20 features. This would result
-    in N = 2*20 = 40, which means the client has to make 40 calls to 
+    in N = 2*20 = 40, which means the client has to make 40 calls to
     storeTransformEvent. This means the client has to wait for 40 round trip
     times at least. Notice that this operation cannot be parallelized either,
     because the first stage's TransformEvent must be stored in order to store
@@ -1462,8 +1499,8 @@ service ModelDBService {
     by the first stage must equal the ID of the DataFrame input to the second
     stage).
 
-    To mitigate the performance issue described above, 
-    storePipelineTransformEvent allows the client to store all N stages of 
+    To mitigate the performance issue described above,
+    storePipelineTransformEvent allows the client to store all N stages of
     transformation at once.
 
     te: The transform events that are involved in this overall pipeline transform event.
@@ -1488,3 +1525,149 @@ service ModelDBService {
   ExtractedPipelineResponse extractPipeline(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx)
 }
 
+
+service ModelDBAPI {
+
+  i32 createProject(1: Project project)
+    throws (1: ServerLogicException svEx),
+
+  i32 createExperiment(1: Experiment experiment)
+    throws (1: ServerLogicException svEx),
+
+  i32 createExperimentRun(1: ExperimentRun experimentRun)
+    throws (1: ServerLogicException svEx),
+
+  i32 createModel(1: Model model)
+    throws (1: ServerLogicException svEx),
+
+  // TODO: rename functions from get*Ids to something else
+  list<i32> getExperimentIds(1: map<string, string> keyValuePairs)
+    throws (1: ServerLogicException svEx),
+
+  Experiment getExperiment(1: i32 experimentId)
+    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  list<i32> getExperimentRunIds(1: map<string, string> keyValuePairs)
+    throws (1: ServerLogicException svEx),
+
+  ExperimentRun getExperimentRun(1: i32 experimentRunId)
+    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  /*
+   Get information about all the experiment runs in a given experiment.
+
+   experimentId: The ID of an experiment.
+   */
+  list<ExperimentRun> getRunsInExperiment(1: i32 experimentId) throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  /*
+   Get information about a project and the experiments/experiment runs that it contains.
+
+   projId: The ID of a project.
+   */
+  ProjectExperimentsAndRuns getRunsAndExperimentsInProject(1: i32 projId) throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  /*
+   Get information about of all the projects in the database.
+   */
+  list<ProjectOverviewResponse> getProjectOverviews() throws (1: ServerLogicException svEx),
+
+  /*
+   Get information about a given experiment run.
+
+   experimentRunId: The ID of an experiment run.
+   */
+  ExperimentRunDetailsResponse getExperimentRunDetails(1: i32 experimentRunId) throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  /*
+   Get information about the model with the given ID.
+
+   modelId: The ID of a model.
+   */
+  ModelResponse getModel(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
+
+  /*
+   Get the IDs of all the projects that match the specified key-value pairs.
+
+   keyValuePairs: The map containing key-value pairs to match,
+    where key is not case-sensitive and value is case-sensitive
+   */
+  list<i32> getProjectIds(1: map<string, string> keyValuePairs)
+    throws (1: ServerLogicException svEx),
+
+  /*
+   Get the IDs of all the models that match the specified key-value pairs.
+
+   keyValuePairs: The map containing key-value pairs to match
+   */
+  list<i32> getModelIds(1: map<string, string> keyValuePairs)
+    throws (1: ServerLogicException svEx),
+
+  /*
+    Update the given field of the project of the given ID with the given value.
+    The field must be an existing field of the project.
+
+    projectId: The ID of the project
+    key: The field to update (not case-sensitive)
+    value: The value for the field (case-sensitive)
+
+    TODO(mcslao): support adding key value pairs
+   */
+  bool updateProject(1: i32 projectId, 2: string key, 3: string value)
+    throws (1: ServerLogicException svEx),
+
+  /*
+    Update the given field of the model of the given ID with the given value.
+    If key exists, update it with value. If not, add the key-value pair to the model.
+    Return a boolean indicating if the key was updated or not.
+
+    modelId: The ID of the model
+    key: The field to update, which follows MongoDB's dot notation
+    value: The value for the field, where datetime values follow the format given at
+      http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTimeParser()
+    valueType: The type of the value (string, int, double, long, datetime, or bool)
+   */
+  bool createOrUpdateScalarField(1: i32 modelId, 2: string key, 3: string value, 4: string valueType)
+    throws (1: ServerLogicException svEx),
+
+  /*
+   Create a vector field with the given name inside the model with the given ID.
+   The vector field is configured with the given vector config.
+   Do nothing if the vector field with the given name already exists.
+   Return a boolean indicating if the vector was created or not.
+
+   modelId: The ID of the model
+   vectorName: The name of the vector field, which follows MongoDB's dot notation
+   vectorConfig: The map containing config information for the vector field
+   */
+  bool createVectorField(1: i32 modelId, 2: string vectorName, 3: map<string, string> vectorConfig)
+    throws (1: ServerLogicException svEx),
+
+  /*
+    Update the given vector field of the model of the given ID with the given value at the specified index.
+    The specified field must exist and must be a vector.
+    Return a boolean indicating if the value was updated or not.
+
+    modelId: The ID of the model
+    key: The field to update, which follows MongoDB's dot notation
+    valueIndex: The index of the value to update (0-indexed)
+    value: The value for the field, where datetime values follow the format given at
+      http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTimeParser()
+    valueType: The type of the value (string, int, double, long, datetime, or bool)
+   */
+  bool updateVectorField(1: i32 modelId, 2: string key, 3: i32 valueIndex, 4: string value, 5: string valueType)
+    throws (1: ServerLogicException svEx),
+
+  /*
+   Add a new value to the vector field with the given name in the model with the given ID.
+   Return a boolean indicating if the value was added or not.
+
+   modelId: The ID of the model
+   vectorName: The name of the vector field to update, which follows MongoDB's dot notation
+   value: The value to be added, where datetime values follow the format given at
+      http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTimeParser()
+    valueType: The type of the value (string, int, double, long, datetime, or bool)
+   */
+  bool appendToVectorField(1: i32 modelId, 2: string vectorName, 3: string value, 4: string valueType)
+    throws (1: ServerLogicException svEx),
+}

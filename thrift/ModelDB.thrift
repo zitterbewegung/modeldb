@@ -1524,8 +1524,13 @@ service ModelDBService {
    */
   ExtractedPipelineResponse extractPipeline(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
 
+  # API Service is here:
   i32 createProject(1: Project project)
     throws (1: ServerLogicException svEx)
+
+  i32 createExperiment(1: Experiment experiment)
+    throws (1: ServerLogicException svEx),
+
 }
 
 
@@ -1533,8 +1538,8 @@ service ModelDBAPI {
   i32 createProject(1: Project project)
     throws (1: ServerLogicException svEx)
 
-  #i32 createExperiment(1: Experiment experiment)
-  #  throws (1: ServerLogicException svEx),
+  i32 createExperiment(1: Experiment experiment)
+    throws (1: ServerLogicException svEx),
 
   #i32 createExperimentRun(1: ExperimentRun experimentRun)
   #  throws (1: ServerLogicException svEx),

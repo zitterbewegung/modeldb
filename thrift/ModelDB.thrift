@@ -150,6 +150,14 @@ struct HyperParameter {
 }
 
 
+// TODO: consolidate with DataFrame ?
+struct DataSource {
+  1: i32 id,
+  2: string filepath,
+  3: optional string jsonMetadata
+}
+
+
 struct Model {
   1: i32 id,
   2: i32 experimentRunId,
@@ -164,14 +172,6 @@ struct Model {
   10: optional list<string> tags,
   11: optional list<string> comments,
   12: optional string jsonMetadata
-}
-
-
-// TODO: consolidate with DataFrame ?
-struct DataSource {
-  1: i32 id,
-  2: string filepath,
-  3: optional string jsonMetadata
 }
 
 
@@ -1522,62 +1522,65 @@ service ModelDBService {
 
    modelId: The ID of a model.
    */
-  ExtractedPipelineResponse extractPipeline(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx)
+  ExtractedPipelineResponse extractPipeline(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx),
+
+  i32 createProject(1: Project project)
+    throws (1: ServerLogicException svEx)
 }
 
 
 service ModelDBAPI {
   i32 createProject(1: Project project)
-    throws (1: ServerLogicException svEx),
+    throws (1: ServerLogicException svEx)
 
-  i32 createExperiment(1: Experiment experiment)
-    throws (1: ServerLogicException svEx),
+  #i32 createExperiment(1: Experiment experiment)
+  #  throws (1: ServerLogicException svEx),
 
-  i32 createExperimentRun(1: ExperimentRun experimentRun)
-    throws (1: ServerLogicException svEx),
+  #i32 createExperimentRun(1: ExperimentRun experimentRun)
+  #  throws (1: ServerLogicException svEx),
 
-  i32 updateProject(1: i32 projectId, 2:  map<string, string> updatedKVs)
-    throws (1: ServerLogicException svEx),
+  #i32 updateProject(1: i32 projectId, 2:  map<string, string> updatedKVs)
+  #  throws (1: ServerLogicException svEx),
 
-  i32 updateExperiment(1: i32 experimentId, 2: map<string, string> updatedKVs)
-      throws (1: ServerLogicException svEx),
+  #i32 updateExperiment(1: i32 experimentId, 2: map<string, string> updatedKVs)
+  #    throws (1: ServerLogicException svEx),
 
-  i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
-    throws (1: ServerLogicException svEx),
+  #i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
+  #  throws (1: ServerLogicException svEx),
 
-  list<i32> queryProjectIds(1: map<string, string> keyValuePairs)
-    throws (1: ServerLogicException svEx),
+  #list<i32> queryProjectIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
 
-  Project getProject(1: i32 projectId)
-    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+  #Project getProject(1: i32 projectId)
+  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
-  list<i32> queryExperimentIds(1: map<string, string> keyValuePairs)
-    throws (1: ServerLogicException svEx),
+  #list<i32> queryExperimentIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
 
-  Experiment getExperiment(1: i32 experimentId)
-    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+  #Experiment getExperiment(1: i32 experimentId)
+  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
-  list<i32> queryExperimentRunIds(1: map<string, string> keyValuePairs)
-    throws (1: ServerLogicException svEx),
+  #list<i32> queryExperimentRunIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
 
-  ExperimentRun getExperimentRun(1: i32 experimentRunId)
-    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+  #ExperimentRun getExperimentRun(1: i32 experimentRunId)
+  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
-  list<i32> getModelIds(1: map<string, string> keyValuePairs)
-    throws (1: ServerLogicException svEx),
+  #list<i32> getModelIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
 
-  Model getModel(1: i32 modelId)
-    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+  #Model getModel(1: i32 modelId)
+  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
-  bool createOrUpdateScalarField(1: i32 modelId, 2: string key, 3: string value, 4: string valueType)
-    throws (1: ServerLogicException svEx),
+  #bool createOrUpdateScalarField(1: i32 modelId, 2: string key, 3: string value, 4: string valueType)
+  #  throws (1: ServerLogicException svEx),
 
-  bool createVectorField(1: i32 modelId, 2: string vectorName, 3: map<string, string> vectorConfig)
-    throws (1: ServerLogicException svEx),
+  #bool createVectorField(1: i32 modelId, 2: string vectorName, 3: map<string, string> vectorConfig)
+  #  throws (1: ServerLogicException svEx),
 
-  bool updateVectorField(1: i32 modelId, 2: string key, 3: i32 valueIndex, 4: string value, 5: string valueType)
-    throws (1: ServerLogicException svEx),
+  #bool updateVectorField(1: i32 modelId, 2: string key, 3: i32 valueIndex, 4: string value, 5: string valueType)
+  #  throws (1: ServerLogicException svEx),
 
-  bool appendToVectorField(1: i32 modelId, 2: string vectorName, 3: string value, 4: string valueType)
-    throws (1: ServerLogicException svEx),
+  #bool appendToVectorField(1: i32 modelId, 2: string vectorName, 3: string value, 4: string valueType)
+  #  throws (1: ServerLogicException svEx),
 }

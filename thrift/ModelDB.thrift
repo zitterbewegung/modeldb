@@ -1531,6 +1531,19 @@ service ModelDBService {
   i32 createExperiment(1: Experiment experiment)
     throws (1: ServerLogicException svEx),
 
+  i32 createExperimentRun(1: ExperimentRun experimentRun)
+    throws (1: ServerLogicException svEx),
+
+  i32 API_updateProject(1: i32 projectId, 2:  map<string, string> updatedKVs)
+    throws (1: ServerLogicException svEx),
+
+  i32 updateExperiment(1: i32 experimentId, 2: map<string, string> updatedKVs)
+      throws (1: ServerLogicException svEx),
+
+  i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
+    throws (1: ServerLogicException svEx),
+
+
 }
 
 
@@ -1541,17 +1554,17 @@ service ModelDBAPI {
   i32 createExperiment(1: Experiment experiment)
     throws (1: ServerLogicException svEx),
 
-  #i32 createExperimentRun(1: ExperimentRun experimentRun)
-  #  throws (1: ServerLogicException svEx),
+  i32 createExperimentRun(1: ExperimentRun experimentRun)
+    throws (1: ServerLogicException svEx),
 
-  #i32 updateProject(1: i32 projectId, 2:  map<string, string> updatedKVs)
-  #  throws (1: ServerLogicException svEx),
+  i32 API_updateProject(1: i32 projectId, 2:  map<string, string> updatedKVs)
+    throws (1: ServerLogicException svEx),
 
-  #i32 updateExperiment(1: i32 experimentId, 2: map<string, string> updatedKVs)
-  #    throws (1: ServerLogicException svEx),
+  i32 updateExperiment(1: i32 experimentId, 2: map<string, string> updatedKVs)
+      throws (1: ServerLogicException svEx),
 
-  #i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
-  #  throws (1: ServerLogicException svEx),
+  i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
+    throws (1: ServerLogicException svEx),
 
   #list<i32> queryProjectIds(1: map<string, string> keyValuePairs)
   #  throws (1: ServerLogicException svEx),

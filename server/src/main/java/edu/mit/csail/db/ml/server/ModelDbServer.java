@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * For documentation on the API methods, see the ModelDB.thrift file.
  */
-public class ModelDbServer implements ModelDBService.Iface {
+public class ModelDbServer implements ModelDBService.Iface, ModelDBAPI.Iface {
   /**
    * The database context.
    */
@@ -75,11 +75,29 @@ public class ModelDbServer implements ModelDBService.Iface {
     return (int)0;
   }
 
-
-  // ^ API Service
   public int createExperiment(Experiment experiment) throws TException{
     return (int)1;
   }
+
+  public int createExperimentRun(ExperimentRun experimentRun) throws TException{
+    return (int)2;
+  }
+
+  public int API_updateProject(int projectId, Map<String, String> updatedKVs) throws TException{
+    return (int)3;
+  }
+
+  public int updateExperiment(int experimentId, Map<String, String> updatedKVs) throws TException{
+    return (int)4;
+  }
+
+  public int updateExperimentRun(int experimentRunId, Map<String, String> updatedKVs) throws TException{
+    return (int)5;
+  }
+
+
+  // ^ API Service
+
 
   public int storeDataFrame(DataFrame df, int experimentRunId) throws TException {
     return ExceptionWrapper.run(experimentRunId, ctx, () -> {

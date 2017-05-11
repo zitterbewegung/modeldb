@@ -109,9 +109,9 @@ public class ModelDbServer implements ModelDBService.Iface, ModelDBAPI.Iface {
   //   return list;
   // }
 
-  // public getExperiment(int experimentId) throws TException{
-  //   return new Experiment(9, 9, "name", "description");
-  // }
+  public Experiment getExperiment(int experimentId) throws TException{
+    return new Experiment(9, 9, "name", "description", true);
+  }
 
 
   // ^ API Service

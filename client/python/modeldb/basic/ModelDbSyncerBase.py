@@ -16,7 +16,6 @@ from Structs import (NewOrExistingProject, ExistingProject,
      Dataset, ModelConfig, Model, ModelMetrics)
 
 from ..thrift.modeldb import ModelDBService
-from ..thrift.modeldb import ModelDBAPI
 from ..thrift.modeldb import ttypes as modeldb_types
 from ..utils.ConfigUtils import ConfigReader
 from ..utils import MetadataConstants as metadata_constants

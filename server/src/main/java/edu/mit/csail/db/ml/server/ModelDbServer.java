@@ -113,6 +113,10 @@ public class ModelDbServer implements ModelDBService.Iface, ModelDBAPI.Iface {
     return new Experiment(9, 9, "name", "description", true);
   }
 
+  public ExperimentRun getExperimentRun(int experimentRunId) throws TException{
+    return new ExperimentRun(11, 11, "description");
+  }
+
 
   // ^ API Service
 

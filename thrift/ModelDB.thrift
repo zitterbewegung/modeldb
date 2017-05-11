@@ -1563,21 +1563,6 @@ service ModelDBService {
 
   #list<i32> getModelIds(1: map<string, string> keyValuePairs)
   #  throws (1: ServerLogicException svEx),
-
-  #Model getModel(1: i32 modelId)
-  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
-
-  #bool createOrUpdateScalarField(1: i32 modelId, 2: string key, 3: string value, 4: string valueType)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool createVectorField(1: i32 modelId, 2: string vectorName, 3: map<string, string> vectorConfig)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool updateVectorField(1: i32 modelId, 2: string key, 3: i32 valueIndex, 4: string value, 5: string valueType)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool appendToVectorField(1: i32 modelId, 2: string vectorName, 3: string value, 4: string valueType)
-  #  throws (1: ServerLogicException svEx),
 }
 
 
@@ -1621,18 +1606,4 @@ service ModelDBAPI {
   #list<i32> getModelIds(1: map<string, string> keyValuePairs)
   #  throws (1: ServerLogicException svEx),
 
-  #Model getModel(1: i32 modelId)
-  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
-
-  #bool createOrUpdateScalarField(1: i32 modelId, 2: string key, 3: string value, 4: string valueType)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool createVectorField(1: i32 modelId, 2: string vectorName, 3: map<string, string> vectorConfig)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool updateVectorField(1: i32 modelId, 2: string key, 3: i32 valueIndex, 4: string value, 5: string valueType)
-  #  throws (1: ServerLogicException svEx),
-
-  #bool appendToVectorField(1: i32 modelId, 2: string vectorName, 3: string value, 4: string valueType)
-  #  throws (1: ServerLogicException svEx),
 }

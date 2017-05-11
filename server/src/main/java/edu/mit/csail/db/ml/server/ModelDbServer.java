@@ -72,28 +72,46 @@ public class ModelDbServer implements ModelDBService.Iface, ModelDBAPI.Iface {
   }
 
   public int createProject(Project project) throws TException{
-    return (int)0;
+    return 0;
   }
 
   public int createExperiment(Experiment experiment) throws TException{
-    return (int)1;
+    return 1;
   }
 
   public int createExperimentRun(ExperimentRun experimentRun) throws TException{
-    return (int)2;
+    return 2;
   }
 
   public int API_updateProject(int projectId, Map<String, String> updatedKVs) throws TException{
-    return (int)3;
+    return 3;
   }
 
   public int updateExperiment(int experimentId, Map<String, String> updatedKVs) throws TException{
-    return (int)4;
+    return 4;
   }
 
   public int updateExperimentRun(int experimentRunId, Map<String, String> updatedKVs) throws TException{
-    return (int)5;
+    return 5;
   }
+
+  // public List<Integer> queryProjectIds(Map<String, String> keyValuePairs) throws TException{
+  //   // return new ArrayList<Integer>();
+  //   return new List<Integer>();
+  // }
+
+  public Project getProject(int projectId) throws TException{
+    return new Project(7, "name", "author", "description");
+  }
+
+  // public List<Integer> queryExperimentIds(Map<String, String> keyValuePairs) throws TException{
+  //   List<Integer> list = new ArrayList<Integer>();
+  //   return list;
+  // }
+
+  // public getExperiment(int experimentId) throws TException{
+  //   return new Experiment(9, 9, "name", "description");
+  // }
 
 
   // ^ API Service

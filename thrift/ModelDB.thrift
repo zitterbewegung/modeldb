@@ -1543,6 +1543,17 @@ service ModelDBService {
   i32 updateExperimentRun(1: i32 experimentRunId, 2:map<string, string> updatedKVs)
     throws (1: ServerLogicException svEx),
 
+  #list<i32> queryProjectIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
+
+  Project getProject(1: i32 projectId)
+    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+
+  #list<i32> queryExperimentIds(1: map<string, string> keyValuePairs)
+  #  throws (1: ServerLogicException svEx),
+
+  #Experiment getExperiment(1: i32 experimentId)
+  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
 }
 
@@ -1569,8 +1580,8 @@ service ModelDBAPI {
   #list<i32> queryProjectIds(1: map<string, string> keyValuePairs)
   #  throws (1: ServerLogicException svEx),
 
-  #Project getProject(1: i32 projectId)
-  #  throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
+  Project getProject(1: i32 projectId)
+    throws (1: ServerLogicException svEx, 2: ResourceNotFoundException rnfEx),
 
   #list<i32> queryExperimentIds(1: map<string, string> keyValuePairs)
   #  throws (1: ServerLogicException svEx),

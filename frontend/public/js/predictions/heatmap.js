@@ -463,8 +463,9 @@ function toggleModel(model) {
 
 function addModel(model, col) {
   // update list of models in menu
-  var div = $('<div>' + model + '</div>');
+  var div = $('<a>' + model + '</a>');
   div.addClass(model + '');
+  div.attr('href', '/models/' + MODELS[model].id);
   $('.predictions-selected-models').append(div);
 
   // highlight column in prediction matrix
@@ -494,7 +495,7 @@ function addModel(model, col) {
 
 function removeModel(model, col) {
   // update list of models in menu
-  $('.predictions-selected-models div.' + model).remove();
+  $('.predictions-selected-models a.' + model).remove();
 
   // unhighlight column in prediction matrix
   d3.select(".hl-col-" + col).remove();

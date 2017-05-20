@@ -6,7 +6,12 @@ select.color-scheme {
   margin-bottom: 20px;
 }
 
-.predictions-selected-models > div:first-child {
+.predictions-selected-models > a {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.predictions-selected-models > a:first-child {
   margin-top: 10px;
 }
 

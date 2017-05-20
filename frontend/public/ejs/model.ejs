@@ -3,7 +3,9 @@
     <div class="view-predictions tooltip-trigger"
       data-val="View model predictions"
       data-modelid="<%= model["id"] %>"
-      data-metadataid="<%= JSON.parse(model["metadata"])["model_id"] %>"
+      <% if (model["metadata"] != null && model["metadata"] != "") { %>
+        data-metadataid="<%= JSON.parse(model["metadata"])["model_id"] %>"
+      <% } %>
     ></div>
 
     <div class="model-section model-ids">

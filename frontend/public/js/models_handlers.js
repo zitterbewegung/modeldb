@@ -186,7 +186,8 @@ $(function() {
     ids.push(metadataId);
 
     var query = $.param({'ids': ids});
-    window.location.href = "/projects/" + projectId + "/predictions/?" + query;
+    //window.location.href = "/projects/" + projectId + "/predictions/?" + query;
+    window.location.href = "/projects/" + projectId + "/predictions";
   });
 
   function attachModalListeners() {

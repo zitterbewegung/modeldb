@@ -23,7 +23,7 @@ $(function() {
       for (var i=0; i<response.length; i++) {
         RAW_DATA[response[i].id] = response[i];
       }
-      SHOW_RATIO = 50/response.length;
+      SHOW_RATIO = 30/response.length;
 
       table(TABLE_COLUMNS, Object.values(RAW_DATA), '#table');
     });

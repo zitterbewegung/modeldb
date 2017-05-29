@@ -132,8 +132,7 @@ function updateDataPlotVega(selector) {
                 "size": 10
               }
             }
-          }
-          /*
+          },
           {
             "type": "line",
             "properties": {
@@ -145,7 +144,6 @@ function updateDataPlotVega(selector) {
               }
             }
           }
-          */
         ]
       }
     ]

@@ -105,4 +105,11 @@ router.get('/examples', function(req, res, next) {
   res.json(response);
 });
 
+// json endpoint for predictions from the PredictionStore thrift server
+router.get('/thrift-predictions', function(req, res, next) {
+  api.getThriftPredictions(1, function(response) {
+    res.json(response);
+  });
+});
+
 module.exports = router;

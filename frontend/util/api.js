@@ -1,4 +1,5 @@
 var Thrift = require('./thrift.js');
+var PredictionThrift = require('./prediction_thrift.js');
 
 var async = require('async');
 var csv = require('csvtojson');
@@ -296,6 +297,70 @@ module.exports = {
         }
       });
     }
+  },
+
+  getThriftPredictions: function(projectId, callback) {
+    PredictionThrift.client.getAllPredictions(projectId, function(err, response) {
+      var result = {};
+      result.data = [];
+      result.rows = {};
+      result.cols = {};
+
+      var numRows = response.dims[0];
+      var numCols = response.dims[1];
+      var arrayLength = numRows * numCols;
+
+      // format the prediction data properly
+      var b = response.data;
+      var farr = new Float64Array(arrayLength);
+      for (i = 0; i < arrayLength; i++) {
+        farr[i] = b.readDoubleLE(i * 8) // this is rather fragile
+      }
+      for (var i=0; i<numRows; i++) {
+        for (var j=0; j<numCols; j++) {
+          result.data.push({
+            'x': response.col_names[j],
+            'y': response.row_names[i],
+            'value': farr[i * numCols + j]/100 // divide by 100 so dummy data in [0,1]
+          });
+        }
+      }
+
+      // get rows
+      for (var i=0; i<numRows; i++) {
+        result.rows[response.row_names[i]] = {
+          'id': response.row_names[i],
+          'index': i,
+          'show': Math.random() < 50/numRows // limit random sample to around 50
+        };
+      }
+
+      // get columns
+      for (var i=0; i<numCols; i++) {
+        result.cols[response.col_names[i]] = {
+          'id': response.col_names[i],
+          'index': i + 1, // leave 0 for GT
+          'show': true // show all columns
+        }
+      }
+
+      // manually insert GT
+      result.cols['GT'] = {
+        'id': 'GT',
+        'index': 0,
+        'show': true
+      };
+
+      for (var i=0; i<numRows; i++) {
+        result.data.push({
+          'x': 'GT',
+          'y': response.row_names[i],
+          'value': Math.round(Math.random())
+        });
+      }
+
+      callback(result);
+    });
   }
 
 };

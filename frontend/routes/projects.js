@@ -104,4 +104,13 @@ router.get('/:id/predictions/examples', function(req, res, next) {
   });
 });
 
+// json endpoint for predictions from the PredictionStore thrift server
+router.get('/:id/predictions/thrift-predictions', function(req, res, next) {
+  var projectId = req.params.id;
+  api.getThriftPredictions(projectId, function(response) {
+    res.json(response);
+  });
+});
+
+
 module.exports = router;

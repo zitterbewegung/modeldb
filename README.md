@@ -1,4 +1,5 @@
 # ModelDB: A system to manage ML models
+[![Build Status](https://travis-ci.org/mitdbg/modeldb.svg?branch=master)](https://travis-ci.org/mitdbg/modeldb)
 **Website**: [http://modeldb.csail.mit.edu](http://modeldb.csail.mit.edu)
 
 **See the ModelDB frontend in action**:
@@ -9,6 +10,7 @@
 
 - [Overview](#overview)
     - [How Does it Work?](#how-does-it-work)
+- [Demo](#demo)
 - [News](#news)
 - [Setup and Installation](#setup-and-installation)
 - [Usage and Samples](#usage-and-samples)
@@ -38,24 +40,49 @@ ModelDB Configurable Graph Parameters
 
 Alternatively, ModelDB native clients for  ```spark.ml``` and ```scikit-learn``` can be used to perform automatic, fine-grained logging. Unlike the Light API, native clients do not require the user to explicitly provide model data to ModelDB. The native clients can automatically extract relevant pieces of model data *as the model is being built* and sync them with ModelDB. Incorporating ModelDB into a scikit-learn / spark.ml workflow is as simple as appending `Sync` or `_sync` to relevant methods in the respective libraries. See samples for spark.ml [here](client/scala/libs/spark.ml#samples) and those for scikit-learn [here](client/python/scikit_learn.md).
 
+## Demo
+- [ModelDB client](http://modeldb.csail.mit.edu:8000): See how ModelDB can be integrated into different ML workflows 
+- [ModelDB frontend](http://modeldb.csail.mit.edu:3000): See how ModelDB can visualize model data and results
+
 ## News
 
 2017.02.08: ModelDB publicly available! Try it out and contribute.
 
 ## Setup and Installation
 
+### Docker Setup
+
+If you have [Docker Compose](https://docs.docker.com/compose/install/) installed, you can bring up a ModelDB server with just a couple commands.
+
+*To run ModelDB with Docker, but without Docker Compose, see [detailed instructions](dockerbuild/README.md).*
+
+1. **Clone the repo**
+
+    ```bash
+    git clone https://github.com/mitdbg/modeldb
+    ```
+
+2. **Build and run ModelDB**
+
+    ```bash
+    cd [path_to_modeldb]
+    docker-compose up
+    ```
+
+### Manual Setup
+
 Watch a video of the setup and installation process [here](https://youtu.be/rmNnG3-bd6s).
 
 1. **Clone the repo**
 
-    ```git
+    ```bash
     git clone https://github.com/mitdbg/modeldb
     ```
 
 2. **Install dependencies**
 
     ModelDB requires Linux or MacOS. The code below shows how you can install the dependencies on each of them. A detailed list of all the dependencies with the recommended and required versions can be found [here](docs/required_software.md).
-    
+
     Depending on the client you're using, we assume you have the following already installed:
     - scikit-learn client:
         - Python 2.7\*\*
@@ -108,10 +135,10 @@ Watch a video of the setup and installation process [here](https://youtu.be/rmNn
     pip install -r [path_to_modeldb]/client/python/requirements.txt
     ```
 
-    For Linux, you can also refer to [this script](https://github.com/mitdbg/modeldb/blob/master/docs/install_on_linux.sh). 
+    For Linux, you can also refer to [this script](https://github.com/mitdbg/modeldb/blob/master/docs/install_on_linux.sh).
 
 3. **Build**
-    
+
     ModelDB is composed of three components: the ModelDB **server**, the ModelDB **client libraries**, and the ModelDB **frontend**.
 
     In the following, **[path_to_modeldb]** refers to the directory into which you have cloned the modeldb repo and **[thrift_version]** is 0.9.3 or 0.10.0 depending on your thrift version (check by running ```thrift -version```).
@@ -128,7 +155,11 @@ Watch a video of the setup and installation process [here](https://youtu.be/rmNn
     ./start_server.sh [thrift_version] &
     # NOTE: if you are building the project in eclipse, you may need to uncomment the pluginManagement tags in pom.xml located in the server directory
 
-    # build scikit-learn client library
+    # build or pip install the scikit-learn client library
+    pip install modeldb
+
+    -- or --
+
     cd [path_to_modeldb]/client/python
     ./build_client.sh
 
@@ -143,7 +174,7 @@ Watch a video of the setup and installation process [here](https://youtu.be/rmNn
     # ****** For server shutdown ******
     # Kill server
     # Shutdown mongodb server
-    mongo --eval "db.getSiblingDB('admin').shutdownServer()" 
+    mongo --eval "db.getSiblingDB('admin').shutdownServer()"
     ```
 
 ## Usage and Samples

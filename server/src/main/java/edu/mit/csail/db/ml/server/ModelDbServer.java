@@ -248,6 +248,10 @@ public class ModelDbServer implements ModelDBService.Iface {
     return ExceptionWrapper.run(() -> ProjectDao.getProjectOverviews(ctx));
   }
 
+  public List<ProjectOverviewResponse> getMyProjectOverviews(String apiKey) throws TException {
+    return ExceptionWrapper.run(() -> ProjectDao.getMyProjectOverviews(apiKey, ctx));
+  }
+
   public ExperimentRunDetailsResponse getExperimentRunDetails(int experimentRunId) throws TException {
     return ExceptionWrapper.run(() -> ExperimentRunDao.readExperimentRunDetails(experimentRunId, ctx, metadataDb));
   }

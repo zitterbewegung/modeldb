@@ -34,7 +34,7 @@ class Syncer(object):
 
     @classmethod
     def create_syncer(
-            cls, proj_name, user_name, proj_desc=None, host=None, port=None):
+            cls, proj_name, user_name, proj_desc=None, host=None, port=None, api_key=None):
         """
         Create a syncer given project information. A default experiment will be
         created and a default experiment run will be used
@@ -45,7 +45,8 @@ class Syncer(object):
             project_config=project_config,
             experiment_config=DefaultExperiment(),
             experiment_run_config=NewExperimentRun(""),
-            thrift_config=ThriftConfig(host, port))
+            thrift_config=ThriftConfig(host, port),
+            api_key=api_key)
         return syncer_obj
 
     @classmethod
@@ -91,13 +92,14 @@ class Syncer(object):
 
     def __init__(
             self, project_config, experiment_config, experiment_run_config,
-            thrift_config=None):
+            thrift_config=None, api_key=None):
         if thrift_config is None:
             thrift_config = ThriftConfig()
         self.buffer_list = []
         self.local_id_to_modeldb_id = {}
         self.local_id_to_object = {}
         self.local_id_to_tag = {}
+        self.api_key = api_key
         self.initialize_thrift_client(thrift_config)
         self.setup(project_config, experiment_config, experiment_run_config)
 
@@ -357,3 +359,9 @@ class Syncer(object):
                 model_dataset, model, "label_col", "prediction_col",
                 metric_type, metric_value)
             Syncer.instance.add_to_buffer(metric_event)
+
+    def get_project_overviews(self):
+        return self.client.getProjectOverviews()
+
+    def get_my_project_overviews(self):
+        return self.client.getMyProjectOverviews(self.api_key)

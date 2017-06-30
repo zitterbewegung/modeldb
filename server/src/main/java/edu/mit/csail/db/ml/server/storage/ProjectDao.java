@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -106,20 +107,51 @@ public class ProjectDao {
     return new Project(rec.getId(), rec.getName(), rec.getAuthor(), rec.getDescription());
   }
 
+  public static List<ProjectOverviewResponse> getProjectOverviews(DSLContext ctx) {
+    return ProjectDao.getProjectOverviewsForUser(null, ctx);
+  }
+
+  public static List<ProjectOverviewResponse> getMyProjectOverviews(String apiKey, DSLContext ctx) {
+    // Check that apiKey is valid and what user it belongs to.
+    // This will be abstracted out to a separate class.
+
+    // For now, hard code an api_key for test_user.
+    // Everyone else gets an empty response, but in the final version an
+    // invalid api_key should return an error to the client.
+    if (!apiKey.equals("1234567890abcdef")) {
+      return new ArrayList<ProjectOverviewResponse>();
+    }
+    String username = "test_user";
+
+    return ProjectDao.getProjectOverviewsForUser(username, ctx);
+  }
+
   /**
    * Get an overview of all the projects in ModelDB.
    * @param ctx - The database context.
    * @return An overview of all the projects in ModelDB. This includes the project names, IDs, authors, descriptions.
    * It also includes the number of experiments and number of experiment runs in each project.
    */
-  public static List<ProjectOverviewResponse> getProjectOverviews(DSLContext ctx) {
+  public static List<ProjectOverviewResponse> getProjectOverviewsForUser(String author, DSLContext ctx) {
     // Create a map that goes from project ID to the corresponding Project object.
-    Map<Integer, Project> projectForId = ctx
-      .selectFrom(Tables.PROJECT)
-      .fetch()
-      .map(rec -> new Project(rec.getId(), rec.getName(), rec.getAuthor(), rec.getDescription()))
-      .stream()
-      .collect(Collectors.toMap(Project::getId, p -> p));
+    // Filter by author if author is set.
+    Map<Integer, Project> projectForId;
+    if (author != null) {
+      projectForId = ctx
+        .selectFrom(Tables.PROJECT)
+        .where(Tables.PROJECT.AUTHOR.eq(author))
+        .fetch()
+        .map(rec -> new Project(rec.getId(), rec.getName(), rec.getAuthor(), rec.getDescription()))
+        .stream()
+        .collect(Collectors.toMap(Project::getId, p -> p));
+    } else {
+      projectForId = ctx
+        .selectFrom(Tables.PROJECT)
+        .fetch()
+        .map(rec -> new Project(rec.getId(), rec.getName(), rec.getAuthor(), rec.getDescription()))
+        .stream()
+        .collect(Collectors.toMap(Project::getId, p -> p));      
+    }
 
     // Create a map that goes from project ID to the number of experiments in the project.
     Map<Integer, Integer> numExperimentsForProjId = ctx

@@ -1419,7 +1419,11 @@ service ModelDBService {
   /*
    Get information about of all the projects in the database.
    */
-  list<ProjectOverviewResponse> getProjectOverviews() throws (1: ServerLogicException svEx),
+  list<ProjectOverviewResponse> getProjectOverviews()
+    throws (1: ServerLogicException svEx),
+
+  list<ProjectOverviewResponse> getMyProjectOverviews(1: string apiKey)
+    throws (1: ServerLogicException svEx),
 
   /*
    Get information about a given experiment run.
@@ -1487,4 +1491,3 @@ service ModelDBService {
    */
   ExtractedPipelineResponse extractPipeline(1: i32 modelId) throws (1: ResourceNotFoundException rnfEx, 2: ServerLogicException svEx)
 }
-
